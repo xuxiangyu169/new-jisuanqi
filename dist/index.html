@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大模型算力集群盈亏平衡分析计算器 - Linear Modern Style</title>
-    <!-- 引入 Outfit 现代展示字体与 Inter 常用字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>大模型算力集群盈亏平衡分析计算器 - Bauhaus Style</title>
+    <!-- 引入 Outfit 纯几何字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
     <!-- 引入 ECharts -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <!-- 引入 Lucide 图标 -->
@@ -13,39 +13,21 @@
     
     <style>
         :root {
-            /* Linear/Modern 风格系统预设 */
-            --bg-deep: #020203;
-            --bg-base: #050506;
-            --bg-elevated: #0a0a0c;
-            --surface: rgba(255, 255, 255, 0.03);
-            --surface-hover: rgba(255, 255, 255, 0.06);
+            /* Bauhaus 风格系统设计代币 */
+            --bg-canvas: #f0f0f0;      /* 浅灰乳白画布 */
+            --foreground: #121212;     /* Stark 纯黑 */
             
-            --foreground: #ededef;
-            --foreground-muted: #8a8f98;
-            --foreground-subtle: rgba(255, 255, 255, 0.4);
+            --primary-red: #d02020;    /* 经典包豪斯红 */
+            --primary-blue: #1040c0;   /* 经典包豪斯蓝 */
+            --primary-yellow: #f0c020; /* 经典包豪斯黄 */
+            --bg-accordion-light: #fff9c4; /* FAQ展开淡黄色 */
             
-            /* 经典星际靛蓝强调色 */
-            --accent: #5e6ad2;
-            --accent-bright: #6872d9;
-            --accent-glow: rgba(94, 106, 210, 0.15);
-            --accent-glow-strong: rgba(94, 106, 210, 0.4);
-            
-            /* 语义警告与成功指示 */
-            --semantic-red: #f87171;
-            --semantic-red-glow: rgba(239, 68, 68, 0.08);
-            --semantic-green: #34d399;
-            --semantic-green-glow: rgba(16, 185, 129, 0.08);
-            
-            --border-default: rgba(255, 255, 255, 0.05);
-            --border-hover: rgba(255, 255, 255, 0.09);
-            --border-accent: rgba(94, 106, 210, 0.25);
-            
-            /* 缓动 Timing (以 expo-out 0.16, 1, 0.3, 1 为准) */
-            --easing-expo: cubic-bezier(0.16, 1, 0.3, 1);
-            
-            --font-display: 'Outfit', 'Inter', -apple-system, sans-serif;
-            --font-sans: 'Inter', -apple-system, sans-serif;
+            --border-thick: 4px;
+            --border-thin: 2px;
+            --font-display: 'Outfit', -apple-system, sans-serif;
             --font-mono: 'Fira Code', monospace;
+            
+            --easing-mechanical: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 机械利落动画 */
         }
 
         * {
@@ -55,247 +37,152 @@
         }
 
         body {
-            font-family: var(--font-sans);
-            background-color: var(--bg-base);
+            font-family: var(--font-display);
+            background-color: var(--bg-canvas);
+            /* 点状网格背景 - 经典包豪斯海报底纹 */
+            background-image: radial-gradient(var(--foreground) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
             color: var(--foreground);
             min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
 
-        /* ==================== Layer 1: 底色渐变 ==================== */
-        .base-gradient-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(ellipse at top, #0a0a14 0%, #050506 55%, #020203 100%);
-            z-index: -4;
-            pointer-events: none;
-        }
-
-        /* ==================== Layer 2: SVG 噪声滤镜 ==================== */
-        .noise-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            opacity: 0.015;
-            pointer-events: none;
-            z-index: -3;
-        }
-
-        /* ==================== Layer 3: 漂浮渐变光斑 ==================== */
-        .blob-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: -2;
-            overflow: hidden;
-        }
-
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            mix-blend-mode: screen;
-            animation: float-animation 20s ease-in-out infinite alternate;
-        }
-
-        .primary-blob {
-            top: -20%;
-            left: 20%;
-            width: 1000px;
-            height: 1000px;
-            background: radial-gradient(circle, rgba(94, 106, 210, 0.16) 0%, rgba(0, 0, 0, 0) 70%);
-            filter: blur(150px);
-        }
-
-        .secondary-blob {
-            top: 35%;
-            left: -15%;
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
-            filter: blur(120px);
-            animation-duration: 25s;
-        }
-
-        .tertiary-blob {
-            bottom: -20%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(94, 106, 210, 0.06) 0%, rgba(0, 0, 0, 0) 70%);
-            filter: blur(100px);
-            animation-duration: 18s;
-        }
-
-        @keyframes float-animation {
-            0% { transform: translateY(0px) rotate(0deg) scale(1); }
-            50% { transform: translateY(-40px) rotate(2deg) scale(1.05); }
-            100% { transform: translateY(20px) rotate(-1deg) scale(0.95); }
-        }
-
-        /* ==================== Layer 4: 网格线叠加 ==================== */
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.009) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.009) 1px, transparent 1px);
-            background-size: 64px 64px;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* ==================== 顶部页眉 ==================== */
+        /* ==================== 顶部导航页眉 ==================== */
         header {
-            padding: 32px 40px;
-            border-bottom: 1px solid var(--border-default);
-            background: rgba(5, 5, 6, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            padding: 24px 40px;
+            background-color: #ffffff;
+            border-bottom: var(--border-thick) solid var(--foreground);
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 10;
+            box-shadow: 0 4px 0px 0px rgba(0,0,0,0.05);
         }
 
-        .header-title-wrapper {
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* 纯几何三原色 SVG Logo */
+        .bauhaus-logo {
+            flex-shrink: 0;
+        }
+
+        .header-texts {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-        }
-
-        .header-tag {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            font-weight: 500;
-            color: var(--accent-bright);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            background: rgba(94, 106, 210, 0.08);
-            border: 1px solid rgba(94, 106, 210, 0.2);
-            padding: 4px 10px;
-            border-radius: 9999px;
-            width: fit-content;
+            gap: 2px;
         }
 
         h1 {
-            font-family: var(--font-display);
-            font-size: 26px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            background: linear-gradient(to bottom, #ffffff 40%, rgba(255, 255, 255, 0.7) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
         }
 
         .subtitle {
             font-size: 13px;
-            color: var(--foreground-muted);
-            font-weight: 400;
+            color: var(--foreground);
+            font-weight: 500;
+            opacity: 0.8;
+            letter-spacing: -0.01em;
         }
 
+        /* 重置配置按钮 */
         .btn-reset {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-default);
+            background-color: var(--primary-yellow);
+            border: var(--border-thin) solid var(--foreground);
             color: var(--foreground);
-            padding: 8px 16px;
-            border-radius: 8px;
+            font-family: var(--font-display);
+            font-weight: 700;
             font-size: 12px;
-            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 10px 18px;
             cursor: pointer;
+            border-radius: 0; /* 绝对直角 */
+            box-shadow: 4px 4px 0px 0px var(--foreground);
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-            transition: all 0.2s var(--easing-expo);
+            transition: transform 0.1s var(--easing-mechanical), box-shadow 0.1s var(--easing-mechanical);
         }
 
         .btn-reset:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: var(--border-hover);
-            transform: translateY(-1px);
+            background-color: #ffd230;
+        }
+
+        .btn-reset:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px var(--foreground);
         }
 
         /* ==================== 页面布局 (Bento Grid) ==================== */
-        main {
+        .app-layout {
             flex: 1;
+            width: 100%;
+            max-width: 1400px; /* 限宽，营造招贴画比例 */
+            margin: 0 auto;
+            padding: 40px;
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 24px;
-            padding: 32px 40px;
-            max-width: 1600px;
-            width: 100%;
-            margin: 0 auto;
+            gap: 32px;
             z-index: 5;
         }
 
-        /* ==================== Bento 卡片通用样式 ==================== */
+        /* ==================== Bento 卡片设计 (几何直角与硬阴影) ==================== */
         .bento-card {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.005) 100%);
-            border: 1px solid var(--border-default);
-            border-radius: 16px;
+            background-color: #ffffff;
+            border: var(--border-thick) solid var(--foreground);
+            border-radius: 0; /* 包豪斯极端：二进制圆角 (0px) */
             padding: 24px;
             position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
-            transition: border-color 0.3s var(--easing-expo), box-shadow 0.3s var(--easing-expo), transform 0.3s var(--easing-expo);
-        }
-
-        /* Spotlight 聚光灯鼠标跟踪图层 */
-        .bento-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(
-                300px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
-                rgba(94, 106, 210, 0.09),
-                transparent 80%
-            );
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 1;
+            box-shadow: 8px 8px 0px 0px var(--foreground); /* 实体硬阴影 */
+            transition: transform 0.15s var(--easing-mechanical), box-shadow 0.15s var(--easing-mechanical);
         }
 
         .bento-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--border-hover);
-            box-shadow: 
-                0 12px 40px rgba(0, 0, 0, 0.45), 
-                0 0 50px rgba(94, 106, 210, 0.04), 
-                inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+            transform: translate(-2px, -2px);
+            box-shadow: 10px 10px 0px 0px var(--foreground);
         }
 
-        .bento-card:hover::before {
-            opacity: 1;
+        /* 卡片右上角几何小图标装饰 (红/黄/蓝循环) */
+        .card-geometric-marker {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 10px;
+            height: 10px;
+            z-index: 5;
         }
 
-        /* 卡片内容包装器，确保位于 spotlight 层之上 */
-        .card-inner {
-            position: relative;
-            z-index: 2;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+        .marker-circle {
+            border-radius: 50%;
+            background-color: var(--primary-red);
+            border: 1px solid var(--foreground);
         }
 
-        /* ==================== 6列网格跨度分配 ==================== */
+        .marker-square {
+            border-radius: 0;
+            background-color: var(--primary-yellow);
+            border: 1px solid var(--foreground);
+        }
+
+        .marker-triangle {
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 10px solid var(--primary-blue);
+        }
+
+        /* ==================== 栅格跨度 ==================== */
         .col-span-2 { grid-column: span 2; }
         .col-span-4 { grid-column: span 4; }
 
@@ -305,111 +192,115 @@
             height: fit-content;
         }
 
-        .tabs-header {
+        .tab-nav-bar {
             display: flex;
-            background: rgba(0, 0, 0, 0.25);
-            border-bottom: 1px solid var(--border-default);
-            padding: 6px;
+            background-color: var(--foreground);
+            border-bottom: var(--border-thin) solid var(--foreground);
         }
 
-        .tab-button {
+        .tab-btn {
             flex: 1;
             background: transparent;
             border: none;
-            color: var(--foreground-muted);
-            padding: 10px;
-            font-size: 12px;
-            font-weight: 500;
+            color: #ffffff;
+            padding: 14px;
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             cursor: pointer;
-            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.2s var(--easing-expo);
+            transition: all 0.2s;
         }
 
-        .tab-button.active {
-            background: rgba(255, 255, 255, 0.04);
+        .tab-btn.active {
+            background-color: #ffffff;
             color: var(--foreground);
-            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
         }
 
-        .console-body {
+        .console-inner-body {
             padding: 24px;
             display: flex;
             flex-direction: column;
-            gap: 22px;
+            gap: 24px;
         }
 
-        .tab-pane {
+        .pane-content {
             display: none;
         }
 
-        .tab-pane.active {
+        .pane-content.active {
             display: flex;
             flex-direction: column;
-            gap: 22px;
+            gap: 24px;
         }
 
-        /* 参数输入框与滑块 */
-        .input-group {
+        /* 输入控件布局 */
+        .input-item {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .label-row {
+        .input-title-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .label-text {
+        .input-title {
             font-size: 13px;
-            color: var(--foreground-muted);
-            font-weight: 500;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
-        .label-text i {
-            color: var(--accent-bright);
+        .input-title i {
+            color: var(--primary-blue);
         }
 
-        .value-badge {
+        .numeric-badge {
             font-family: var(--font-mono);
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 700;
             color: var(--foreground);
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-default);
-            padding: 2px 8px;
-            border-radius: 6px;
+            border: var(--border-thin) solid var(--foreground);
+            background-color: #ffffff;
+            padding: 1px 8px;
+            box-shadow: 2px 2px 0px 0px var(--foreground);
         }
 
-        /* Linear 扁平数字输入框与下拉选择框 */
-        .flat-input, select {
-            background: #09090b;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+        /* 纯包豪斯直角硬边输入框和选择框 */
+        .bauhaus-input, select {
+            background-color: #ffffff;
+            border: var(--border-thin) solid var(--foreground);
+            border-radius: 0; /* 绝对直角 */
             color: var(--foreground);
-            border-radius: 8px;
             padding: 10px 14px;
-            font-family: var(--font-sans);
+            font-family: var(--font-display);
+            font-weight: 500;
             font-size: 13px;
             outline: none;
             width: 100%;
-            transition: all 0.2s var(--easing-expo);
+            box-shadow: 2px 2px 0px 0px var(--foreground);
+            transition: all 0.15s var(--easing-mechanical);
         }
 
-        .flat-input:focus, select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px var(--accent-glow);
+        .bauhaus-input:focus, select:focus {
+            background-color: var(--bg-accordion-light);
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px 0px var(--foreground);
         }
 
-        /* 自定义 Linear 滑块 (Slider) */
-        .slider-wrapper {
+        /* 机械感滑块 (Range Input) */
+        .range-wrapper {
             display: flex;
             align-items: center;
             margin: 6px 0;
@@ -418,89 +309,115 @@
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 9999px;
+            height: 6px;
+            background-color: var(--foreground); /* 黑色硬轨 */
+            border-radius: 0;
             outline: none;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 12px;
-            width: 12px;
-            border-radius: 50%;
-            background: #ffffff;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%; /* 正圆 */
+            background-color: var(--primary-yellow); /* 黄色滑块 */
+            border: var(--border-thin) solid var(--foreground);
             cursor: pointer;
-            box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.8);
-            transition: all 0.15s var(--easing-expo);
+            box-shadow: 2px 2px 0px 0px var(--foreground);
+            transition: transform 0.1s var(--easing-mechanical), background-color 0.1s;
         }
 
         input[type="range"]::-webkit-slider-thumb:hover {
             transform: scale(1.2);
-            background: #ffffff;
-            box-shadow: 0 0 10px var(--accent-glow-strong), 0 0 0 4px var(--accent);
+            background-color: var(--primary-red); /* 悬浮时变红 */
         }
 
-        .limits-row {
+        input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(0.95);
+            box-shadow: 0px 0px 0px 0px var(--foreground);
+        }
+
+        .range-boundaries {
             display: flex;
             justify-content: space-between;
             font-size: 10px;
-            color: var(--foreground-subtle);
+            font-weight: 700;
+            color: var(--foreground);
+            opacity: 0.6;
         }
 
-        /* 风琴折叠卡片 */
-        .acc-panel {
-            border-top: 1px solid var(--border-default);
-            margin-top: 10px;
+        /* ==================== 手风琴 (Accordion) ==================== */
+        .accordion-wrapper {
+            border-top: var(--border-thin) solid var(--foreground);
+            margin-top: 8px;
         }
 
-        .acc-trigger {
+        .accordion-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 0 8px 0;
+            padding: 12px 8px;
             cursor: pointer;
-            color: var(--foreground-muted);
-            font-size: 13px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .acc-trigger:hover {
+            background-color: #ffffff;
+            border: var(--border-thin) solid var(--foreground);
             color: var(--foreground);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 2px 2px 0px 0px var(--foreground);
+            transition: all 0.15s var(--easing-mechanical);
         }
 
-        .acc-arrow {
-            transition: transform 0.3s var(--easing-expo);
+        .accordion-bar:hover {
+            background-color: #f7f7f7;
         }
 
-        .acc-trigger.expanded .acc-arrow {
+        /* 展开时的状态：纯色红背景，白字 */
+        .accordion-bar.expanded {
+            background-color: var(--primary-red);
+            color: #ffffff;
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px 0px var(--foreground);
+        }
+
+        .accordion-arrow {
+            transition: transform 0.3s var(--easing-mechanical);
+        }
+
+        .accordion-bar.expanded .accordion-arrow {
             transform: rotate(180deg);
         }
 
-        .acc-body {
+        /* 展开内容：淡黄色背景 */
+        .accordion-content-panel {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s var(--easing-expo);
+            transition: max-height 0.4s var(--easing-mechanical);
+            background-color: var(--bg-accordion-light);
+            border-left: var(--border-thin) solid var(--foreground);
+            border-right: var(--border-thin) solid var(--foreground);
+            border-bottom: var(--border-thin) solid var(--foreground);
             display: flex;
             flex-direction: column;
             gap: 16px;
+            padding: 0 16px;
         }
 
-        .acc-trigger.expanded + .acc-body {
+        .accordion-bar.expanded + .accordion-content-panel {
             max-height: 1200px;
-            padding-bottom: 12px;
+            padding: 20px 16px;
         }
 
-        /* 隐藏的原生下拉箭头与自定义包装 */
-        .select-box {
+        /* 自定义下拉箭头 */
+        .select-container {
             position: relative;
         }
 
-        .select-box::after {
+        .select-container::after {
             content: "▼";
             font-size: 8px;
-            color: var(--foreground-muted);
+            color: var(--foreground);
             position: absolute;
             right: 14px;
             top: 50%;
@@ -508,94 +425,97 @@
             pointer-events: none;
         }
 
-        select {
-            appearance: none;
-            -webkit-appearance: none;
-            cursor: pointer;
-        }
-
-        /* ==================== 右侧：Dashboard 区域 ==================== */
-        .dashboard-layout {
+        /* ==================== 右侧：Dashboard ==================== */
+        .dashboard-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 32px;
             height: 100%;
         }
 
-        /* KPI Card 栅格网格 */
-        .kpi-grid {
+        /* KPI Cards Grid */
+        .kpi-cards-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 16px;
         }
 
-        /* KPI Bento Item */
-        .kpi-bento {
+        /* KPI Bento Box - Color Blocking */
+        .kpi-block {
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
+            gap: 12px;
+            border-radius: 0;
+            border: var(--border-thick) solid var(--foreground);
+            box-shadow: 4px 4px 0px 0px var(--foreground);
         }
 
-        /* Top highlight borders for cards */
-        .kpi-bento::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(to right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
-        }
-
-        .kpi-bento-label {
+        .kpi-block-label {
             font-size: 11px;
-            font-family: var(--font-mono);
-            letter-spacing: 0.05em;
-            color: var(--foreground-muted);
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .kpi-bento-label i {
+        .kpi-block-label i {
             font-size: 13px;
         }
 
-        .kpi-bento-value-row {
+        .kpi-block-value-row {
             display: flex;
             align-items: baseline;
             gap: 4px;
         }
 
-        .kpi-bento-value {
+        .kpi-block-value {
             font-family: var(--font-display);
             font-size: 24px;
-            font-weight: 600;
+            font-weight: 900;
             letter-spacing: -0.02em;
         }
 
-        .kpi-bento-unit {
+        .kpi-block-unit {
             font-size: 10px;
-            color: var(--foreground-subtle);
-            font-family: var(--font-mono);
+            font-weight: 700;
+            font-family: var(--font-display);
+            text-transform: uppercase;
         }
 
-        /* 净利润卡片动态高亮状态 */
-        .kpi-bento.profit-glowing {
-            background: radial-gradient(circle at top right, rgba(94, 106, 210, 0.06) 0%, rgba(255, 255, 255, 0.01) 80%);
-            border-color: rgba(94, 106, 210, 0.15);
+        /* 纯色高对比度色块分配 (Color Blocking) */
+        .kpi-block.cost-block {
+            background-color: #ffffff; /* 白卡 */
+            color: var(--foreground);
+        }
+
+        .kpi-block.price-block {
+            background-color: var(--primary-yellow); /* 黄卡 */
+            color: var(--foreground);
+        }
+
+        .kpi-block.util-block {
+            background-color: var(--primary-blue); /* 蓝卡 (白字) */
+            color: #ffffff;
+        }
+
+        /* 净利润卡片动态色块拼贴 */
+        .kpi-block.profit-active {
+            background-color: var(--primary-blue); /* 盈利为蓝卡 */
+            color: #ffffff;
+            border-color: var(--foreground);
         }
         
-        .kpi-bento.loss-glowing {
-            background: radial-gradient(circle at top right, rgba(239, 68, 68, 0.03) 0%, rgba(255, 255, 255, 0.01) 80%);
-            border-color: rgba(239, 68, 68, 0.12);
+        .kpi-block.loss-active {
+            background-color: var(--primary-red); /* 亏损为红卡 */
+            color: #ffffff;
+            border-color: var(--foreground);
         }
 
-        /* 图表 Bento 容器 */
-        .chart-bento {
+        /* 图表卡片 */
+        .chart-bento-card {
             flex: 1;
             min-height: 480px;
             display: flex;
@@ -603,45 +523,46 @@
             gap: 16px;
         }
 
-        .chart-header-bar {
+        .chart-top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: var(--border-thin) solid var(--foreground);
+            padding-bottom: 12px;
         }
 
-        .chart-head-title {
+        .chart-title-label {
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-family: var(--font-display);
         }
 
-        .chart-head-title i {
-            color: var(--accent-bright);
+        .chart-title-label i {
+            color: var(--primary-red);
         }
 
-        .chart-custom-legend {
+        .chart-legend-box {
             display: flex;
             gap: 16px;
             font-size: 11px;
-            font-family: var(--font-mono);
-        }
-
-        .custom-legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--foreground-muted);
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         .legend-indicator-line {
-            width: 16px;
-            height: 2px;
+            display: inline-block;
+            width: 20px;
+            height: 4px;
+            border: 1px solid var(--foreground);
+            vertical-align: middle;
+            margin-right: 6px;
         }
 
-        .chart-container-wrapper {
+        .chart-render-wrapper {
             position: relative;
             flex: 1;
             width: 100%;
@@ -652,73 +573,65 @@
             width: 100%;
             height: 100%;
             min-height: 400px;
+            background-color: #ffffff;
         }
 
-        /* 盈亏平衡紫色/靛蓝发光呼吸点 */
-        .glow-pulse-dot {
+        /* 机械脉冲闪烁点 (Bauhaus 拼贴硬核动效) */
+        .mechanical-pulse {
             position: absolute;
-            width: 12px;
-            height: 12px;
-            background-color: var(--accent-bright);
+            width: 14px;
+            height: 14px;
+            background-color: var(--primary-yellow);
+            border: var(--border-thin) solid var(--foreground);
             border-radius: 50%;
-            box-shadow: 0 0 0 0 rgba(94, 106, 210, 0.7);
-            animation: pulse-glow 1.8s infinite;
-            pointer-events: none;
+            animation: mechanical-flash 1s steps(2, start) infinite; /* steps 无平滑，纯机械感 */
             transform: translate(-50%, -50%);
             z-index: 10;
             display: none;
+            pointer-events: none;
         }
 
-        @keyframes pulse-glow {
-            0% {
-                transform: translate(-50%, -50%) scale(0.9);
-                box-shadow: 0 0 0 0 rgba(94, 106, 210, 0.7);
-            }
-            70% {
-                transform: translate(-50%, -50%) scale(1.15);
-                box-shadow: 0 0 0 12px rgba(94, 106, 210, 0);
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(0.9);
-                box-shadow: 0 0 0 0 rgba(94, 106, 210, 0);
-            }
+        @keyframes mechanical-flash {
+            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.15; transform: translate(-50%, -50%) scale(1.2); }
         }
 
-        /* ==================== 底部信息栏 ==================== */
+        /* ==================== 页脚 (纯黑底色装帧) ==================== */
         footer {
             margin-top: auto;
             padding: 24px 40px;
-            border-top: 1px solid var(--border-default);
-            background: rgba(2, 2, 3, 0.6);
+            background-color: var(--foreground);
+            border-top: var(--border-thick) solid var(--foreground);
+            color: #ffffff;
             font-size: 11px;
-            color: var(--foreground-subtle);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             text-align: center;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 10;
-            font-family: var(--font-mono);
         }
 
-        .footer-desc-group {
+        .footer-desc {
             display: flex;
             gap: 16px;
+            opacity: 0.7;
         }
 
-        /* ECharts Tooltip 极简化毛玻璃卡片 */
-        .tooltip-linear {
-            background: rgba(10, 10, 12, 0.9) !important;
-            backdrop-filter: blur(12px) !important;
-            -webkit-backdrop-filter: blur(12px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 8px !important;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5) !important;
+        /* ECharts Tooltip 纯包豪斯硬描边卡片 */
+        .tooltip-bauhaus {
+            background-color: #ffffff !important;
+            border: var(--border-thin) solid var(--foreground) !important;
+            border-radius: 0 !important;
+            box-shadow: 4px 4px 0px 0px var(--foreground) !important;
             padding: 12px !important;
         }
 
-        /* ==================== 响应式移动端自适应 ==================== */
+        /* ==================== 响应式移动端适配 ==================== */
         @media (max-width: 1024px) {
-            main {
+            .app-layout {
                 grid-template-columns: 1fr;
                 padding: 16px;
             }
@@ -733,13 +646,13 @@
                 flex-direction: column;
                 gap: 10px;
             }
-            .kpi-grid {
+            .kpi-cards-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
 
         @media (max-width: 600px) {
-            .kpi-grid {
+            .kpi-cards-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -747,345 +660,328 @@
 </head>
 <body>
 
-    <!-- Layer 1: Base Gradient -->
-    <div class="base-gradient-bg"></div>
-
-    <!-- Layer 2: Noise Overlay -->
-    <svg class="noise-overlay" xmlns="http://www.w3.org/2000/svg">
-        <filter id="noise">
-            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/>
-        </filter>
-        <rect width="100%" height="100%" filter="url(#noise)"/>
-    </svg>
-
-    <!-- Layer 3: Floating Blobs -->
-    <div class="blob-container">
-        <div class="blob primary-blob"></div>
-        <div class="blob secondary-blob"></div>
-        <div class="blob tertiary-blob"></div>
-    </div>
-
-    <!-- Layer 4: Grid Overlay -->
-    <div class="grid-overlay"></div>
-
-    <!-- 页眉 Header -->
+    <!-- 页眉 (Header) -->
     <header>
-        <div class="header-title-wrapper">
-            <div class="header-tag">LLM Infrastructure</div>
-            <h1>大模型算力集群盈亏平衡分析计算器</h1>
-            <p class="subtitle">基于多维变动成本与集群通信效率的算力中心 ROI 沙盘决策演练大屏</p>
+        <div class="header-title-group">
+            <!-- 三原色几何 Logo -->
+            <svg class="bauhaus-logo" width="70" height="22" viewBox="0 0 70 22" xmlns="http://www.w3.org/2000/svg">
+                <!-- 红圆 -->
+                <circle cx="11" cy="11" r="9" fill="#d02020" stroke="#121212" stroke-width="2"/>
+                <!-- 黄方 -->
+                <rect x="26" y="2" width="18" height="18" fill="#f0c020" stroke="#121212" stroke-width="2"/>
+                <!-- 蓝三角 -->
+                <polygon points="59,2 50,20 68,20" fill="#1040c0" stroke="#121212" stroke-width="2" stroke-linejoin="miter"/>
+            </svg>
+            <div class="header-texts">
+                <h1>大模型算力集群盈亏平衡分析计算器</h1>
+                <p class="subtitle">基于三原色几何建构主义的 LLM 基础设施 ROI 决策演练沙盘</p>
+            </div>
         </div>
         <div>
-            <button class="btn-reset" onclick="resetAllParams()">
+            <button class="btn-reset" onclick="resetAllValues()">
                 <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i>
                 重置配置
             </button>
         </div>
     </header>
 
-    <!-- 主体内容 (Bento Grid) -->
-    <main class="bento-grid">
+    <!-- 主体容器 (Bento Grid) -->
+    <main class="app-layout">
         
-        <!-- 左侧输入面板 (col-span-2) -->
+        <!-- 左侧输入控制台 (col-span-2) -->
         <div class="bento-card console-card col-span-2">
-            <div class="card-inner">
-                <!-- Tabs 导航 -->
-                <div class="tabs-header">
-                    <button class="tab-button active" onclick="switchPane('quick')">
-                        <i data-lucide="zap" style="width: 13px; height: 13px;"></i>
-                        极简模式
-                    </button>
-                    <button class="tab-button" onclick="switchPane('advanced')">
-                        <i data-lucide="sliders" style="width: 13px; height: 13px;"></i>
-                        专业真实模式
-                    </button>
-                </div>
+            <!-- 几何小标志装饰 -->
+            <div class="card-geometric-marker marker-circle"></div>
 
-                <!-- 参数表单 -->
-                <div class="console-body">
-                    
-                    <!-- 极简模式 Pane -->
-                    <div id="quick-pane" class="tab-pane active">
-                        <!-- 服务器节点数量 -->
-                        <div class="input-group">
-                            <div class="label-row">
-                                <span class="label-text">
-                                    <i data-lucide="server"></i>
-                                    集群节点数量 (台)
-                                </span>
-                                <span class="value-badge" id="badge-server-count">8</span>
-                            </div>
-                            <div class="slider-wrapper">
-                                <input type="range" id="slider-server-count" min="1" max="64" step="1" value="8" oninput="changeParam('server-count', this.value)">
-                            </div>
-                            <div class="limits-row">
-                                <span>1 台</span>
-                                <span>64 台</span>
-                            </div>
-                        </div>
+            <!-- Tab 栏 -->
+            <div class="tab-nav-bar">
+                <button class="tab-btn active" onclick="switchPaneTab('quick')">
+                    <i data-lucide="zap" style="width: 13px; height: 13px;"></i>
+                    极简模式
+                </button>
+                <button class="tab-btn" onclick="switchPaneTab('advanced')">
+                    <i data-lucide="sliders" style="width: 13px; height: 13px;"></i>
+                    专业生产模式
+                </button>
+            </div>
 
-                        <!-- 节点硬件包单价 -->
-                        <div class="input-group">
-                            <div class="label-row">
-                                <span class="label-text">
-                                    <i data-lucide="wallet"></i>
-                                    单节点硬件价格 (万元)
-                                </span>
-                            </div>
-                            <input type="number" id="field-node-price" class="flat-input" value="150" min="10" max="1000" oninput="changeParam('node-price', this.value)">
-                            <div class="limits-row" style="margin-top: 4px;">
-                                <span>含算力机、交换网、存储设备折旧分摊</span>
-                            </div>
-                        </div>
-
-                        <!-- 混合 Token 定价 -->
-                        <div class="input-group">
-                            <div class="label-row">
-                                <span class="label-text">
-                                    <i data-lucide="tag"></i>
-                                    混合 Token 销售单价 (元/百万)
-                                </span>
-                                <span class="value-badge" id="badge-token-price">12</span>
-                            </div>
-                            <div class="slider-wrapper">
-                                <input type="range" id="slider-token-price" min="1" max="50" step="0.5" value="12" oninput="changeParam('token-price', this.value)">
-                            </div>
-                            <div class="limits-row">
-                                <span>1 元/百万</span>
-                                <span>50 元/百万</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 专业真实模式 Pane -->
-                    <div id="advanced-pane" class="tab-pane">
-                        <!-- 同步展示的核心输入 -->
-                        <div id="advanced-sync-inputs"></div>
-
-                        <!-- 折叠面板：高级基础设施与物理环境 -->
-                        <div class="acc-panel">
-                            <div class="acc-trigger expanded" onclick="toggleAccordionPane(this)">
-                                <span>物理基础设施配置</span>
-                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 13px; height: 13px;"></i>
-                            </div>
-                            <div class="acc-body">
-                                <!-- 折旧周期 -->
-                                <div class="input-group">
-                                    <div class="label-row">
-                                        <span class="label-text">服务器折旧周期 (月)</span>
-                                    </div>
-                                    <input type="number" id="field-dep-period" class="flat-input" value="36" min="12" max="120" oninput="changeParam('dep-period', this.value)">
-                                </div>
-                                <!-- 机柜功率上限 -->
-                                <div class="input-group">
-                                    <div class="label-row">
-                                        <span class="label-text">单个机柜最大额定功率 (kW)</span>
-                                    </div>
-                                    <input type="number" id="field-rack-limit" class="flat-input" value="8" min="4" max="32" oninput="changeParam('rack-limit', this.value)">
-                                </div>
-                                <!-- 机柜月度租金 -->
-                                <div class="input-group">
-                                    <div class="label-row">
-                                        <span class="label-text">单个机柜租赁租金 (元/月)</span>
-                                    </div>
-                                    <input type="number" id="field-rack-cost" class="flat-input" value="6000" min="1000" max="30000" oninput="changeParam('rack-cost', this.value)">
-                                </div>
-                                <!-- PUE 系数 -->
-                                <div class="input-group">
-                                    <div class="label-row">
-                                        <span class="label-text">机房 PUE 指标系数</span>
-                                        <span class="value-badge" id="badge-pue">1.30</span>
-                                    </div>
-                                    <div class="slider-wrapper">
-                                        <input type="range" id="slider-pue" min="1.0" max="2.0" step="0.05" value="1.3" oninput="changeParam('pue', this.value)">
-                                    </div>
-                                </div>
-                                <!-- 电费 -->
-                                <div class="input-group">
-                                    <div class="label-row">
-                                        <span class="label-text">电力单价电费 (元/kWh)</span>
-                                    </div>
-                                    <input type="number" id="field-elec-rate" class="flat-input" value="0.7" step="0.1" min="0.1" max="3.0" oninput="changeParam('elec-rate', this.value)">
-                                </div>
-                                <!-- 通信衰减 -->
-                                <div class="input-group">
-                                    <div class="label-row">
-                                        <span class="label-text">集群多节点通信衰减 (%)</span>
-                                        <span class="value-badge" id="badge-comm-loss">3.0%</span>
-                                    </div>
-                                    <div class="slider-wrapper">
-                                        <input type="range" id="slider-comm-loss" min="0" max="10" step="0.5" value="3.0" oninput="changeParam('comm-loss', this.value)">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 折叠面板：模型规格与工作负载 -->
-                        <div class="acc-panel">
-                            <div class="acc-trigger expanded" onclick="toggleAccordionPane(this)">
-                                <span>模型规格参数配置</span>
-                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 13px; height: 13px;"></i>
-                            </div>
-                            <div class="acc-body">
-                                <!-- 模型选择 -->
-                                <div class="input-group">
-                                    <div class="label-row">
-                                        <span class="label-text">模型级别预设</span>
-                                    </div>
-                                    <div class="select-box">
-                                        <select id="select-model-spec-preset" onchange="toggleModelSpecPreset(this.value)">
-                                            <option value="preset-70b">Llama-3-70B 级别 (单节点 TPS = 240)</option>
-                                            <option value="preset-8b">Llama-3-8B 级别 (单节点 TPS = 960)</option>
-                                            <option value="preset-custom">自定义性能参数...</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- 自定义 TPS -->
-                                <div class="input-group" id="custom-tps-field-wrapper" style="display: none;">
-                                    <div class="label-row">
-                                        <span class="label-text">单节点基准性能 (Tokens/s)</span>
-                                    </div>
-                                    <input type="number" id="field-base-tps" class="flat-input" value="240" min="10" max="10000" oninput="changeParam('base-tps', this.value)">
-                                </div>
-                                <!-- 上下文长度 -->
-                                <div class="input-group">
-                                    <div class="label-row">
-                                        <span class="label-text">平均上下文请求窗口</span>
-                                    </div>
-                                    <div class="select-box">
-                                        <select id="select-context-factor" onchange="changeParam('context-length', this.value)">
-                                            <option value="1.0">4K 上下文 (100% 吞吐效率)</option>
-                                            <option value="0.85" selected>8K 上下文 (85% 吞吐效率)</option>
-                                            <option value="0.7">16K 上下文 (70% 吞吐效率)</option>
-                                            <option value="0.5">32K 上下文 (50% 吞吐效率)</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 全局共享：系统算力负载率 (控制核心枢纽) -->
-                    <div class="input-group" style="margin-top: 10px; border-top: 1px dashed var(--border-default); padding-top: 20px;">
-                        <div class="label-row">
-                            <span class="label-text" style="color: var(--accent-bright); font-weight: 600;">
-                                <i data-lucide="gauge"></i>
-                                系统当前算力利用率 (U)
+            <!-- 参数设置主体 -->
+            <div class="console-inner-body">
+                
+                <!-- 极简模式 -->
+                <div id="pane-quick" class="pane-content active">
+                    <!-- 节点数量 -->
+                    <div class="input-item">
+                        <div class="input-title-row">
+                            <span class="input-title">
+                                <i data-lucide="server"></i>
+                                集群节点数量 (台)
                             </span>
-                            <span class="value-badge" id="badge-utilization" style="color: var(--accent-bright); border-color: rgba(94, 106, 210, 0.4); background: rgba(94, 106, 210, 0.08);">50%</span>
+                            <span class="numeric-badge" id="badge-server">8</span>
                         </div>
-                        <div class="slider-wrapper">
-                            <input type="range" id="slider-utilization" min="0" max="100" step="1" value="50" oninput="changeParam('utilization-rate', this.value)">
+                        <div class="range-wrapper">
+                            <input type="range" id="range-server" min="1" max="64" step="1" value="8" oninput="modifyParam('server-count', this.value)">
                         </div>
-                        <div class="limits-row">
-                            <span>0% (无载)</span>
-                            <span>100% (满载)</span>
+                        <div class="range-boundaries">
+                            <span>1 台</span>
+                            <span>64 台</span>
                         </div>
                     </div>
 
+                    <!-- 单节点硬件价格 -->
+                    <div class="input-item">
+                        <div class="input-title-row">
+                            <span class="input-title">
+                                <i data-lucide="wallet"></i>
+                                单节点硬件价格 (万元)
+                            </span>
+                        </div>
+                        <input type="number" id="num-node-price" class="bauhaus-input" value="150" min="10" max="1000" oninput="modifyParam('node-price', this.value)">
+                        <div class="range-boundaries" style="margin-top: 4px;">
+                            <span>含服务器、交换机、网络与存储设备分摊</span>
+                        </div>
+                    </div>
+
+                    <!-- Token 定价 -->
+                    <div class="input-item">
+                        <div class="input-title-row">
+                            <span class="input-title">
+                                <i data-lucide="tag"></i>
+                                混合 Token 销售单价 (元/百万)
+                            </span>
+                            <span class="numeric-badge" id="badge-price">12</span>
+                        </div>
+                        <div class="range-wrapper">
+                            <input type="range" id="range-price" min="1" max="50" step="0.5" value="12" oninput="modifyParam('token-price', this.value)">
+                        </div>
+                        <div class="range-boundaries">
+                            <span>1 元/百万</span>
+                            <span>50 元/百万</span>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- 专业模式 -->
+                <div id="pane-advanced" class="pane-content">
+                    <!-- 核心参数副本 -->
+                    <div id="advanced-copied-inputs"></div>
+
+                    <!-- 折叠面板 1: 物理环控 -->
+                    <div class="accordion-wrapper">
+                        <div class="accordion-bar expanded" onclick="toggleAccordionBar(this)">
+                            <span>物理基础设施参数</span>
+                            <i data-lucide="chevron-down" class="accordion-arrow" style="width: 13px; height: 13px;"></i>
+                        </div>
+                        <div class="accordion-content-panel">
+                            <!-- 折旧周期 -->
+                            <div class="input-item">
+                                <div class="input-title-row">
+                                    <span class="input-title">服务器折旧周期 (月)</span>
+                                </div>
+                                <input type="number" id="num-dep-period" class="bauhaus-input" value="36" min="12" max="120" oninput="modifyParam('dep-period', this.value)">
+                            </div>
+                            <!-- 机柜限制功率 -->
+                            <div class="input-item">
+                                <div class="input-title-row">
+                                    <span class="input-title">机柜最大功率限制 (kW)</span>
+                                </div>
+                                <input type="number" id="num-rack-limit" class="bauhaus-input" value="8" min="4" max="32" oninput="modifyParam('rack-limit', this.value)">
+                            </div>
+                            <!-- 机柜月租金 -->
+                            <div class="input-item">
+                                <div class="input-title-row">
+                                    <span class="input-title">单个机柜租金 (元/月)</span>
+                                </div>
+                                <input type="number" id="num-rack-cost" class="bauhaus-input" value="6000" min="1000" max="30000" oninput="modifyParam('rack-cost', this.value)">
+                            </div>
+                            <!-- PUE -->
+                            <div class="input-item">
+                                <div class="input-title-row">
+                                    <span class="input-title">数据中心 PUE 指标系数</span>
+                                    <span class="numeric-badge" id="badge-pue">1.30</span>
+                                </div>
+                                <div class="range-wrapper">
+                                    <input type="range" id="range-pue" min="1.0" max="2.0" step="0.05" value="1.3" oninput="modifyParam('pue', this.value)">
+                                </div>
+                            </div>
+                            <!-- 电费 -->
+                            <div class="input-item">
+                                <div class="input-title-row">
+                                    <span class="input-title">电力单费单价 (元/kWh)</span>
+                                </div>
+                                <input type="number" id="num-elec-rate" class="bauhaus-input" value="0.7" step="0.1" min="0.1" max="3.0" oninput="modifyParam('elec-rate', this.value)">
+                            </div>
+                            <!-- 集群损耗 -->
+                            <div class="input-item">
+                                <div class="input-title-row">
+                                    <span class="input-title">多节点集群通信损耗 (%)</span>
+                                    <span class="numeric-badge" id="badge-comm-loss">3.0%</span>
+                                </div>
+                                <div class="range-wrapper">
+                                    <input type="range" id="range-comm-loss" min="0" max="10" step="0.5" value="3.0" oninput="modifyParam('comm-loss', this.value)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 折叠面板 2: 模型参数 -->
+                    <div class="accordion-wrapper">
+                        <div class="accordion-bar expanded" onclick="toggleAccordionBar(this)">
+                            <span>大模型负载性能配置</span>
+                            <i data-lucide="chevron-down" class="accordion-arrow" style="width: 13px; height: 13px;"></i>
+                        </div>
+                        <div class="accordion-content-panel">
+                            <!-- 预设模型 -->
+                            <div class="input-item">
+                                <div class="input-title-row">
+                                    <span class="input-title">预设模型规范</span>
+                                </div>
+                                <div class="select-container">
+                                    <select id="select-model-preset" onchange="changeModelSpecPreset(this.value)">
+                                        <option value="llama-70b">Llama-3-70B 级别 (单节点 TPS = 240)</option>
+                                        <option value="llama-8b">Llama-3-8B 级别 (单节点 TPS = 960)</option>
+                                        <option value="custom-spec">自定义性能指标...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- 自定义 TPS -->
+                            <div class="input-item" id="custom-tps-container" style="display: none;">
+                                <div class="input-title-row">
+                                    <span class="input-title">自定义单服务器性能 (Tokens/s)</span>
+                                </div>
+                                <input type="number" id="num-base-tps" class="bauhaus-input" value="240" min="10" max="10000" oninput="modifyParam('base-tps', this.value)">
+                            </div>
+                            <!-- 上下文窗口 -->
+                            <div class="input-item">
+                                <div class="input-title-row">
+                                    <span class="input-title">请求上下文窗口折算</span>
+                                </div>
+                                <div class="select-container">
+                                    <select id="select-context" onchange="modifyParam('context-length', this.value)">
+                                        <option value="1.0">4K 上下文 (100% 吞吐效率)</option>
+                                        <option value="0.85" selected>8K 上下文 (85% 吞吐效率)</option>
+                                        <option value="0.7">16K 上下文 (70% 吞吐效率)</option>
+                                        <option value="0.5">32K 上下文 (50% 吞吐效率)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 底部算力容量负载率 (控制中枢) -->
+                <div class="input-item" style="margin-top: 10px; border-top: 2px dashed var(--foreground); padding-top: 20px;">
+                    <div class="input-title-row">
+                        <span class="input-title" style="color: var(--primary-blue); font-weight: 900;">
+                            <i data-lucide="gauge"></i>
+                            系统当前实际负载率 (U)
+                        </span>
+                        <span class="numeric-badge" id="badge-utilization">50%</span>
+                    </div>
+                    <div class="range-wrapper">
+                        <input type="range" id="range-utilization" min="0" max="100" step="1" value="50" oninput="modifyParam('utilization-rate', this.value)">
+                    </div>
+                    <div class="range-boundaries">
+                        <span>0% (无负载)</span>
+                        <span>100% (满载)</span>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <!-- 右侧：Dashboard 区域 (col-span-4) -->
-        <div class="col-span-4 dashboard-layout">
-            
-            <!-- 4 个 KPI Bento Items -->
-            <div class="kpi-grid">
-                <!-- 成本 -->
-                <div class="bento-card kpi-bento">
-                    <div class="card-inner">
-                        <div class="kpi-bento-label">
-                            <i data-lucide="calculator"></i>
-                            月度总成本 (OPEX)
-                        </div>
-                        <div class="kpi-bento-value-row">
-                            <span class="kpi-bento-value" id="val-total-cost">0.00</span>
-                            <span class="kpi-bento-unit">万元/月</span>
-                        </div>
+        <!-- 右侧展示面板 (col-span-4) -->
+        <div class="col-span-4 dashboard-wrapper">
+            <!-- 4 KPI Grid (Color Blocking) -->
+            <div class="kpi-cards-grid">
+                <!-- 运营成本 -->
+                <div class="bento-card kpi-block cost-block">
+                    <div class="card-geometric-marker marker-circle"></div>
+                    <span class="kpi-block-label">
+                        <i data-lucide="line-chart"></i>
+                        月度总成本
+                    </span>
+                    <div class="kpi-block-value-row">
+                        <span class="kpi-block-value" id="kpi-cost">0.00</span>
+                        <span class="kpi-block-unit">万元/月</span>
                     </div>
                 </div>
 
-                <!-- 最低平衡售价 -->
-                <div class="bento-card kpi-bento">
-                    <div class="card-inner">
-                        <div class="kpi-bento-label">
-                            <i data-lucide="trending-up"></i>
-                            盈亏平衡售价
-                        </div>
-                        <div class="kpi-bento-value-row">
-                            <span class="kpi-bento-value" id="val-be-price">0.00</span>
-                            <span class="kpi-bento-unit">元/百万</span>
-                        </div>
+                <!-- 售价 -->
+                <div class="bento-card kpi-block price-block">
+                    <div class="card-geometric-marker marker-square"></div>
+                    <span class="kpi-block-label">
+                        <i data-lucide="tag"></i>
+                        盈亏平衡售价
+                    </span>
+                    <div class="kpi-block-value-row">
+                        <span class="kpi-block-value" id="kpi-be-price">0.00</span>
+                        <span class="kpi-block-unit">元/百万</span>
                     </div>
                 </div>
 
-                <!-- 最低平衡负载 -->
-                <div class="bento-card kpi-bento">
-                    <div class="card-inner">
-                        <div class="kpi-bento-label">
-                            <i data-lucide="bar-chart-2"></i>
-                            最低平衡负载率
-                        </div>
-                        <div class="kpi-bento-value-row">
-                            <span class="kpi-bento-value" id="val-be-utilization">0.0%</span>
-                            <span class="kpi-bento-unit">负载占比</span>
-                        </div>
+                <!-- 负载占比 -->
+                <div class="bento-card kpi-block util-block">
+                    <div class="card-geometric-marker marker-triangle"></div>
+                    <span class="kpi-block-label">
+                        <i data-lucide="activity"></i>
+                        最低平衡负载率
+                    </span>
+                    <div class="kpi-block-value-row">
+                        <span class="kpi-block-value" id="kpi-be-util">0.0%</span>
+                        <span class="kpi-block-unit">负载占比</span>
                     </div>
                 </div>
 
-                <!-- 月预计净利润 -->
-                <div class="bento-card kpi-bento" id="kpi-profit-bento">
-                    <div class="card-inner">
-                        <div class="kpi-bento-label">
-                            <i data-lucide="activity" id="kpi-profit-arrow"></i>
-                            月预计净利润
-                        </div>
-                        <div class="kpi-bento-value-row">
-                            <span class="kpi-bento-value" id="val-net-profit">0.00</span>
-                            <span class="kpi-bento-unit">万元/月</span>
-                        </div>
+                <!-- 净利润 -->
+                <div class="bento-card kpi-block" id="profit-kpi-block">
+                    <div class="card-geometric-marker marker-circle"></div>
+                    <span class="kpi-block-label">
+                        <i data-lucide="trending-up" id="profit-kpi-icon"></i>
+                        月预计净利润
+                    </span>
+                    <div class="kpi-block-value-row">
+                        <span class="kpi-block-value" id="kpi-net-profit">0.00</span>
+                        <span class="kpi-block-unit">万元/月</span>
                     </div>
                 </div>
             </div>
 
-            <!-- 图表 Bento Card -->
-            <div class="bento-card chart-bento">
-                <div class="card-inner">
-                    <div class="chart-header-bar">
-                        <div class="chart-head-title">
-                            <i data-lucide="activity"></i>
-                            盈亏平衡收支解析曲线
-                        </div>
-                        <div class="chart-custom-legend">
-                            <div class="custom-legend-item">
-                                <span class="legend-indicator-line" style="background: var(--accent);"></span>
-                                <span>月度总收入</span>
-                            </div>
-                            <div class="custom-legend-item">
-                                <span class="legend-indicator-line" style="border-bottom: 2px dashed var(--foreground-muted); height: 0;"></span>
-                                <span>月度运营总成本 (包含动态电量)</span>
-                            </div>
-                        </div>
+            <!-- 大分析图表卡片 -->
+            <div class="bento-card chart-bento-card">
+                <div class="card-geometric-marker marker-square"></div>
+                <div class="chart-top-bar">
+                    <div class="chart-title-label">
+                        <i data-lucide="area-chart"></i>
+                        算力中心盈亏平衡曲线模型
                     </div>
-                    
-                    <!-- 图表画布区域 -->
-                    <div class="chart-container-wrapper">
-                        <div id="main-analysis-chart"></div>
-                        <!-- 脉冲物理坐标呼吸灯 -->
-                        <div id="chart-glow-pulse" class="glow-pulse-dot"></div>
+                    <div class="chart-legend-box">
+                        <div>
+                            <span class="legend-indicator-line" style="background-color: var(--primary-blue);"></span>
+                            <span>月度总收入</span>
+                        </div>
+                        <div style="margin-left: 10px;">
+                            <span class="legend-indicator-line" style="border-bottom: 2px dashed var(--primary-red); height: 0;"></span>
+                            <span>月度运营成本 (含动态电费)</span>
+                        </div>
                     </div>
                 </div>
+                
+                <!-- 图表渲染容器 -->
+                <div class="chart-render-wrapper">
+                    <div id="main-analysis-chart"></div>
+                    <!-- 机械闪烁交点标记 -->
+                    <div id="pulse-indicator" class="mechanical-pulse"></div>
+                </div>
             </div>
-
         </div>
 
     </main>
 
-    <!-- 页脚 Footer -->
+    <!-- 纯黑底部信息栏 -->
     <footer>
-        <div>大模型算力集群投资回报分析系统 • Linear System v2.0</div>
-        <div class="footer-desc-group">
+        <div>大模型算力投资回报分析系统 • Bauhaus 几何建构版</div>
+        <div class="footer-desc">
             <span>硬件折旧按双倍余额/平均分摊计算</span>
             <span>|</span>
             <span>集群通信损耗公式: (1-loss)<sup>N-1</sup></span>
@@ -1095,11 +991,11 @@
     </footer>
 
     <script>
-        // 初始化图标
+        // 初始化 Lucide
         lucide.createIcons();
 
-        // 默认参数定义
-        const initParams = {
+        // 默认数据配置
+        const defaultParamData = {
             serverCount: 8,
             nodePrice: 150,
             tokenPrice: 12,
@@ -1117,109 +1013,107 @@
             opsOverheadRatio: 0.1
         };
 
-        let currentParams = { ...initParams };
-        let tickerInstances = {};
-        let analysisChart = null;
-        let lastCrossPoint = null;
+        let activeParams = { ...defaultParamData };
+        let numTickers = {};
+        let myBauhausChart = null;
+        let recentCrossPoint = null;
 
-        // 数值平滑变化组件
-        class SmoothNumberTicker {
-            constructor(elementId, renderFn, startVal = 0) {
+        // 数值滚动 ticker (虽然是包豪斯，但我们设计得更偏机械翻牌感)
+        class MechanicalTicker {
+            constructor(elementId, renderFn, initialVal = 0) {
                 this.element = document.getElementById(elementId);
                 this.renderFn = renderFn;
-                this.currentVal = startVal;
-                this.targetVal = startVal;
-                this.animFrame = null;
-                this.animStart = null;
-                this.duration = 200; // 缓动时间，符合 Linear 高灵敏度的交互要求
+                this.currVal = initialVal;
+                this.targetVal = initialVal;
+                this.frameId = null;
+                this.startTime = null;
+                this.duration = 180; // 更利落的动效
             }
 
             update(newVal) {
                 if (newVal === this.targetVal && this.element.textContent !== '') return;
                 
                 if (typeof newVal === 'string') {
-                    if (this.animFrame) cancelAnimationFrame(this.animFrame);
+                    if (this.frameId) cancelAnimationFrame(this.frameId);
                     this.element.textContent = newVal;
                     this.targetVal = newVal;
-                    this.currentVal = 0;
+                    this.currVal = 0;
                     return;
                 }
 
-                if (isNaN(this.currentVal)) {
-                    this.currentVal = 0;
+                if (isNaN(this.currVal)) {
+                    this.currVal = 0;
                 }
 
-                this.startVal = this.currentVal;
+                this.startVal = this.currVal;
                 this.targetVal = newVal;
-                this.animStart = null;
+                this.startTime = null;
 
-                if (this.animFrame) {
-                    cancelAnimationFrame(this.animFrame);
+                if (this.frameId) {
+                    cancelAnimationFrame(this.frameId);
                 }
 
-                const frameTick = (timestamp) => {
-                    if (!this.animStart) this.animStart = timestamp;
-                    const elapsed = timestamp - this.animStart;
+                const runTick = (timestamp) => {
+                    if (!this.startTime) this.startTime = timestamp;
+                    const elapsed = timestamp - this.startTime;
                     const progress = Math.min(elapsed / this.duration, 1);
                     
-                    // 使用 expo-out 缓动算法
-                    const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-                    this.currentVal = this.startVal + (this.targetVal - this.startVal) * ease;
-                    this.element.textContent = this.renderFn(this.currentVal);
+                    // 利落的直角/线性缓动
+                    const ease = progress === 1 ? 1 : 1 - Math.pow(2, -12 * progress);
+                    this.currVal = this.startVal + (this.targetVal - this.startVal) * ease;
+                    this.element.textContent = this.renderFn(this.currVal);
 
                     if (progress < 1) {
-                        this.animFrame = requestAnimationFrame(frameTick);
+                        this.frameId = requestAnimationFrame(runTick);
                     } else {
-                        this.currentVal = this.targetVal;
+                        this.currVal = this.targetVal;
                         this.element.textContent = this.renderFn(this.targetVal);
-                        this.animFrame = null;
+                        this.frameId = null;
                     }
                 };
 
-                this.animFrame = requestAnimationFrame(frameTick);
+                this.frameId = requestAnimationFrame(runTick);
             }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // 初始化克隆核心输入到高级面板
-            syncCoreInputs();
-            // 初始化 Bento Spotlight 鼠标监听
-            initBentoSpotlight();
+            // 同步输入控件
+            syncCoreControls();
             
-            // 初始化数据滚动翻页器
-            tickerInstances['total-cost'] = new SmoothNumberTicker('val-total-cost', val => val.toFixed(2));
-            tickerInstances['be-price'] = new SmoothNumberTicker('val-be-price', val => typeof val === 'number' ? val.toFixed(2) : val);
-            tickerInstances['be-utilization'] = new SmoothNumberTicker('val-be-utilization', val => typeof val === 'number' ? (val * 100).toFixed(1) + '%' : val);
-            tickerInstances['net-profit'] = new SmoothNumberTicker('val-net-profit', val => (val >= 0 ? '+' : '') + val.toFixed(2));
+            // 初始化 Tickers
+            numTickers['cost'] = new MechanicalTicker('kpi-cost', val => val.toFixed(2));
+            numTickers['be-price'] = new MechanicalTicker('kpi-be-price', val => typeof val === 'number' ? val.toFixed(2) : val);
+            numTickers['be-util'] = new MechanicalTicker('kpi-be-util', val => typeof val === 'number' ? (val * 100).toFixed(1) + '%' : val);
+            numTickers['net-profit'] = new MechanicalTicker('kpi-net-profit', val => (val >= 0 ? '+' : '') + val.toFixed(2));
 
-            // 初始化 ECharts 图表
-            initAnalysisChart();
-            // 运行计算
-            runFinancialCalculator();
+            // 初始化 ECharts
+            initBauhausChart();
+            // 计算数据
+            executeCalculation();
 
             window.addEventListener('resize', () => {
-                if (analysisChart) {
-                    analysisChart.resize();
-                    relocatePulseDot();
+                if (myBauhausChart) {
+                    myBauhausChart.resize();
+                    relocatePulseIndicator();
                 }
             });
         });
 
-        // 克隆极简模式的 3 个主输入放置到高级模式面板顶部
-        function syncCoreInputs() {
-            const container = document.getElementById('advanced-sync-inputs');
-            container.innerHTML = `
-                <!-- 服务器节点数量 -->
-                <div class="input-group">
-                    <div class="label-row">
-                        <span class="label-text">
+        // 极简同步核心配置到高级面板
+        function syncCoreControls() {
+            const wrapper = document.getElementById('advanced-copied-inputs');
+            wrapper.innerHTML = `
+                <!-- 节点数量 -->
+                <div class="input-item">
+                    <div class="input-title-row">
+                        <span class="input-title">
                             <i data-lucide="server"></i>
                             集群节点数量 (台)
                         </span>
-                        <span class="value-badge" id="badge-server-count-adv">8</span>
+                        <span class="numeric-badge" id="badge-server-adv">8</span>
                     </div>
-                    <div class="slider-wrapper">
-                        <input type="range" id="slider-server-count-adv" min="1" max="64" step="1" value="8" oninput="changeParam('server-count', this.value)">
+                    <div class="range-wrapper">
+                        <input type="range" id="range-server-adv" min="1" max="64" step="1" value="8" oninput="modifyParam('server-count', this.value)">
                     </div>
                     <div class="limits-row">
                         <span>1 台</span>
@@ -1227,28 +1121,28 @@
                     </div>
                 </div>
 
-                <!-- 节点硬件包单价 -->
-                <div class="input-group">
-                    <div class="label-row">
-                        <span class="label-text">
+                <!-- 节点硬件单价 -->
+                <div class="input-item">
+                    <div class="input-title-row">
+                        <span class="input-title">
                             <i data-lucide="wallet"></i>
                             单节点硬件价格 (万元)
                         </span>
                     </div>
-                    <input type="number" id="field-node-price-adv" class="flat-input" value="150" min="10" max="1000" oninput="changeParam('node-price', this.value)">
+                    <input type="number" id="num-node-price-adv" class="bauhaus-input" value="150" min="10" max="1000" oninput="modifyParam('node-price', this.value)">
                 </div>
 
                 <!-- Token 定价 -->
-                <div class="input-group">
-                    <div class="label-row">
-                        <span class="label-text">
+                <div class="input-item">
+                    <div class="input-title-row">
+                        <span class="input-title">
                             <i data-lucide="tag"></i>
                             混合 Token 销售单价 (元/百万)
                         </span>
-                        <span class="value-badge" id="badge-token-price-adv">12</span>
+                        <span class="numeric-badge" id="badge-price-adv">12</span>
                     </div>
                     <div class="slider-wrapper">
-                        <input type="range" id="slider-token-price-adv" min="1" max="50" step="0.5" value="12" oninput="changeParam('token-price', this.value)">
+                        <input type="range" id="range-price-adv" min="1" max="50" step="0.5" value="12" oninput="modifyParam('token-price', this.value)">
                     </div>
                     <div class="limits-row">
                         <span>1 元/百万</span>
@@ -1257,292 +1151,269 @@
                 </div>
             `;
             lucide.createIcons();
-            initBentoSpotlight(); // 给新生成的 DOM 绑定 spotlight
         }
 
-        // 初始化所有 Bento 卡片的光标聚光灯特效
-        function initBentoSpotlight() {
-            const cards = document.querySelectorAll('.bento-card');
-            cards.forEach(card => {
-                // 移出原监听器防止重复绑定
-                card.removeEventListener('mousemove', spotlightMove);
-                card.addEventListener('mousemove', spotlightMove);
-            });
-        }
-
-        function spotlightMove(e) {
-            const rect = this.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            this.style.setProperty('--mouse-x', `${x}px`);
-            this.style.setProperty('--mouse-y', `${y}px`);
-        }
-
-        // 切换左侧表单 Pane
-        function switchPane(pane) {
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        // 切换 Tab 页
+        function switchPaneTab(pane) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.pane-content').forEach(p => p.classList.remove('active'));
 
             if (pane === 'quick') {
-                document.querySelectorAll('.tab-button')[0].classList.add('active');
-                document.getElementById('quick-pane').classList.add('active');
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('pane-quick').classList.add('active');
             } else {
-                document.querySelectorAll('.tab-button')[1].classList.add('active');
-                document.getElementById('advanced-pane').classList.add('active');
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('pane-advanced').classList.add('active');
             }
 
-            // 选项卡切换时可能会引起页面拉伸，重新渲染 ECharts
             setTimeout(() => {
-                if (analysisChart) {
-                    analysisChart.resize();
-                    relocatePulseDot();
+                if (myBauhausChart) {
+                    myBauhausChart.resize();
+                    relocatePulseIndicator();
                 }
             }, 50);
         }
 
-        // 手风琴面板收放
-        function toggleAccordionPane(trigger) {
+        // 手风琴卡片开闭
+        function toggleAccordionBar(trigger) {
             trigger.classList.toggle('expanded');
         }
 
-        // 模型预设更改
-        function toggleModelSpecPreset(val) {
-            const customTpsWrap = document.getElementById('custom-tps-field-wrapper');
-            if (val === 'preset-70b') {
-                customTpsWrap.style.display = 'none';
-                changeParam('base-tps', 240);
-            } else if (val === 'preset-8b') {
-                customTpsWrap.style.display = 'none';
-                changeParam('base-tps', 960);
+        // 模型预设选择
+        function changeModelSpecPreset(val) {
+            const wrapper = document.getElementById('custom-tps-container');
+            if (val === 'llama-70b') {
+                wrapper.style.display = 'none';
+                modifyParam('base-tps', 240);
+            } else if (val === 'llama-8b') {
+                wrapper.style.display = 'none';
+                modifyParam('base-tps', 960);
             } else {
-                customTpsWrap.style.display = 'flex';
-                const userTps = document.getElementById('field-base-tps').value;
-                changeParam('base-tps', userTps);
+                wrapper.style.display = 'flex';
+                const currentTps = document.getElementById('num-base-tps').value;
+                modifyParam('base-tps', currentTps);
             }
         }
 
-        // 更新状态并刷新数据
-        function changeParam(key, val) {
-            const floatVal = parseFloat(val);
-            if (isNaN(floatVal)) return;
+        // 双向同步参数并触发计算
+        function modifyParam(key, val) {
+            const num = parseFloat(val);
+            if (isNaN(num)) return;
 
             switch (key) {
                 case 'server-count':
-                    currentParams.serverCount = Math.round(floatVal);
-                    document.getElementById('slider-server-count').value = currentParams.serverCount;
-                    document.getElementById('slider-server-count-adv').value = currentParams.serverCount;
-                    document.getElementById('badge-server-count').textContent = currentParams.serverCount;
-                    document.getElementById('badge-server-count-adv').textContent = currentParams.serverCount;
+                    activeParams.serverCount = Math.round(num);
+                    document.getElementById('range-server').value = activeParams.serverCount;
+                    document.getElementById('range-server-adv').value = activeParams.serverCount;
+                    document.getElementById('badge-server').textContent = activeParams.serverCount;
+                    document.getElementById('badge-server-adv').textContent = activeParams.serverCount;
                     break;
                 case 'node-price':
-                    currentParams.nodePrice = floatVal;
-                    document.getElementById('field-node-price').value = floatVal;
-                    document.getElementById('field-node-price-adv').value = floatVal;
+                    activeParams.nodePrice = num;
+                    document.getElementById('num-node-price').value = num;
+                    document.getElementById('num-node-price-adv').value = num;
                     break;
                 case 'token-price':
-                    currentParams.tokenPrice = floatVal;
-                    document.getElementById('slider-token-price').value = floatVal;
-                    document.getElementById('slider-token-price-adv').value = floatVal;
-                    document.getElementById('badge-token-price').textContent = floatVal;
-                    document.getElementById('badge-token-price-adv').textContent = floatVal;
+                    activeParams.tokenPrice = num;
+                    document.getElementById('range-price').value = num;
+                    document.getElementById('range-price-adv').value = num;
+                    document.getElementById('badge-price').textContent = num;
+                    document.getElementById('badge-price-adv').textContent = num;
                     break;
                 case 'dep-period':
-                    currentParams.depPeriod = Math.max(1, Math.round(floatVal));
+                    activeParams.depPeriod = Math.max(1, Math.round(num));
                     break;
                 case 'rack-limit':
-                    currentParams.rackLimit = Math.max(1, floatVal);
+                    activeParams.rackLimit = Math.max(1, num);
                     break;
                 case 'rack-cost':
-                    currentParams.rackCost = floatVal;
+                    activeParams.rackCost = num;
                     break;
                 case 'pue':
-                    currentParams.pue = floatVal;
-                    document.getElementById('badge-pue').textContent = floatVal.toFixed(2);
+                    activeParams.pue = num;
+                    document.getElementById('badge-pue').textContent = num.toFixed(2);
                     break;
                 case 'elec-rate':
-                    currentParams.elecRate = floatVal;
+                    activeParams.elecRate = num;
                     break;
                 case 'comm-loss':
-                    currentParams.commLoss = floatVal;
-                    document.getElementById('badge-comm-loss').textContent = floatVal.toFixed(1) + '%';
+                    activeParams.commLoss = num;
+                    document.getElementById('badge-comm-loss').textContent = num.toFixed(1) + '%';
                     break;
                 case 'base-tps':
-                    currentParams.baseTps = Math.round(floatVal);
-                    document.getElementById('field-base-tps').value = currentParams.baseTps;
+                    activeParams.baseTps = Math.round(num);
+                    document.getElementById('num-base-tps').value = activeParams.baseTps;
                     break;
                 case 'context-length':
-                    currentParams.contextFactor = floatVal;
+                    activeParams.contextFactor = num;
                     break;
                 case 'utilization-rate':
-                    currentParams.utilizationRate = Math.round(floatVal);
-                    document.getElementById('slider-utilization').value = currentParams.utilizationRate;
-                    document.getElementById('badge-utilization').textContent = currentParams.utilizationRate + '%';
+                    activeParams.utilizationRate = Math.round(num);
+                    document.getElementById('range-utilization').value = activeParams.utilizationRate;
+                    document.getElementById('badge-utilization').textContent = activeParams.utilizationRate + '%';
                     break;
             }
 
-            runFinancialCalculator();
+            executeCalculation();
         }
 
-        // 重置配置
-        function resetAllParams() {
-            currentParams = { ...initParams };
+        // 重置所有数值
+        function resetAllValues() {
+            activeParams = { ...defaultParamData };
             
-            document.getElementById('slider-server-count').value = currentParams.serverCount;
-            document.getElementById('slider-server-count-adv').value = currentParams.serverCount;
-            document.getElementById('badge-server-count').textContent = currentParams.serverCount;
-            document.getElementById('badge-server-count-adv').textContent = currentParams.serverCount;
+            document.getElementById('range-server').value = activeParams.serverCount;
+            document.getElementById('range-server-adv').value = activeParams.serverCount;
+            document.getElementById('badge-server').textContent = activeParams.serverCount;
+            document.getElementById('badge-server-adv').textContent = activeParams.serverCount;
 
-            document.getElementById('field-node-price').value = currentParams.nodePrice;
-            document.getElementById('field-node-price-adv').value = currentParams.nodePrice;
+            document.getElementById('num-node-price').value = activeParams.nodePrice;
+            document.getElementById('num-node-price-adv').value = activeParams.nodePrice;
 
-            document.getElementById('slider-token-price').value = currentParams.tokenPrice;
-            document.getElementById('slider-token-price-adv').value = currentParams.tokenPrice;
-            document.getElementById('badge-token-price').textContent = currentParams.tokenPrice;
-            document.getElementById('badge-token-price-adv').textContent = currentParams.tokenPrice;
+            document.getElementById('range-price').value = activeParams.tokenPrice;
+            document.getElementById('range-price-adv').value = activeParams.tokenPrice;
+            document.getElementById('badge-price').textContent = activeParams.tokenPrice;
+            document.getElementById('badge-price-adv').textContent = activeParams.tokenPrice;
 
-            document.getElementById('field-dep-period').value = currentParams.depPeriod;
-            document.getElementById('field-rack-limit').value = currentParams.rackLimit;
-            document.getElementById('field-rack-cost').value = currentParams.rackCost;
+            document.getElementById('num-dep-period').value = activeParams.depPeriod;
+            document.getElementById('num-rack-limit').value = activeParams.rackLimit;
+            document.getElementById('num-rack-cost').value = activeParams.rackCost;
 
-            document.getElementById('slider-pue').value = currentParams.pue;
-            document.getElementById('badge-pue').textContent = currentParams.pue.toFixed(2);
+            document.getElementById('range-pue').value = activeParams.pue;
+            document.getElementById('badge-pue').textContent = activeParams.pue.toFixed(2);
 
-            document.getElementById('field-elec-rate').value = currentParams.elecRate;
+            document.getElementById('num-elec-rate').value = activeParams.elecRate;
             
-            document.getElementById('slider-comm-loss').value = currentParams.commLoss;
-            document.getElementById('badge-comm-loss').textContent = currentParams.commLoss.toFixed(1) + '%';
+            document.getElementById('range-comm-loss').value = activeParams.commLoss;
+            document.getElementById('badge-comm-loss').textContent = activeParams.commLoss.toFixed(1) + '%';
 
-            document.getElementById('select-model-spec-preset').value = 'preset-70b';
-            document.getElementById('custom-tps-field-wrapper').style.display = 'none';
-            document.getElementById('field-base-tps').value = currentParams.baseTps;
+            document.getElementById('select-model-preset').value = 'llama-70b';
+            document.getElementById('custom-tps-container').style.display = 'none';
+            document.getElementById('num-base-tps').value = activeParams.baseTps;
 
-            document.getElementById('select-context-factor').value = '0.85';
+            document.getElementById('select-context').value = '0.85';
             
-            document.getElementById('slider-utilization').value = currentParams.utilizationRate;
-            document.getElementById('badge-utilization').textContent = currentParams.utilizationRate + '%';
+            document.getElementById('range-utilization').value = activeParams.utilizationRate;
+            document.getElementById('badge-utilization').textContent = activeParams.utilizationRate + '%';
 
-            runFinancialCalculator();
+            executeCalculation();
         }
 
         // 计算核心
-        function runFinancialCalculator() {
-            const nodeCount = currentParams.serverCount;
+        function executeCalculation() {
+            const count = activeParams.serverCount;
             
-            // 1. 物理吞吐性能核心公式
-            const commEfficiency = Math.pow(1 - (currentParams.commLoss / 100), nodeCount - 1);
-            const totalHours = 720;
-            const maxTokensMonth = (nodeCount * currentParams.baseTps * commEfficiency * currentParams.contextFactor * totalHours * 3600) / 1000000; // 百万 Tokens/月
+            // 1. 集群吞吐效率
+            const efficiency = Math.pow(1 - (activeParams.commLoss / 100), count - 1);
+            const hrs = 720;
+            const maxTokens = (count * activeParams.baseTps * efficiency * activeParams.contextFactor * hrs * 3600) / 1000000;
             
-            // 2. 算力运营固定成本 (折旧、机房费用、固定运维)
-            const depCostMonth = (nodeCount * currentParams.nodePrice) / currentParams.depPeriod; // 万元
-            const opsCostMonth = depCostMonth * currentParams.opsOverheadRatio; // 万元
-            const rackCount = Math.ceil((nodeCount * currentParams.nodeMaxPower) / currentParams.rackLimit);
-            const rackRentMonth = (rackCount * currentParams.rackCost) / 10000; // 万元
+            // 2. 算力运营固定成本
+            const hardwareDep = (count * activeParams.nodePrice) / activeParams.depPeriod; // 万元
+            const opsCost = hardwareDep * activeParams.opsOverheadRatio; // 万元
+            const rackCount = Math.ceil((count * activeParams.nodeMaxPower) / activeParams.rackLimit);
+            const rackRent = (rackCount * activeParams.rackCost) / 10000; // 万元
             
-            const fixedCostBase = depCostMonth + opsCostMonth + rackRentMonth; // 固定基础设施折损 (万元)
+            const fixedCostBase = hardwareDep + opsCost + rackRent;
 
-            // 3. 动态功耗电费公式与分段利用率
-            const totalPowerMax = (nodeCount * currentParams.nodeMaxPower * currentParams.pue * totalHours * currentParams.elecRate) / 10000; // 满载最大电费 (万元)
-            const idlePowerCost = totalPowerMax * currentParams.idlePowerRatio; // 0%负载时空闲电费
-            const variablePowerSlope = totalPowerMax * (1 - currentParams.idlePowerRatio); // 随负载变化的增量电费
+            // 3. 动态功耗电费与分段负载
+            const maxPowerElec = (count * activeParams.nodeMaxPower * activeParams.pue * hrs * activeParams.elecRate) / 10000; // 万元
+            const idlePower = maxPowerElec * activeParams.idlePowerRatio;
+            const variablePowerSlope = maxPowerElec * (1 - activeParams.idlePowerRatio);
 
-            // 当前利用率对应电费与总成本
-            const currentUDec = currentParams.utilizationRate / 100;
-            const currentPowerCost = idlePowerCost + (variablePowerSlope * currentUDec);
-            const currentTotalOpex = fixedCostBase + currentPowerCost;
+            const uDec = activeParams.utilizationRate / 100;
+            const elecCost = idlePower + (variablePowerSlope * uDec);
+            const totalOpex = fixedCostBase + elecCost;
 
             // 4. 收入与预计利润
-            const actualThroughput = maxTokensMonth * currentUDec;
-            const actualRevenue = (actualThroughput * currentParams.tokenPrice) / 10000; // 万元
-            const netProfit = actualRevenue - currentTotalOpex;
+            const actualThroughput = maxTokens * uDec;
+            const revenue = (actualThroughput * activeParams.tokenPrice) / 10000;
+            const profit = revenue - totalOpex;
 
-            // 5. 求解盈亏平衡点 (Rev_Max * U = FC_Base + IdlePower + Slope * U)
-            const maxRevenuePotential = (maxTokensMonth * currentParams.tokenPrice) / 10000;
-            const fixedCostTotal = fixedCostBase + idlePowerCost; // 总固定成本 (含空闲电费)
-            const netDenominator = maxRevenuePotential - variablePowerSlope;
+            // 5. 盈亏平衡参数求解
+            const maxRevPotential = (maxTokens * activeParams.tokenPrice) / 10000;
+            const fixedTotal = fixedCostBase + idlePower; // 固定成本 (含空闲电费)
+            const denominator = maxRevPotential - variablePowerSlope;
 
-            let breakEvenU = null;
-            let breakEvenPriceVal = null;
+            let beU = null;
+            let bePrice = null;
 
-            if (netDenominator > 0) {
-                breakEvenU = fixedCostTotal / netDenominator;
+            if (denominator > 0) {
+                beU = fixedTotal / denominator;
             }
 
-            // 当前利用率下的盈亏平衡单价
             if (actualThroughput > 0) {
-                breakEvenPriceVal = (currentTotalOpex * 10000) / actualThroughput;
+                bePrice = (totalOpex * 10000) / actualThroughput;
             } else {
-                breakEvenPriceVal = Infinity;
+                bePrice = Infinity;
             }
 
-            // 6. 更新 KPI Bento
-            tickerInstances['total-cost'].update(currentTotalOpex);
+            // 6. 更新 KPI Block (触发 Tickers 翻页)
+            numTickers['cost'].update(totalOpex);
             
-            // 净利润卡片微发光调色板升级 (高克制发光)
-            const profitBento = document.getElementById('kpi-profit-bento');
-            const profitArrow = document.getElementById('kpi-profit-arrow');
+            // 净利润卡片拼贴状态切换
+            const profitBlock = document.getElementById('profit-kpi-block');
+            const profitIcon = document.getElementById('profit-kpi-icon');
             
-            if (netProfit >= 0) {
-                profitBento.className = 'bento-card kpi-bento profit-glowing';
-                profitBento.style.borderTopColor = 'var(--semantic-green)';
-                profitArrow.setAttribute('data-lucide', 'trending-up');
-                profitArrow.style.color = 'var(--semantic-green)';
+            if (profit >= 0) {
+                profitBlock.className = 'bento-card kpi-block profit-active';
+                profitIcon.setAttribute('data-lucide', 'trending-up');
             } else {
-                profitBento.className = 'bento-card kpi-bento loss-glowing';
-                profitBento.style.borderTopColor = 'var(--semantic-red)';
-                profitArrow.setAttribute('data-lucide', 'trending-down');
-                profitArrow.style.color = 'var(--semantic-red)';
+                profitBlock.className = 'bento-card kpi-block loss-active';
+                profitIcon.setAttribute('data-lucide', 'trending-down');
             }
             lucide.createIcons();
 
-            if (breakEvenPriceVal === Infinity) {
-                tickerInstances['be-price'].update('N/A');
+            numTickers['net-profit'].update(profit);
+
+            if (bePrice === Infinity) {
+                numTickers['be-price'].update('N/A');
             } else {
-                tickerInstances['be-price'].update(breakEvenPriceVal);
+                numTickers['be-price'].update(bePrice);
             }
 
-            if (breakEvenU !== null && breakEvenU >= 0 && breakEvenU <= 1) {
-                tickerInstances['be-utilization'].update(breakEvenU);
-            } else if (breakEvenU > 1) {
-                tickerInstances['be-utilization'].update('>100%');
+            if (beU !== null && beU >= 0 && beU <= 1) {
+                numTickers['be-util'].update(beU);
+            } else if (beU > 1) {
+                numTickers['be-util'].update('>100%');
             } else {
-                tickerInstances['be-utilization'].update('无法平衡');
+                numTickers['be-util'].update('无法平衡');
             }
 
             // 7. 渲染 ECharts 曲线
-            drawAnalysisChart(fixedCostTotal, variablePowerSlope, maxRevenuePotential, breakEvenU);
+            drawBauhausChart(fixedTotal, variablePowerSlope, maxRevPotential, beU);
         }
 
-        // 初始化 ECharts (Linear 紫调主题)
-        function initAnalysisChart() {
-            const dom = document.getElementById('main-analysis-chart');
-            analysisChart = echarts.init(dom, 'dark', {
+        // 初始化 ECharts (包豪斯 Stark 白底高对比度主题)
+        function initBauhausChart() {
+            const chartDom = document.getElementById('main-analysis-chart');
+            myBauhausChart = echarts.init(chartDom, 'light', {
                 renderer: 'canvas',
                 useDirtyRect: false
             });
 
             const option = {
-                backgroundColor: 'transparent',
+                backgroundColor: '#ffffff',
                 tooltip: {
                     trigger: 'axis',
-                    className: 'tooltip-linear',
-                    borderColor: 'rgba(255, 255, 255, 0.08)',
-                    backgroundColor: '#0a0a0c',
+                    className: 'tooltip-bauhaus',
+                    borderColor: '#121212',
+                    backgroundColor: '#ffffff',
                     textStyle: {
-                        color: '#ededef',
-                        fontFamily: 'Inter',
-                        fontSize: 12
+                        color: '#121212',
+                        fontFamily: 'Outfit',
+                        fontSize: 12,
+                        fontWeight: 700
                     },
-                    formatter: function (items) {
-                        let text = `<div style="font-weight: 600; font-family: Outfit; margin-bottom: 6px; font-size:13px; color:#5e6ad2;">算力利用率: ${items[0].name}%</div>`;
-                        items.forEach(el => {
-                            const num = parseFloat(el.value).toFixed(2);
-                            text += `<div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; font-family:Inter;">
-                                        <span style="color:#8a8f98;">${el.seriesName}:</span>
-                                        <span style="font-weight:500; color:${el.color};">${num} 万元</span>
+                    formatter: function (params) {
+                        let res = `<div style="font-weight: 900; margin-bottom: 6px; font-size:13px; color:#1040c0; text-transform:uppercase;">利用率: ${params[0].name}%</div>`;
+                        params.forEach(item => {
+                            const val = parseFloat(item.value).toFixed(2);
+                            res += `<div style="display:flex; justify-content:space-between; gap:20px; font-size:12px;">
+                                        <span style="color:#555;">${item.seriesName}:</span>
+                                        <span style="font-weight:700; color:${item.color};">${val} 万元</span>
                                     </div>`;
                         });
-                        return text;
+                        return res;
                     }
                 },
                 grid: {
@@ -1558,19 +1429,21 @@
                     data: Array.from({length: 101}, (_, i) => i),
                     axisLabel: {
                         formatter: '{value}%',
-                        color: '#8a8f98',
+                        color: '#121212',
                         fontFamily: 'Outfit',
+                        fontWeight: 700,
                         fontSize: 11
                     },
                     axisLine: {
                         lineStyle: {
-                            color: 'rgba(255, 255, 255, 0.04)'
+                            color: '#121212',
+                            width: 2
                         }
                     },
                     splitLine: {
                         show: true,
                         lineStyle: {
-                            color: 'rgba(255, 255, 255, 0.015)'
+                            color: 'rgba(18, 18, 18, 0.05)'
                         }
                     }
                 },
@@ -1578,25 +1451,29 @@
                     type: 'value',
                     name: '金额 (万元)',
                     nameTextStyle: {
-                        color: '#8a8f98',
+                        color: '#121212',
                         fontSize: 10,
+                        fontWeight: 700,
                         align: 'right',
-                        fontFamily: 'Inter'
+                        fontFamily: 'Outfit'
                     },
                     axisLabel: {
-                        color: '#8a8f98',
+                        color: '#121212',
                         fontFamily: 'Outfit',
+                        fontWeight: 700,
                         fontSize: 11
                     },
                     axisLine: {
                         lineStyle: {
-                            color: 'rgba(255, 255, 255, 0.04)'
+                            color: '#121212',
+                            width: 2
                         }
                     },
                     splitLine: {
                         show: true,
                         lineStyle: {
-                            color: 'rgba(255, 255, 255, 0.03)'
+                            color: 'rgba(18, 18, 18, 0.08)',
+                            width: 1
                         }
                     }
                 },
@@ -1607,8 +1484,8 @@
                         smooth: true,
                         symbol: 'none',
                         lineStyle: {
-                            color: '#8a8f98', // 克制深灰色成本虚线
-                            width: 2,
+                            color: '#d02020', // 包豪斯红成本虚线
+                            width: 3,
                             type: 'dashed'
                         },
                         data: []
@@ -1619,27 +1496,27 @@
                         smooth: true,
                         symbol: 'none',
                         lineStyle: {
-                            color: '#5e6ad2', // 经典 Linear 靛蓝收入实线
-                            width: 3
+                            color: '#1040c0', // 包豪斯蓝收入实线
+                            width: 4
                         },
                         data: []
                     }
                 ]
             };
 
-            analysisChart.setOption(option);
+            myBauhausChart.setOption(option);
         }
 
-        // 重新渲染 ECharts 数据
-        function drawAnalysisChart(fixedC, varSlope, maxRev, breakEvenDec) {
-            if (!analysisChart) return;
+        // 重新渲染 ECharts 数据点
+        function drawBauhausChart(fixedTotal, slope, maxRev, beUDec) {
+            if (!myBauhausChart) return;
 
             const cData = [];
             const rData = [];
 
             for (let i = 0; i <= 100; i++) {
                 const dec = i / 100;
-                cData.push(fixedC + (varSlope * dec));
+                cData.push(fixedTotal + (slope * dec));
                 rData.push(maxRev * dec);
             }
 
@@ -1647,17 +1524,17 @@
             let bValue = null;
             let areas = [];
 
-            if (breakEvenDec !== null && breakEvenDec >= 0 && breakEvenDec <= 1) {
-                bPercent = breakEvenDec * 100;
-                bValue = fixedC + (varSlope * breakEvenDec);
-                lastCrossPoint = { x: bPercent, y: bValue };
+            if (beUDec !== null && beUDec >= 0 && beUDec <= 1) {
+                bPercent = beUDec * 100;
+                bValue = fixedTotal + (slope * beUDec);
+                recentCrossPoint = { x: bPercent, y: bValue };
 
                 areas = [
                     [
                         {
                             xAxis: 0,
                             itemStyle: {
-                                color: 'rgba(239, 68, 68, 0.02)' // 亏损区间采用极其微弱的红色填充
+                                color: 'rgba(208, 32, 32, 0.04)' // 亏损区间填极淡红色
                             }
                         },
                         {
@@ -1668,7 +1545,7 @@
                         {
                             xAxis: Math.min(100, bPercent),
                             itemStyle: {
-                                color: 'rgba(94, 106, 210, 0.04)' // 盈利区间使用经典的紫色半透明填充
+                                color: 'rgba(240, 192, 32, 0.15)' // 盈利区间填经典黄色
                             }
                         },
                         {
@@ -1677,13 +1554,13 @@
                     ]
                 ];
             } else {
-                lastCrossPoint = null;
+                recentCrossPoint = null;
                 areas = [
                     [
                         {
                             xAxis: 0,
                             itemStyle: {
-                                color: 'rgba(239, 68, 68, 0.02)'
+                                color: 'rgba(208, 32, 32, 0.04)'
                             }
                         },
                         {
@@ -1693,7 +1570,7 @@
                 ];
             }
 
-            analysisChart.setOption({
+            myBauhausChart.setOption({
                 series: [
                     {
                         name: '月度总成本',
@@ -1710,32 +1587,31 @@
                 ]
             });
 
-            // 重新定位交点脉冲灯
-            setTimeout(relocatePulseDot, 50);
+            // 重新定位硬闪烁脉冲交点
+            setTimeout(relocatePulseIndicator, 50);
         }
 
-        // 重新转换物理像素点，安置呼吸发光灯
-        function relocatePulseDot() {
-            const glowDot = document.getElementById('chart-glow-pulse');
-            if (!analysisChart || !lastCrossPoint) {
-                glowDot.style.display = 'none';
+        // 重新计算机械脉冲指示器的位置
+        function relocatePulseIndicator() {
+            const ind = document.getElementById('pulse-indicator');
+            if (!myBauhausChart || !recentCrossPoint) {
+                ind.style.display = 'none';
                 return;
             }
 
             try {
-                const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPoint.x, lastCrossPoint.y]);
-                if (xy && !isNaN(xy[0]) && !isNaN(xy[1])) {
-                    glowDot.style.left = xy[0] + 'px';
-                    glowDot.style.top = xy[1] + 'px';
-                    glowDot.style.display = 'block';
+                const pixelXY = myBauhausChart.convertToPixel({ gridIndex: 0 }, [recentCrossPoint.x, recentCrossPoint.y]);
+                if (pixelXY && !isNaN(pixelXY[0]) && !isNaN(pixelXY[1])) {
+                    ind.style.left = pixelXY[0] + 'px';
+                    ind.style.top = pixelXY[1] + 'px';
+                    ind.style.display = 'block';
                 } else {
-                    glowDot.style.display = 'none';
+                    ind.style.display = 'none';
                 }
             } catch (err) {
-                glowDot.style.display = 'none';
+                ind.style.display = 'none';
             }
         }
     </script>
-
 </body>
 </html>
