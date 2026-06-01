@@ -382,11 +382,12 @@
             font-family: var(--font-mono);
             font-size: 12px;
             font-weight: 500;
-            color: var(--foreground);
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-default);
+            color: #a5b4fc; /* 浅紫靛蓝 */
+            background: rgba(94, 106, 210, 0.06);
+            border: 1px solid rgba(94, 106, 210, 0.15);
             padding: 2px 8px;
             border-radius: 6px;
+            text-shadow: 0 0 8px rgba(165, 180, 252, 0.2);
         }
 
         /* Linear 扁平数字输入框与下拉选择框 */
@@ -575,6 +576,19 @@
             font-size: 24px;
             font-weight: 600;
             letter-spacing: -0.02em;
+        }
+
+        #val-total-cost {
+            color: #c7d2fe; /* 亮靛蓝紫色 */
+            text-shadow: 0 0 12px rgba(199, 210, 254, 0.25);
+        }
+        #val-be-price {
+            color: #fcd34d; /* 亮金黄色 */
+            text-shadow: 0 0 12px rgba(252, 211, 77, 0.3);
+        }
+        #val-be-utilization {
+            color: #99f6e4; /* 亮青色 */
+            text-shadow: 0 0 12px rgba(153, 246, 228, 0.3);
         }
 
         .kpi-bento-unit {
@@ -1477,17 +1491,22 @@
             // 利润状态卡片微发光调色板
             const profitBento = document.getElementById('kpi-profit-bento');
             const profitArrow = document.getElementById('kpi-profit-arrow');
+            const netProfitValueEl = document.getElementById('val-net-profit');
             
             if (netProfit >= 0) {
                 profitBento.className = 'bento-card kpi-bento profit-glowing';
                 profitBento.style.borderTopColor = 'var(--semantic-green)';
                 profitArrow.setAttribute('data-lucide', 'trending-up');
                 profitArrow.style.color = 'var(--semantic-green)';
+                netProfitValueEl.style.color = '#34d399';
+                netProfitValueEl.style.textShadow = '0 0 12px rgba(52, 211, 153, 0.25)';
             } else {
                 profitBento.className = 'bento-card kpi-bento loss-glowing';
                 profitBento.style.borderTopColor = 'var(--semantic-red)';
                 profitArrow.setAttribute('data-lucide', 'trending-down');
                 profitArrow.style.color = 'var(--semantic-red)';
+                netProfitValueEl.style.color = '#f87171';
+                netProfitValueEl.style.textShadow = '0 0 12px rgba(248, 113, 113, 0.25)';
             }
             lucide.createIcons();
 
