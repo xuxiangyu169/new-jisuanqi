@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大模型算力集群盈亏平衡分析计算器 - Bauhaus Style</title>
-    <!-- 引入 Outfit 纯几何字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
+    <title>大模型算力集群盈亏平衡分析计算器 - Swiss International Style</title>
+    <!-- 引入 Inter 经典无衬线客观字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
     <!-- 引入 ECharts -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <!-- 引入 Lucide 图标 -->
@@ -13,21 +13,16 @@
     
     <style>
         :root {
-            /* Bauhaus 风格系统设计代币 */
-            --bg-canvas: #f0f0f0;      /* 浅灰乳白画布 */
-            --foreground: #121212;     /* Stark 纯黑 */
-            
-            --primary-red: #d02020;    /* 经典包豪斯红 */
-            --primary-blue: #1040c0;   /* 经典包豪斯蓝 */
-            --primary-yellow: #f0c020; /* 经典包豪斯黄 */
-            --bg-accordion-light: #fff9c4; /* FAQ展开淡黄色 */
+            /* 瑞士平面风格代币 (Flat & High-Contrast) */
+            --bg-canvas: #ffffff;      /* 纯白主画布 */
+            --foreground: #000000;     /* 纯黑前景与边框 */
+            --bg-muted: #f2f2f2;       /* 辅助版面浅灰色 */
+            --accent-red: #ff3000;     /* 标志性瑞士红 (唯一彩色信号) */
             
             --border-thick: 4px;
             --border-thin: 2px;
-            --font-display: 'Outfit', -apple-system, sans-serif;
+            --font-sans: 'Inter', -apple-system, sans-serif;
             --font-mono: 'Fira Code', monospace;
-            
-            --easing-mechanical: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 机械利落动画 */
         }
 
         * {
@@ -37,39 +32,73 @@
         }
 
         body {
-            font-family: var(--font-display);
+            font-family: var(--font-sans);
             background-color: var(--bg-canvas);
-            /* 点状网格背景 - 经典包豪斯海报底纹 */
-            background-image: radial-gradient(var(--foreground) 1.5px, transparent 1.5px);
-            background-size: 24px 24px;
             color: var(--foreground);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            position: relative;
         }
 
-        /* ==================== 顶部导航页眉 ==================== */
+        /* ==================== 印刷肌理图案 (CSS Textures) ==================== */
+        
+        /* 全局 SVG 纸张噪点 */
+        .swiss-noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            opacity: 0.015;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 24px 结构网格背景 (用于辅助面板和网格底色) */
+        .swiss-grid-pattern {
+            background-image: 
+                linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* 16px 半色调印刷圆点 (局部装饰) */
+        .swiss-dots-pattern {
+            background-image: radial-gradient(rgba(0, 0, 0, 0.035) 1.5px, transparent 1.5px);
+            background-size: 16px 16px;
+        }
+
+        /* 45度印刷斜线条 (警告与亏损区装饰) */
+        .swiss-diagonal-pattern {
+            background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.015), rgba(0, 0, 0, 0.015) 1px, transparent 1px, transparent 10px);
+        }
+
+        /* ==================== 顶部导航 (Stark Banner) ==================== */
         header {
             padding: 24px 40px;
-            background-color: #ffffff;
+            background-color: var(--bg-canvas);
             border-bottom: var(--border-thick) solid var(--foreground);
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 10;
-            box-shadow: 0 4px 0px 0px rgba(0,0,0,0.05);
         }
 
-        .header-title-group {
+        .header-title-container {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
         }
 
-        /* 纯几何三原色 SVG Logo */
-        .bauhaus-logo {
-            flex-shrink: 0;
+        /* 纯黑十字标记 - 瑞士经典视觉元素 */
+        .swiss-cross-deco {
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--accent-red);
+            line-height: 1;
+            margin-top: -3px;
         }
 
         .header-texts {
@@ -79,55 +108,55 @@
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
+            letter-spacing: -0.04em;
+            line-height: 1.0;
         }
 
         .subtitle {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--foreground);
             font-weight: 500;
-            opacity: 0.8;
-            letter-spacing: -0.01em;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         /* 重置配置按钮 */
         .btn-reset {
-            background-color: var(--primary-yellow);
+            background-color: var(--foreground);
             border: var(--border-thin) solid var(--foreground);
-            color: var(--foreground);
-            font-family: var(--font-display);
+            color: #ffffff;
+            font-family: var(--font-sans);
             font-weight: 700;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 10px 18px;
+            letter-spacing: 0.1em;
+            padding: 10px 20px;
             cursor: pointer;
             border-radius: 0; /* 绝对直角 */
-            box-shadow: 4px 4px 0px 0px var(--foreground);
+            transition: all 0.15s ease-out;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: transform 0.1s var(--easing-mechanical), box-shadow 0.1s var(--easing-mechanical);
         }
 
         .btn-reset:hover {
-            background-color: #ffd230;
+            background-color: var(--accent-red);
+            border-color: var(--accent-red);
         }
 
         .btn-reset:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px 0px var(--foreground);
+            transform: scale(0.98);
         }
 
-        /* ==================== 页面布局 (Bento Grid) ==================== */
-        .app-layout {
+        /* ==================== 页面布局 (Asymmetric Grid) ==================== */
+        .app-container {
             flex: 1;
             width: 100%;
-            max-width: 1400px; /* 限宽，营造招贴画比例 */
+            max-width: 1360px; /* 国际主义海报最佳限宽 */
             margin: 0 auto;
             padding: 40px;
             display: grid;
@@ -136,53 +165,38 @@
             z-index: 5;
         }
 
-        /* ==================== Bento 卡片设计 (几何直角与硬阴影) ==================== */
+        /* ==================== 瑞士卡片设计 (无阴影、粗描边) ==================== */
         .bento-card {
-            background-color: #ffffff;
+            background-color: var(--bg-canvas);
             border: var(--border-thick) solid var(--foreground);
-            border-radius: 0; /* 包豪斯极端：二进制圆角 (0px) */
+            border-radius: 0; /* 绝对直角 */
             padding: 24px;
             position: relative;
-            box-shadow: 8px 8px 0px 0px var(--foreground); /* 实体硬阴影 */
-            transition: transform 0.15s var(--easing-mechanical), box-shadow 0.15s var(--easing-mechanical);
+            box-shadow: none; /* 瑞士风格严禁阴影，追求极致扁平 */
+            transition: background-color 0.15s ease-out, color 0.15s ease-out, border-color 0.15s;
         }
 
-        .bento-card:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 10px 10px 0px 0px var(--foreground);
+        /* 编号 Section Labels (如 01. / ) */
+        .section-number-label {
+            font-family: var(--font-sans);
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent-red);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        /* 卡片右上角几何小图标装饰 (红/黄/蓝循环) */
-        .card-geometric-marker {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 10px;
-            height: 10px;
-            z-index: 5;
+        .section-number-label span {
+            color: var(--foreground);
+            opacity: 0.4;
+            font-weight: 500;
         }
 
-        .marker-circle {
-            border-radius: 50%;
-            background-color: var(--primary-red);
-            border: 1px solid var(--foreground);
-        }
-
-        .marker-square {
-            border-radius: 0;
-            background-color: var(--primary-yellow);
-            border: 1px solid var(--foreground);
-        }
-
-        .marker-triangle {
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-bottom: 10px solid var(--primary-blue);
-        }
-
-        /* ==================== 栅格跨度 ==================== */
+        /* ==================== 跨度划分 ==================== */
         .col-span-2 { grid-column: span 2; }
         .col-span-4 { grid-column: span 4; }
 
@@ -192,115 +206,111 @@
             height: fit-content;
         }
 
-        .tab-nav-bar {
+        .tab-menu {
             display: flex;
             background-color: var(--foreground);
-            border-bottom: var(--border-thin) solid var(--foreground);
         }
 
-        .tab-btn {
+        .tab-menu-btn {
             flex: 1;
             background: transparent;
             border: none;
-            color: #ffffff;
+            color: rgba(255, 255, 255, 0.6);
             padding: 14px;
-            font-family: var(--font-display);
-            font-size: 13px;
+            font-family: var(--font-sans);
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.2s;
+            transition: all 0.15s;
         }
 
-        .tab-btn.active {
-            background-color: #ffffff;
+        .tab-menu-btn.active {
+            background-color: var(--bg-canvas);
             color: var(--foreground);
         }
 
-        .console-inner-body {
+        .console-body {
             padding: 24px;
             display: flex;
             flex-direction: column;
             gap: 24px;
         }
 
-        .pane-content {
+        .pane-layout {
             display: none;
         }
 
-        .pane-content.active {
+        .pane-layout.active {
             display: flex;
             flex-direction: column;
             gap: 24px;
         }
 
-        /* 输入控件布局 */
-        .input-item {
+        /* 控件项目 */
+        .control-item {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .input-title-row {
+        .control-label-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .input-title {
-            font-size: 13px;
+        .control-label-text {
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.05em;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
-        .input-title i {
-            color: var(--primary-blue);
-        }
-
-        .numeric-badge {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 700;
+        .control-label-text i {
             color: var(--foreground);
-            border: var(--border-thin) solid var(--foreground);
-            background-color: #ffffff;
-            padding: 1px 8px;
-            box-shadow: 2px 2px 0px 0px var(--foreground);
+            opacity: 0.6;
         }
 
-        /* 纯包豪斯直角硬边输入框和选择框 */
-        .bauhaus-input, select {
-            background-color: #ffffff;
+        .swiss-num-badge {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffffff;
+            background-color: var(--foreground);
+            padding: 2px 8px;
+            border-radius: 0;
+        }
+
+        /* 纯黑直角输入框与下拉选择框 */
+        .swiss-input, select {
+            background-color: var(--bg-canvas);
             border: var(--border-thin) solid var(--foreground);
-            border-radius: 0; /* 绝对直角 */
+            border-radius: 0;
             color: var(--foreground);
             padding: 10px 14px;
-            font-family: var(--font-display);
-            font-weight: 500;
+            font-family: var(--font-sans);
+            font-weight: 700;
             font-size: 13px;
             outline: none;
             width: 100%;
-            box-shadow: 2px 2px 0px 0px var(--foreground);
-            transition: all 0.15s var(--easing-mechanical);
+            transition: border-color 0.15s;
         }
 
-        .bauhaus-input:focus, select:focus {
-            background-color: var(--bg-accordion-light);
-            transform: translate(-1px, -1px);
-            box-shadow: 3px 3px 0px 0px var(--foreground);
+        .swiss-input:focus, select:focus {
+            border-color: var(--accent-red); /* 聚焦变为瑞士红 */
         }
 
-        /* 机械感滑块 (Range Input) */
-        .range-wrapper {
+        /* 机械极简直角滑块 (Square range slider) */
+        .range-container {
             display: flex;
             align-items: center;
             margin: 6px 0;
@@ -309,35 +319,28 @@
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 6px;
+            height: 4px;
             background-color: var(--foreground); /* 黑色硬轨 */
-            border-radius: 0;
             outline: none;
+            border-radius: 0;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
-            border-radius: 50%; /* 正圆 */
-            background-color: var(--primary-yellow); /* 黄色滑块 */
-            border: var(--border-thin) solid var(--foreground);
+            height: 18px;
+            width: 18px;
+            border-radius: 0; /* 绝对直角正方形滑块 */
+            background-color: #ffffff;
+            border: 3px solid var(--foreground);
             cursor: pointer;
-            box-shadow: 2px 2px 0px 0px var(--foreground);
-            transition: transform 0.1s var(--easing-mechanical), background-color 0.1s;
+            transition: background-color 0.1s;
         }
 
         input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            background-color: var(--primary-red); /* 悬浮时变红 */
+            background-color: var(--accent-red); /* hover 时滑块变红色 */
         }
 
-        input[type="range"]::-webkit-slider-thumb:active {
-            transform: scale(0.95);
-            box-shadow: 0px 0px 0px 0px var(--foreground);
-        }
-
-        .range-boundaries {
+        .range-limits-display {
             display: flex;
             justify-content: space-between;
             font-size: 10px;
@@ -347,54 +350,52 @@
         }
 
         /* ==================== 手风琴 (Accordion) ==================== */
-        .accordion-wrapper {
+        .accordion-panel {
             border-top: var(--border-thin) solid var(--foreground);
             margin-top: 8px;
         }
 
-        .accordion-bar {
+        .accordion-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 8px;
             cursor: pointer;
-            background-color: #ffffff;
+            background-color: var(--bg-canvas);
             border: var(--border-thin) solid var(--foreground);
             color: var(--foreground);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            box-shadow: 2px 2px 0px 0px var(--foreground);
-            transition: all 0.15s var(--easing-mechanical);
+            transition: all 0.15s;
         }
 
-        .accordion-bar:hover {
-            background-color: #f7f7f7;
+        .accordion-header:hover {
+            background-color: var(--bg-muted);
         }
 
-        /* 展开时的状态：纯色红背景，白字 */
-        .accordion-bar.expanded {
-            background-color: var(--primary-red);
+        /* 展开时：纯色红背景，白字 */
+        .accordion-header.expanded {
+            background-color: var(--accent-red);
             color: #ffffff;
-            transform: translate(2px, 2px);
-            box-shadow: 0px 0px 0px 0px var(--foreground);
+            border-color: var(--accent-red);
         }
 
-        .accordion-arrow {
+        .accordion-icon-arrow {
             transition: transform 0.3s var(--easing-mechanical);
         }
 
-        .accordion-bar.expanded .accordion-arrow {
+        .accordion-header.expanded .accordion-icon-arrow {
             transform: rotate(180deg);
         }
 
-        /* 展开内容：淡黄色背景 */
-        .accordion-content-panel {
+        /* 展开内容：浅灰底色 */
+        .accordion-body-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s var(--easing-mechanical);
-            background-color: var(--bg-accordion-light);
+            transition: max-height 0.3s ease-out;
+            background-color: var(--bg-muted);
             border-left: var(--border-thin) solid var(--foreground);
             border-right: var(--border-thin) solid var(--foreground);
             border-bottom: var(--border-thin) solid var(--foreground);
@@ -404,17 +405,17 @@
             padding: 0 16px;
         }
 
-        .accordion-bar.expanded + .accordion-content-panel {
+        .accordion-header.expanded + .accordion-body-content {
             max-height: 1200px;
             padding: 20px 16px;
         }
 
-        /* 自定义下拉箭头 */
-        .select-container {
+        /* 下拉容器 */
+        .select-wrapper {
             position: relative;
         }
 
-        .select-container::after {
+        .select-wrapper::after {
             content: "▼";
             font-size: 8px;
             color: var(--foreground);
@@ -425,33 +426,49 @@
             pointer-events: none;
         }
 
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
         /* ==================== 右侧：Dashboard ==================== */
-        .dashboard-wrapper {
+        .dashboard-container {
             display: flex;
             flex-direction: column;
             gap: 32px;
             height: 100%;
         }
 
-        /* KPI Cards Grid */
-        .kpi-cards-grid {
+        /* 4 KPI Grid */
+        .kpi-block-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 16px;
         }
 
-        /* KPI Bento Box - Color Blocking */
-        .kpi-block {
+        /* KPI Bento Box - Hover Color Inversion (白底黑字悬停变红底白字) */
+        .kpi-bento-item {
+            background-color: var(--bg-canvas);
+            border: var(--border-thick) solid var(--foreground);
+            color: var(--foreground);
             padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 12px;
             border-radius: 0;
-            border: var(--border-thick) solid var(--foreground);
-            box-shadow: 4px 4px 0px 0px var(--foreground);
+            box-shadow: none;
+            transition: background-color 0.15s ease-out, color 0.15s ease-out;
+            cursor: default;
         }
 
-        .kpi-block-label {
+        .kpi-bento-item:hover {
+            background-color: var(--accent-red);
+            color: #ffffff;
+            border-color: var(--foreground);
+        }
+
+        .kpi-bento-label {
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
@@ -459,59 +476,51 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            color: inherit;
         }
 
-        .kpi-block-label i {
+        .kpi-bento-label i {
             font-size: 13px;
         }
 
-        .kpi-block-value-row {
+        .kpi-bento-value-row {
             display: flex;
             align-items: baseline;
             gap: 4px;
+            color: inherit;
         }
 
-        .kpi-block-value {
-            font-family: var(--font-display);
+        .kpi-bento-value {
+            font-family: var(--font-sans);
             font-size: 24px;
             font-weight: 900;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.04em;
         }
 
-        .kpi-block-unit {
+        .kpi-bento-unit {
             font-size: 10px;
             font-weight: 700;
-            font-family: var(--font-display);
             text-transform: uppercase;
+            opacity: 0.6;
         }
 
-        /* 纯色高对比度色块分配 (Color Blocking) */
-        .kpi-block.cost-block {
-            background-color: #ffffff; /* 白卡 */
-            color: var(--foreground);
-        }
-
-        .kpi-block.price-block {
-            background-color: var(--primary-yellow); /* 黄卡 */
-            color: var(--foreground);
-        }
-
-        .kpi-block.util-block {
-            background-color: var(--primary-blue); /* 蓝卡 (白字) */
-            color: #ffffff;
-        }
-
-        /* 净利润卡片动态色块拼贴 */
-        .kpi-block.profit-active {
-            background-color: var(--primary-blue); /* 盈利为蓝卡 */
-            color: #ffffff;
-            border-color: var(--foreground);
+        /* 净利润卡片动态色块高亮 */
+        .kpi-bento-item.profit-status {
+            background-color: var(--bg-muted);
         }
         
-        .kpi-block.loss-active {
-            background-color: var(--primary-red); /* 亏损为红卡 */
+        .kpi-bento-item.loss-status {
+            background-color: var(--bg-muted);
+        }
+
+        .kpi-bento-item.profit-status:hover {
+            background-color: var(--accent-red);
             color: #ffffff;
-            border-color: var(--foreground);
+        }
+        
+        .kpi-bento-item.loss-status:hover {
+            background-color: var(--accent-red);
+            color: #ffffff;
         }
 
         /* 图表卡片 */
@@ -523,7 +532,7 @@
             gap: 16px;
         }
 
-        .chart-top-bar {
+        .chart-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -531,8 +540,8 @@
             padding-bottom: 12px;
         }
 
-        .chart-title-label {
-            font-size: 15px;
+        .chart-main-title {
+            font-size: 14px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: -0.01em;
@@ -541,11 +550,11 @@
             gap: 8px;
         }
 
-        .chart-title-label i {
-            color: var(--primary-red);
+        .chart-main-title i {
+            color: var(--accent-red);
         }
 
-        .chart-legend-box {
+        .chart-legend-labels {
             display: flex;
             gap: 16px;
             font-size: 11px;
@@ -553,16 +562,15 @@
             text-transform: uppercase;
         }
 
-        .legend-indicator-line {
+        .legend-indicator-stroke {
             display: inline-block;
-            width: 20px;
+            width: 24px;
             height: 4px;
-            border: 1px solid var(--foreground);
             vertical-align: middle;
             margin-right: 6px;
         }
 
-        .chart-render-wrapper {
+        .chart-canvas-container {
             position: relative;
             flex: 1;
             width: 100%;
@@ -576,27 +584,27 @@
             background-color: #ffffff;
         }
 
-        /* 机械脉冲闪烁点 (Bauhaus 拼贴硬核动效) */
-        .mechanical-pulse {
+        /* 瑞士机械快闪交点脉冲 */
+        .swiss-mechanical-pulse {
             position: absolute;
             width: 14px;
             height: 14px;
-            background-color: var(--primary-yellow);
+            background-color: var(--accent-red);
             border: var(--border-thin) solid var(--foreground);
             border-radius: 50%;
-            animation: mechanical-flash 1s steps(2, start) infinite; /* steps 无平滑，纯机械感 */
+            animation: mechanical-flash-swiss 0.8s steps(2, start) infinite; /* 纯机械 steps 闪烁 */
             transform: translate(-50%, -50%);
             z-index: 10;
             display: none;
             pointer-events: none;
         }
 
-        @keyframes mechanical-flash {
+        @keyframes mechanical-flash-swiss {
             0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.15; transform: translate(-50%, -50%) scale(1.2); }
+            50% { opacity: 0; transform: translate(-50%, -50%) scale(1.15); }
         }
 
-        /* ==================== 页脚 (纯黑底色装帧) ==================== */
+        /* ==================== 底部 (纯黑装帧) ==================== */
         footer {
             margin-top: auto;
             padding: 24px 40px;
@@ -606,32 +614,33 @@
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
             text-align: center;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 10;
+            font-family: var(--font-sans);
         }
 
-        .footer-desc {
+        .footer-desc-text {
             display: flex;
             gap: 16px;
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
-        /* ECharts Tooltip 纯包豪斯硬描边卡片 */
-        .tooltip-bauhaus {
+        /* ECharts Tooltip 纯白直角硬黑边卡片 */
+        .tooltip-swiss-card {
             background-color: #ffffff !important;
             border: var(--border-thin) solid var(--foreground) !important;
             border-radius: 0 !important;
-            box-shadow: 4px 4px 0px 0px var(--foreground) !important;
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.15) !important;
             padding: 12px !important;
         }
 
-        /* ==================== 响应式移动端适配 ==================== */
+        /* ==================== 响应式移动端自适应 ==================== */
         @media (max-width: 1024px) {
-            .app-layout {
+            .app-container {
                 grid-template-columns: 1fr;
                 padding: 16px;
             }
@@ -646,115 +655,115 @@
                 flex-direction: column;
                 gap: 10px;
             }
-            .kpi-cards-grid {
+            .kpi-block-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
 
         @media (max-width: 600px) {
-            .kpi-cards-grid {
+            .kpi-block-grid {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
-<body>
+<body class="swiss-diagonal-pattern">
 
-    <!-- 页眉 (Header) -->
+    <!-- Layer 2: Global Noise Texture -->
+    <svg class="swiss-noise" xmlns="http://www.w3.org/2000/svg">
+        <filter id="noise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/>
+        </filter>
+        <rect width="100%" height="100%" filter="url(#noise)"/>
+    </svg>
+
+    <!-- 页眉 (Banner) -->
     <header>
-        <div class="header-title-group">
-            <!-- 三原色几何 Logo -->
-            <svg class="bauhaus-logo" width="70" height="22" viewBox="0 0 70 22" xmlns="http://www.w3.org/2000/svg">
-                <!-- 红圆 -->
-                <circle cx="11" cy="11" r="9" fill="#d02020" stroke="#121212" stroke-width="2"/>
-                <!-- 黄方 -->
-                <rect x="26" y="2" width="18" height="18" fill="#f0c020" stroke="#121212" stroke-width="2"/>
-                <!-- 蓝三角 -->
-                <polygon points="59,2 50,20 68,20" fill="#1040c0" stroke="#121212" stroke-width="2" stroke-linejoin="miter"/>
-            </svg>
+        <div class="header-title-container">
+            <!-- 瑞士红十字标志装饰 -->
+            <span class="swiss-cross-deco">✚</span>
             <div class="header-texts">
                 <h1>大模型算力集群盈亏平衡分析计算器</h1>
-                <p class="subtitle">基于三原色几何建构主义的 LLM 基础设施 ROI 决策演练沙盘</p>
+                <p class="subtitle">基于国际主义设计系统 (Swiss Style) 的 LLM 基础设施 ROI 决策演练沙盘</p>
             </div>
         </div>
         <div>
-            <button class="btn-reset" onclick="resetAllValues()">
-                <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i>
+            <button class="btn-reset" onclick="resetAllValuesToSwiss()">
+                <i data-lucide="rotate-ccw" style="width: 12px; height: 12px;"></i>
                 重置配置
             </button>
         </div>
     </header>
 
     <!-- 主体容器 (Bento Grid) -->
-    <main class="app-layout">
+    <main class="app-container">
         
         <!-- 左侧输入控制台 (col-span-2) -->
-        <div class="bento-card console-card col-span-2">
-            <!-- 几何小标志装饰 -->
-            <div class="card-geometric-marker marker-circle"></div>
-
+        <div class="bento-card console-card col-span-2 swiss-grid-pattern">
             <!-- Tab 栏 -->
-            <div class="tab-nav-bar">
-                <button class="tab-btn active" onclick="switchPaneTab('quick')">
-                    <i data-lucide="zap" style="width: 13px; height: 13px;"></i>
+            <div class="tab-menu">
+                <button class="tab-menu-btn active" onclick="switchControlTab('quick')">
+                    <i data-lucide="zap" style="width: 12px; height: 12px;"></i>
                     极简模式
                 </button>
-                <button class="tab-btn" onclick="switchPaneTab('advanced')">
-                    <i data-lucide="sliders" style="width: 13px; height: 13px;"></i>
+                <button class="tab-menu-btn" onclick="switchControlTab('advanced')">
+                    <i data-lucide="sliders" style="width: 12px; height: 12px;"></i>
                     专业生产模式
                 </button>
             </div>
 
             <!-- 参数设置主体 -->
-            <div class="console-inner-body">
+            <div class="console-body">
                 
                 <!-- 极简模式 -->
-                <div id="pane-quick" class="pane-content active">
+                <div id="pane-quick" class="pane-layout active">
+                    <div class="section-number-label">01. <span>/</span> CORE PARAMETERS</div>
+
                     <!-- 节点数量 -->
-                    <div class="input-item">
-                        <div class="input-title-row">
-                            <span class="input-title">
+                    <div class="control-item">
+                        <div class="control-label-row">
+                            <span class="control-label-text">
                                 <i data-lucide="server"></i>
                                 集群节点数量 (台)
                             </span>
-                            <span class="numeric-badge" id="badge-server">8</span>
+                            <span class="swiss-num-badge" id="badge-server">8</span>
                         </div>
-                        <div class="range-wrapper">
-                            <input type="range" id="range-server" min="1" max="64" step="1" value="8" oninput="modifyParam('server-count', this.value)">
+                        <div class="range-container">
+                            <input type="range" id="range-server" min="1" max="64" step="1" value="8" oninput="changeSwissParam('server-count', this.value)">
                         </div>
-                        <div class="range-boundaries">
+                        <div class="range-limits-display">
                             <span>1 台</span>
                             <span>64 台</span>
                         </div>
                     </div>
 
                     <!-- 单节点硬件价格 -->
-                    <div class="input-item">
-                        <div class="input-title-row">
-                            <span class="input-title">
+                    <div class="control-item">
+                        <div class="control-label-row">
+                            <span class="control-label-text">
                                 <i data-lucide="wallet"></i>
                                 单节点硬件价格 (万元)
                             </span>
                         </div>
-                        <input type="number" id="num-node-price" class="bauhaus-input" value="150" min="10" max="1000" oninput="modifyParam('node-price', this.value)">
-                        <div class="range-boundaries" style="margin-top: 4px;">
-                            <span>含服务器、交换机、网络与存储设备分摊</span>
+                        <input type="number" id="num-node-price" class="swiss-input" value="150" min="10" max="1000" oninput="changeSwissParam('node-price', this.value)">
+                        <div class="range-limits-display" style="margin-top: 4px;">
+                            <span>包含服务器、交换机、网络与存储设备分摊</span>
                         </div>
                     </div>
 
                     <!-- Token 定价 -->
-                    <div class="input-item">
-                        <div class="input-title-row">
-                            <span class="input-title">
+                    <div class="control-item">
+                        <div class="control-label-row">
+                            <span class="control-label-text">
                                 <i data-lucide="tag"></i>
                                 混合 Token 销售单价 (元/百万)
                             </span>
-                            <span class="numeric-badge" id="badge-price">12</span>
+                            <span class="swiss-num-badge" id="badge-price">12</span>
                         </div>
-                        <div class="range-wrapper">
-                            <input type="range" id="range-price" min="1" max="50" step="0.5" value="12" oninput="modifyParam('token-price', this.value)">
+                        <div class="range-container">
+                            <input type="range" id="range-price" min="1" max="50" step="0.5" value="12" oninput="changeSwissParam('token-price', this.value)">
                         </div>
-                        <div class="range-boundaries">
+                        <div class="range-limits-display">
                             <span>1 元/百万</span>
                             <span>50 元/百万</span>
                         </div>
@@ -762,82 +771,83 @@
                 </div>
 
                 <!-- 专业模式 -->
-                <div id="pane-advanced" class="pane-content">
+                <div id="pane-advanced" class="pane-layout">
+                    <div class="section-number-label">01. <span>/</span> PRODUCTION CONFIGS</div>
                     <!-- 核心参数副本 -->
-                    <div id="advanced-copied-inputs"></div>
+                    <div id="advanced-copied-controls"></div>
 
                     <!-- 折叠面板 1: 物理环控 -->
-                    <div class="accordion-wrapper">
-                        <div class="accordion-bar expanded" onclick="toggleAccordionBar(this)">
-                            <span>物理基础设施参数</span>
-                            <i data-lucide="chevron-down" class="accordion-arrow" style="width: 13px; height: 13px;"></i>
+                    <div class="accordion-panel">
+                        <div class="accordion-header expanded" onclick="toggleAccordion(this)">
+                            <span>01.1 / 物理基础设施参数</span>
+                            <i data-lucide="chevron-down" class="accordion-icon-arrow" style="width: 12px; height: 12px;"></i>
                         </div>
-                        <div class="accordion-content-panel">
+                        <div class="accordion-body-content">
                             <!-- 折旧周期 -->
-                            <div class="input-item">
-                                <div class="input-title-row">
-                                    <span class="input-title">服务器折旧周期 (月)</span>
+                            <div class="control-item">
+                                <div class="control-label-row">
+                                    <span class="control-label-text">服务器折旧周期 (月)</span>
                                 </div>
-                                <input type="number" id="num-dep-period" class="bauhaus-input" value="36" min="12" max="120" oninput="modifyParam('dep-period', this.value)">
+                                <input type="number" id="num-dep-period" class="swiss-input" value="36" min="12" max="120" oninput="changeSwissParam('dep-period', this.value)">
                             </div>
                             <!-- 机柜限制功率 -->
-                            <div class="input-item">
-                                <div class="input-title-row">
-                                    <span class="input-title">机柜最大功率限制 (kW)</span>
+                            <div class="control-item">
+                                <div class="control-label-row">
+                                    <span class="control-label-text">机柜最大功率限制 (kW)</span>
                                 </div>
-                                <input type="number" id="num-rack-limit" class="bauhaus-input" value="8" min="4" max="32" oninput="modifyParam('rack-limit', this.value)">
+                                <input type="number" id="num-rack-limit" class="swiss-input" value="8" min="4" max="32" oninput="changeSwissParam('rack-limit', this.value)">
                             </div>
                             <!-- 机柜月租金 -->
-                            <div class="input-item">
-                                <div class="input-title-row">
-                                    <span class="input-title">单个机柜租金 (元/月)</span>
+                            <div class="control-item">
+                                <div class="control-label-row">
+                                    <span class="control-label-text">单个机柜月度租金 (元/月)</span>
                                 </div>
-                                <input type="number" id="num-rack-cost" class="bauhaus-input" value="6000" min="1000" max="30000" oninput="modifyParam('rack-cost', this.value)">
+                                <input type="number" id="num-rack-cost" class="swiss-input" value="6000" min="1000" max="30000" oninput="changeSwissParam('rack-cost', this.value)">
                             </div>
                             <!-- PUE -->
-                            <div class="input-item">
-                                <div class="input-title-row">
-                                    <span class="input-title">数据中心 PUE 指标系数</span>
-                                    <span class="numeric-badge" id="badge-pue">1.30</span>
+                            <div class="control-item">
+                                <div class="control-label-row">
+                                    <span class="control-label-text">数据中心 PUE 指标系数</span>
+                                    <span class="swiss-num-badge" id="badge-pue">1.30</span>
                                 </div>
-                                <div class="range-wrapper">
-                                    <input type="range" id="range-pue" min="1.0" max="2.0" step="0.05" value="1.3" oninput="modifyParam('pue', this.value)">
+                                <div class="range-container">
+                                    <input type="range" id="range-pue" min="1.0" max="2.0" step="0.05" value="1.3" oninput="changeSwissParam('pue', this.value)">
                                 </div>
                             </div>
                             <!-- 电费 -->
-                            <div class="input-item">
-                                <div class="input-title-row">
-                                    <span class="input-title">电力单费单价 (元/kWh)</span>
+                            <div class="control-item">
+                                <div class="control-label-row">
+                                    <span class="control-label-text">电力单价电费 (元/kWh)</span>
                                 </div>
-                                <input type="number" id="num-elec-rate" class="bauhaus-input" value="0.7" step="0.1" min="0.1" max="3.0" oninput="modifyParam('elec-rate', this.value)">
+                                <input type="number" id="num-elec-rate" class="swiss-input" value="0.7" step="0.1" min="0.1" max="3.0" oninput="changeSwissParam('elec-rate', this.value)">
                             </div>
                             <!-- 集群损耗 -->
-                            <div class="input-item">
-                                <div class="input-title-row">
-                                    <span class="input-title">多节点集群通信损耗 (%)</span>
-                                    <span class="numeric-badge" id="badge-comm-loss">3.0%</span>
+                            <div class="control-item">
+                                <div class="control-label-row">
+                                    <span class="control-label-text">多节点集群通信损耗 (%)</span>
+                                    <span class="swiss-num-badge" id="badge-comm-loss">3.0%</span>
                                 </div>
-                                <div class="range-wrapper">
-                                    <input type="range" id="range-comm-loss" min="0" max="10" step="0.5" value="3.0" oninput="modifyParam('comm-loss', this.value)">
+                                <div class="range-container">
+                                    <input type="range" id="range-comm-loss" min="0" max="10" step="0.5" value="3.0" oninput="changeSwissParam('comm-loss', this.value)">
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- 折叠面板 2: 模型参数 -->
-                    <div class="accordion-wrapper">
-                        <div class="accordion-bar expanded" onclick="toggleAccordionBar(this)">
-                            <span>大模型负载性能配置</span>
-                            <i data-lucide="chevron-down" class="accordion-arrow" style="width: 13px; height: 13px;"></i>
+                    <div class="accordion-panel">
+                        <div class="accordion-header expanded" onclick="toggleAccordion(this)">
+                            <span>01.2 / 大模型负载性能配置</span>
+                            <i data-lucide="chevron-down" class="accordion-icon-arrow" style="width: 12px; height: 12px;"></i>
                         </div>
-                        <div class="accordion-content-panel">
+                        <div class="accordion-body-content">
                             <!-- 预设模型 -->
-                            <div class="input-item">
-                                <div class="input-title-row">
-                                    <span class="input-title">预设模型规范</span>
+                            <div class="control-item">
+                                <div class="control-label-row">
+                                    <span class="control-label-text">预设模型规范</span>
                                 </div>
-                                <div class="select-container">
-                                    <select id="select-model-preset" onchange="changeModelSpecPreset(this.value)">
+                                <div class="select-wrapper">
+                                    <select id="select-model-preset" onchange="toggleSwissModelSpec(this.value)">
                                         <option value="llama-70b">Llama-3-70B 级别 (单节点 TPS = 240)</option>
                                         <option value="llama-8b">Llama-3-8B 级别 (单节点 TPS = 960)</option>
                                         <option value="custom-spec">自定义性能指标...</option>
@@ -845,19 +855,19 @@
                                 </div>
                             </div>
                             <!-- 自定义 TPS -->
-                            <div class="input-item" id="custom-tps-container" style="display: none;">
-                                <div class="input-title-row">
-                                    <span class="input-title">自定义单服务器性能 (Tokens/s)</span>
+                            <div class="control-item" id="custom-tps-wrapper" style="display: none;">
+                                <div class="control-label-row">
+                                    <span class="control-label-text">单服务器基准吞吐量 (Tokens/s)</span>
                                 </div>
-                                <input type="number" id="num-base-tps" class="bauhaus-input" value="240" min="10" max="10000" oninput="modifyParam('base-tps', this.value)">
+                                <input type="number" id="num-base-tps" class="swiss-input" value="240" min="10" max="10000" oninput="changeSwissParam('base-tps', this.value)">
                             </div>
                             <!-- 上下文窗口 -->
-                            <div class="input-item">
-                                <div class="input-title-row">
-                                    <span class="input-title">请求上下文窗口折算</span>
+                            <div class="control-item">
+                                <div class="control-label-row">
+                                    <span class="control-label-text">请求上下文窗口折算</span>
                                 </div>
-                                <div class="select-container">
-                                    <select id="select-context" onchange="modifyParam('context-length', this.value)">
+                                <div class="select-wrapper">
+                                    <select id="select-context" onchange="changeSwissParam('context-length', this.value)">
                                         <option value="1.0">4K 上下文 (100% 吞吐效率)</option>
                                         <option value="0.85" selected>8K 上下文 (85% 吞吐效率)</option>
                                         <option value="0.7">16K 上下文 (70% 吞吐效率)</option>
@@ -870,19 +880,19 @@
                 </div>
 
                 <!-- 底部算力容量负载率 (控制中枢) -->
-                <div class="input-item" style="margin-top: 10px; border-top: 2px dashed var(--foreground); padding-top: 20px;">
-                    <div class="input-title-row">
-                        <span class="input-title" style="color: var(--primary-blue); font-weight: 900;">
+                <div class="control-item" style="margin-top: 10px; border-top: 2px dashed var(--foreground); padding-top: 20px;">
+                    <div class="control-label-row">
+                        <span class="control-label-text" style="color: var(--accent-red); font-weight: 900;">
                             <i data-lucide="gauge"></i>
                             系统当前实际负载率 (U)
                         </span>
-                        <span class="numeric-badge" id="badge-utilization">50%</span>
+                        <span class="swiss-num-badge" id="badge-utilization" style="background-color: var(--accent-red);">50%</span>
                     </div>
-                    <div class="range-wrapper">
-                        <input type="range" id="range-utilization" min="0" max="100" step="1" value="50" oninput="modifyParam('utilization-rate', this.value)">
+                    <div class="range-container">
+                        <input type="range" id="range-utilization" min="0" max="100" step="1" value="50" oninput="changeSwissParam('utilization-rate', this.value)">
                     </div>
-                    <div class="range-boundaries">
-                        <span>0% (无负载)</span>
+                    <div class="range-limits-display">
+                        <span>0% (空载)</span>
                         <span>100% (满载)</span>
                     </div>
                 </div>
@@ -891,97 +901,98 @@
         </div>
 
         <!-- 右侧展示面板 (col-span-4) -->
-        <div class="col-span-4 dashboard-wrapper">
-            <!-- 4 KPI Grid (Color Blocking) -->
-            <div class="kpi-cards-grid">
+        <div class="col-span-4 dashboard-container">
+            
+            <div class="section-number-label" style="margin-bottom: -16px;">02. <span>/</span> REALTIME TELEMETRY</div>
+            
+            <!-- 4 KPI Grid (Color Inversion) -->
+            <div class="kpi-block-grid">
                 <!-- 运营成本 -->
-                <div class="bento-card kpi-block cost-block">
-                    <div class="card-geometric-marker marker-circle"></div>
-                    <span class="kpi-block-label">
+                <div class="kpi-bento-item">
+                    <span class="kpi-bento-label">
                         <i data-lucide="line-chart"></i>
-                        月度总成本
+                        月度总成本 (OPEX)
                     </span>
-                    <div class="kpi-block-value-row">
-                        <span class="kpi-block-value" id="kpi-cost">0.00</span>
-                        <span class="kpi-block-unit">万元/月</span>
+                    <div class="kpi-bento-value-row">
+                        <span class="kpi-bento-value" id="kpi-cost">0.00</span>
+                        <span class="kpi-bento-unit">万元/月</span>
                     </div>
                 </div>
 
                 <!-- 售价 -->
-                <div class="bento-card kpi-block price-block">
-                    <div class="card-geometric-marker marker-square"></div>
-                    <span class="kpi-block-label">
+                <div class="kpi-bento-item">
+                    <span class="kpi-bento-label">
                         <i data-lucide="tag"></i>
                         盈亏平衡售价
                     </span>
-                    <div class="kpi-block-value-row">
-                        <span class="kpi-block-value" id="kpi-be-price">0.00</span>
-                        <span class="kpi-block-unit">元/百万</span>
+                    <div class="kpi-bento-value-row">
+                        <span class="kpi-bento-value" id="kpi-be-price">0.00</span>
+                        <span class="kpi-bento-unit">元/百万</span>
                     </div>
                 </div>
 
                 <!-- 负载占比 -->
-                <div class="bento-card kpi-block util-block">
-                    <div class="card-geometric-marker marker-triangle"></div>
-                    <span class="kpi-block-label">
+                <div class="kpi-bento-item">
+                    <span class="kpi-bento-label">
                         <i data-lucide="activity"></i>
                         最低平衡负载率
                     </span>
-                    <div class="kpi-block-value-row">
-                        <span class="kpi-block-value" id="kpi-be-util">0.0%</span>
-                        <span class="kpi-block-unit">负载占比</span>
+                    <div class="kpi-bento-value-row">
+                        <span class="kpi-bento-value" id="kpi-be-util">0.0%</span>
+                        <span class="kpi-bento-unit">负载占比</span>
                     </div>
                 </div>
 
                 <!-- 净利润 -->
-                <div class="bento-card kpi-block" id="profit-kpi-block">
-                    <div class="card-geometric-marker marker-circle"></div>
-                    <span class="kpi-block-label">
+                <div class="kpi-bento-item" id="profit-kpi-block">
+                    <span class="kpi-bento-label">
                         <i data-lucide="trending-up" id="profit-kpi-icon"></i>
                         月预计净利润
                     </span>
-                    <div class="kpi-block-value-row">
-                        <span class="kpi-block-value" id="kpi-net-profit">0.00</span>
-                        <span class="kpi-block-unit">万元/月</span>
+                    <div class="kpi-bento-value-row">
+                        <span class="kpi-bento-value" id="kpi-net-profit">0.00</span>
+                        <span class="kpi-bento-unit">万元/月</span>
                     </div>
                 </div>
             </div>
 
             <!-- 大分析图表卡片 -->
-            <div class="bento-card chart-bento-card">
-                <div class="card-geometric-marker marker-square"></div>
-                <div class="chart-top-bar">
-                    <div class="chart-title-label">
-                        <i data-lucide="area-chart"></i>
-                        算力中心盈亏平衡曲线模型
-                    </div>
-                    <div class="chart-legend-box">
-                        <div>
-                            <span class="legend-indicator-line" style="background-color: var(--primary-blue);"></span>
-                            <span>月度总收入</span>
+            <div class="bento-card chart-bento-card swiss-dots-pattern">
+                <div class="card-inner" style="background-color: #ffffff; padding: 12px; height: 100%;">
+                    <div class="section-number-label">03. <span>/</span> FINANCIAL BALANCE MODEL</div>
+                    <div class="chart-header-row">
+                        <div class="chart-main-title">
+                            <i data-lucide="activity"></i>
+                            盈亏平衡收支解析曲线
                         </div>
-                        <div style="margin-left: 10px;">
-                            <span class="legend-indicator-line" style="border-bottom: 2px dashed var(--primary-red); height: 0;"></span>
-                            <span>月度运营成本 (含动态电费)</span>
+                        <div class="chart-legend-labels">
+                            <div>
+                                <span class="legend-indicator-stroke" style="background-color: var(--foreground);"></span>
+                                <span>月度总收入</span>
+                            </div>
+                            <div style="margin-left: 10px;">
+                                <span class="legend-indicator-stroke" style="border-bottom: 2px dashed var(--accent-red); height: 0;"></span>
+                                <span>月度运营成本 (含动态电量)</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- 图表渲染容器 -->
-                <div class="chart-render-wrapper">
-                    <div id="main-analysis-chart"></div>
-                    <!-- 机械闪烁交点标记 -->
-                    <div id="pulse-indicator" class="mechanical-pulse"></div>
+                    
+                    <!-- 图表渲染容器 -->
+                    <div class="chart-canvas-container">
+                        <div id="main-analysis-chart"></div>
+                        <!-- 瑞士机械闪烁交点标记 -->
+                        <div id="swiss-pulse" class="swiss-mechanical-pulse"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
     </main>
 
-    <!-- 纯黑底部信息栏 -->
+    <!-- 底部 (纯黑装帧) -->
     <footer>
-        <div>大模型算力投资回报分析系统 • Bauhaus 几何建构版</div>
-        <div class="footer-desc">
+        <div>大模型算力投资回报分析系统 • Swiss International Typographic Style</div>
+        <div class="footer-desc-text">
             <span>硬件折旧按双倍余额/平均分摊计算</span>
             <span>|</span>
             <span>集群通信损耗公式: (1-loss)<sup>N-1</sup></span>
@@ -994,8 +1005,8 @@
         // 初始化 Lucide
         lucide.createIcons();
 
-        // 默认数据配置
-        const defaultParamData = {
+        // 默认数据
+        const initialParams = {
             serverCount: 8,
             nodePrice: 150,
             tokenPrice: 12,
@@ -1013,107 +1024,107 @@
             opsOverheadRatio: 0.1
         };
 
-        let activeParams = { ...defaultParamData };
-        let numTickers = {};
-        let myBauhausChart = null;
-        let recentCrossPoint = null;
+        let activeParams = { ...initialParams };
+        let swissTickers = {};
+        let mySwissChart = null;
+        let lastCrossIntersection = null;
 
-        // 数值滚动 ticker (虽然是包豪斯，但我们设计得更偏机械翻牌感)
-        class MechanicalTicker {
-            constructor(elementId, renderFn, initialVal = 0) {
+        // 瑞士风格利落数字翻牌类
+        class SwissTicker {
+            constructor(elementId, formatFn, initialVal = 0) {
                 this.element = document.getElementById(elementId);
-                this.renderFn = renderFn;
-                this.currVal = initialVal;
+                this.formatFn = formatFn;
+                this.currentVal = initialVal;
                 this.targetVal = initialVal;
-                this.frameId = null;
-                this.startTime = null;
-                this.duration = 180; // 更利落的动效
+                this.frame = null;
+                this.start = null;
+                this.duration = 150; // 极速响应，符合瑞士排版客观理性的直白感
             }
 
             update(newVal) {
                 if (newVal === this.targetVal && this.element.textContent !== '') return;
                 
                 if (typeof newVal === 'string') {
-                    if (this.frameId) cancelAnimationFrame(this.frameId);
+                    if (this.frame) cancelAnimationFrame(this.frame);
                     this.element.textContent = newVal;
                     this.targetVal = newVal;
-                    this.currVal = 0;
+                    this.currentVal = 0;
                     return;
                 }
 
-                if (isNaN(this.currVal)) {
-                    this.currVal = 0;
+                if (isNaN(this.currentVal)) {
+                    this.currentVal = 0;
                 }
 
-                this.startVal = this.currVal;
+                this.startVal = this.currentVal;
                 this.targetVal = newVal;
-                this.startTime = null;
+                this.start = null;
 
-                if (this.frameId) {
-                    cancelAnimationFrame(this.frameId);
+                if (this.frame) {
+                    cancelAnimationFrame(this.frame);
                 }
 
-                const runTick = (timestamp) => {
-                    if (!this.startTime) this.startTime = timestamp;
-                    const elapsed = timestamp - this.startTime;
+                const tick = (timestamp) => {
+                    if (!this.start) this.start = timestamp;
+                    const elapsed = timestamp - this.start;
                     const progress = Math.min(elapsed / this.duration, 1);
                     
-                    // 利落的直角/线性缓动
+                    // 机械线性/硬切缓动
                     const ease = progress === 1 ? 1 : 1 - Math.pow(2, -12 * progress);
-                    this.currVal = this.startVal + (this.targetVal - this.startVal) * ease;
-                    this.element.textContent = this.renderFn(this.currVal);
+                    this.currentVal = this.startVal + (this.targetVal - this.startVal) * ease;
+                    this.element.textContent = this.formatFn(this.currentVal);
 
                     if (progress < 1) {
-                        this.frameId = requestAnimationFrame(runTick);
+                        this.frame = requestAnimationFrame(tick);
                     } else {
-                        this.currVal = this.targetVal;
-                        this.element.textContent = this.renderFn(this.targetVal);
-                        this.frameId = null;
+                        this.currentVal = this.targetVal;
+                        this.element.textContent = this.formatFn(this.targetVal);
+                        this.frame = null;
                     }
                 };
 
-                this.frameId = requestAnimationFrame(runTick);
+                this.frame = requestAnimationFrame(tick);
             }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // 同步输入控件
-            syncCoreControls();
+            // 同步控制组件
+            syncAdvancedInputs();
             
-            // 初始化 Tickers
-            numTickers['cost'] = new MechanicalTicker('kpi-cost', val => val.toFixed(2));
-            numTickers['be-price'] = new MechanicalTicker('kpi-be-price', val => typeof val === 'number' ? val.toFixed(2) : val);
-            numTickers['be-util'] = new MechanicalTicker('kpi-be-util', val => typeof val === 'number' ? (val * 100).toFixed(1) + '%' : val);
-            numTickers['net-profit'] = new MechanicalTicker('kpi-net-profit', val => (val >= 0 ? '+' : '') + val.toFixed(2));
+            // 初始化数据滚动翻页器
+            swissTickers['cost'] = new SwissTicker('kpi-cost', val => val.toFixed(2));
+            swissTickers['be-price'] = new SwissTicker('kpi-be-price', val => typeof val === 'number' ? val.toFixed(2) : val);
+            swissTickers['be-util'] = new SwissTicker('kpi-be-util', val => typeof val === 'number' ? (val * 100).toFixed(1) + '%' : val);
+            swissTickers['net-profit'] = new SwissTicker('kpi-net-profit', val => (val >= 0 ? '+' : '') + val.toFixed(2));
 
             // 初始化 ECharts
-            initBauhausChart();
-            // 计算数据
-            executeCalculation();
+            initSwissEcharts();
+            // 运行计算
+            calculateSwissFinance();
 
             window.addEventListener('resize', () => {
-                if (myBauhausChart) {
-                    myBauhausChart.resize();
-                    relocatePulseIndicator();
+                if (mySwissChart) {
+                    mySwissChart.resize();
+                    relocateSwissPulse();
                 }
             });
         });
 
-        // 极简同步核心配置到高级面板
-        function syncCoreControls() {
-            const wrapper = document.getElementById('advanced-copied-inputs');
+        // 备份并同步极简参数到专业大面板
+        function syncAdvancedInputs() {
+            const wrapper = document.getElementById('advanced-copied-controls');
             wrapper.innerHTML = `
                 <!-- 节点数量 -->
-                <div class="input-item">
-                    <div class="input-title-row">
-                        <span class="input-title">
+                <div class="control-item">
+                    <div class="control-label-row">
+                        <span class="control-label-text">
                             <i data-lucide="server"></i>
                             集群节点数量 (台)
                         </span>
-                        <span class="numeric-badge" id="badge-server-adv">8</span>
+                        <span class="swiss-num-badge" id="badge-server-adv">8</span>
                     </div>
-                    <div class="range-wrapper">
-                        <input type="range" id="range-server-adv" min="1" max="64" step="1" value="8" oninput="modifyParam('server-count', this.value)">
+                    <div class="range-container">
+                        <input type="range" id="range-server-adv" min="1" max="64" step="1" value="8" oninput="changeSwissParam('server-count', this.value)">
                     </div>
                     <div class="limits-row">
                         <span>1 台</span>
@@ -1121,28 +1132,28 @@
                     </div>
                 </div>
 
-                <!-- 节点硬件单价 -->
-                <div class="input-item">
-                    <div class="input-title-row">
-                        <span class="input-title">
+                <!-- 节点单价 -->
+                <div class="control-item">
+                    <div class="control-label-row">
+                        <span class="control-label-text">
                             <i data-lucide="wallet"></i>
                             单节点硬件价格 (万元)
                         </span>
                     </div>
-                    <input type="number" id="num-node-price-adv" class="bauhaus-input" value="150" min="10" max="1000" oninput="modifyParam('node-price', this.value)">
+                    <input type="number" id="num-node-price-adv" class="swiss-input" value="150" min="10" max="1000" oninput="changeSwissParam('node-price', this.value)">
                 </div>
 
                 <!-- Token 定价 -->
-                <div class="input-item">
-                    <div class="input-title-row">
-                        <span class="input-title">
+                <div class="control-item">
+                    <div class="control-label-row">
+                        <span class="control-label-text">
                             <i data-lucide="tag"></i>
                             混合 Token 销售单价 (元/百万)
                         </span>
-                        <span class="numeric-badge" id="badge-price-adv">12</span>
+                        <span class="swiss-num-badge" id="badge-price-adv">12</span>
                     </div>
-                    <div class="slider-wrapper">
-                        <input type="range" id="range-price-adv" min="1" max="50" step="0.5" value="12" oninput="modifyParam('token-price', this.value)">
+                    <div class="range-container">
+                        <input type="range" id="range-price-adv" min="1" max="50" step="0.5" value="12" oninput="changeSwissParam('token-price', this.value)">
                     </div>
                     <div class="limits-row">
                         <span>1 元/百万</span>
@@ -1154,49 +1165,49 @@
         }
 
         // 切换 Tab 页
-        function switchPaneTab(pane) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.pane-content').forEach(p => p.classList.remove('active'));
+        function switchControlTab(pane) {
+            document.querySelectorAll('.tab-menu-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.pane-layout').forEach(pane => pane.classList.remove('active'));
 
             if (pane === 'quick') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.querySelectorAll('.tab-menu-btn')[0].classList.add('active');
                 document.getElementById('pane-quick').classList.add('active');
             } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.querySelectorAll('.tab-menu-btn')[1].classList.add('active');
                 document.getElementById('pane-advanced').classList.add('active');
             }
 
             setTimeout(() => {
-                if (myBauhausChart) {
-                    myBauhausChart.resize();
-                    relocatePulseIndicator();
+                if (mySwissChart) {
+                    mySwissChart.resize();
+                    relocateSwissPulse();
                 }
             }, 50);
         }
 
-        // 手风琴卡片开闭
-        function toggleAccordionBar(trigger) {
+        // 折叠面板切换
+        function toggleAccordion(trigger) {
             trigger.classList.toggle('expanded');
         }
 
-        // 模型预设选择
-        function changeModelSpecPreset(val) {
-            const wrapper = document.getElementById('custom-tps-container');
+        // 模型预设更改
+        function toggleSwissModelSpec(val) {
+            const wrapper = document.getElementById('custom-tps-wrapper');
             if (val === 'llama-70b') {
                 wrapper.style.display = 'none';
-                modifyParam('base-tps', 240);
+                changeSwissParam('base-tps', 240);
             } else if (val === 'llama-8b') {
                 wrapper.style.display = 'none';
-                modifyParam('base-tps', 960);
+                changeSwissParam('base-tps', 960);
             } else {
                 wrapper.style.display = 'flex';
-                const currentTps = document.getElementById('num-base-tps').value;
-                modifyParam('base-tps', currentTps);
+                const baseTps = document.getElementById('num-base-tps').value;
+                changeSwissParam('base-tps', baseTps);
             }
         }
 
-        // 双向同步参数并触发计算
-        function modifyParam(key, val) {
+        // 统一双向参数管理与计算触发
+        function changeSwissParam(key, val) {
             const num = parseFloat(val);
             if (isNaN(num)) return;
 
@@ -1254,12 +1265,12 @@
                     break;
             }
 
-            executeCalculation();
+            calculateSwissFinance();
         }
 
-        // 重置所有数值
-        function resetAllValues() {
-            activeParams = { ...defaultParamData };
+        // 重置为默认值
+        function resetAllValuesToSwiss() {
+            activeParams = { ...initialParams };
             
             document.getElementById('range-server').value = activeParams.serverCount;
             document.getElementById('range-server-adv').value = activeParams.serverCount;
@@ -1287,7 +1298,7 @@
             document.getElementById('badge-comm-loss').textContent = activeParams.commLoss.toFixed(1) + '%';
 
             document.getElementById('select-model-preset').value = 'llama-70b';
-            document.getElementById('custom-tps-container').style.display = 'none';
+            document.getElementById('custom-tps-wrapper').style.display = 'none';
             document.getElementById('num-base-tps').value = activeParams.baseTps;
 
             document.getElementById('select-context').value = '0.85';
@@ -1295,98 +1306,103 @@
             document.getElementById('range-utilization').value = activeParams.utilizationRate;
             document.getElementById('badge-utilization').textContent = activeParams.utilizationRate + '%';
 
-            executeCalculation();
+            calculateSwissFinance();
         }
 
         // 计算核心
-        function executeCalculation() {
-            const count = activeParams.serverCount;
+        function calculateSwissFinance() {
+            const serverCount = activeParams.serverCount;
             
-            // 1. 集群吞吐效率
-            const efficiency = Math.pow(1 - (activeParams.commLoss / 100), count - 1);
-            const hrs = 720;
-            const maxTokens = (count * activeParams.baseTps * efficiency * activeParams.contextFactor * hrs * 3600) / 1000000;
+            // 1. 物理性能吞吐量
+            const commLossFactor = Math.pow(1 - (activeParams.commLoss / 100), serverCount - 1);
+            const totalHours = 720;
+            const maxTokensMonth = (serverCount * activeParams.baseTps * commLossFactor * activeParams.contextFactor * totalHours * 3600) / 1000000;
             
-            // 2. 算力运营固定成本
-            const hardwareDep = (count * activeParams.nodePrice) / activeParams.depPeriod; // 万元
-            const opsCost = hardwareDep * activeParams.opsOverheadRatio; // 万元
-            const rackCount = Math.ceil((count * activeParams.nodeMaxPower) / activeParams.rackLimit);
-            const rackRent = (rackCount * activeParams.rackCost) / 10000; // 万元
+            // 2. 算力固定运营成本 (折旧、房租、固定运维)
+            const depCost = (serverCount * activeParams.nodePrice) / activeParams.depPeriod; // 万元
+            const opsCost = depCost * activeParams.opsOverheadRatio; // 万元
+            const rackCount = Math.ceil((serverCount * activeParams.nodeMaxPower) / activeParams.rackLimit);
+            const rackCost = (rackCount * activeParams.rackCost) / 10000; // 万元
             
-            const fixedCostBase = hardwareDep + opsCost + rackRent;
+            const fixedCostBase = depCost + opsCost + rackCost;
 
-            // 3. 动态功耗电费与分段负载
-            const maxPowerElec = (count * activeParams.nodeMaxPower * activeParams.pue * hrs * activeParams.elecRate) / 10000; // 万元
-            const idlePower = maxPowerElec * activeParams.idlePowerRatio;
-            const variablePowerSlope = maxPowerElec * (1 - activeParams.idlePowerRatio);
+            // 3. 动态功耗电费
+            const maxPowerElecCost = (serverCount * activeParams.nodeMaxPower * activeParams.pue * totalHours * activeParams.elecRate) / 10000; // 万元
+            const idlePowerCost = maxPowerElecCost * activeParams.idlePowerRatio;
+            const variablePowerSlope = maxPowerElecCost * (1 - activeParams.idlePowerRatio);
 
             const uDec = activeParams.utilizationRate / 100;
-            const elecCost = idlePower + (variablePowerSlope * uDec);
-            const totalOpex = fixedCostBase + elecCost;
+            const currentElecCost = idlePowerCost + (variablePowerSlope * uDec);
+            const currentTotalOpex = fixedCostBase + currentElecCost;
 
             // 4. 收入与预计利润
-            const actualThroughput = maxTokens * uDec;
+            const actualThroughput = maxTokensMonth * uDec;
             const revenue = (actualThroughput * activeParams.tokenPrice) / 10000;
-            const profit = revenue - totalOpex;
+            const profit = revenue - currentTotalOpex;
 
-            // 5. 盈亏平衡参数求解
-            const maxRevPotential = (maxTokens * activeParams.tokenPrice) / 10000;
-            const fixedTotal = fixedCostBase + idlePower; // 固定成本 (含空闲电费)
-            const denominator = maxRevPotential - variablePowerSlope;
+            // 5. 求解平衡点 (U_be)
+            const maxRevenuePotential = (maxTokensMonth * activeParams.tokenPrice) / 10000;
+            const fixedCostTotal = fixedCostBase + idlePowerCost; // 固定成本 (含空闲电费)
+            const netDenominator = maxRevenuePotential - variablePowerSlope;
 
-            let beU = null;
-            let bePrice = null;
+            let beUDec = null;
+            let bePriceVal = null;
 
-            if (denominator > 0) {
-                beU = fixedTotal / denominator;
+            if (netDenominator > 0) {
+                beUDec = fixedCostTotal / netDenominator;
             }
 
             if (actualThroughput > 0) {
-                bePrice = (totalOpex * 10000) / actualThroughput;
+                bePriceVal = (currentTotalOpex * 10000) / actualThroughput;
             } else {
-                bePrice = Infinity;
+                bePriceVal = Infinity;
             }
 
-            // 6. 更新 KPI Block (触发 Tickers 翻页)
-            numTickers['cost'].update(totalOpex);
+            // 6. 更新 KPI Tickers
+            swissTickers['cost'].update(currentTotalOpex);
             
-            // 净利润卡片拼贴状态切换
+            // 净利润卡片底色及指示同步 (高反差视觉)
             const profitBlock = document.getElementById('profit-kpi-block');
             const profitIcon = document.getElementById('profit-kpi-icon');
             
+            // 移除旧的状态类
+            profitBlock.classList.remove('profit-status', 'loss-status');
+            
             if (profit >= 0) {
-                profitBlock.className = 'bento-card kpi-block profit-active';
+                profitBlock.classList.add('profit-status');
+                profitBlock.style.borderTopColor = 'var(--foreground)';
                 profitIcon.setAttribute('data-lucide', 'trending-up');
             } else {
-                profitBlock.className = 'bento-card kpi-block loss-active';
+                profitBlock.classList.add('loss-status');
+                profitBlock.style.borderTopColor = 'var(--accent-red)';
                 profitIcon.setAttribute('data-lucide', 'trending-down');
             }
             lucide.createIcons();
 
-            numTickers['net-profit'].update(profit);
+            swissTickers['net-profit'].update(profit);
 
-            if (bePrice === Infinity) {
-                numTickers['be-price'].update('N/A');
+            if (bePriceVal === Infinity) {
+                swissTickers['be-price'].update('N/A');
             } else {
-                numTickers['be-price'].update(bePrice);
+                swissTickers['be-price'].update(bePriceVal);
             }
 
-            if (beU !== null && beU >= 0 && beU <= 1) {
-                numTickers['be-util'].update(beU);
-            } else if (beU > 1) {
-                numTickers['be-util'].update('>100%');
+            if (beUDec !== null && beUDec >= 0 && beUDec <= 1) {
+                swissTickers['be-util'].update(beUDec);
+            } else if (beUDec > 1) {
+                swissTickers['be-util'].update('>100%');
             } else {
-                numTickers['be-util'].update('无法平衡');
+                swissTickers['be-util'].update('无法平衡');
             }
 
             // 7. 渲染 ECharts 曲线
-            drawBauhausChart(fixedTotal, variablePowerSlope, maxRevPotential, beU);
+            drawSwissChart(fixedCostTotal, variablePowerSlope, maxRevenuePotential, beUDec);
         }
 
-        // 初始化 ECharts (包豪斯 Stark 白底高对比度主题)
-        function initBauhausChart() {
-            const chartDom = document.getElementById('main-analysis-chart');
-            myBauhausChart = echarts.init(chartDom, 'light', {
+        // 初始化 ECharts (纯白高对比度瑞士风)
+        function initSwissEcharts() {
+            const dom = document.getElementById('main-analysis-chart');
+            mySwissChart = echarts.init(dom, 'light', {
                 renderer: 'canvas',
                 useDirtyRect: false
             });
@@ -1395,32 +1411,32 @@
                 backgroundColor: '#ffffff',
                 tooltip: {
                     trigger: 'axis',
-                    className: 'tooltip-bauhaus',
-                    borderColor: '#121212',
+                    className: 'tooltip-swiss-card',
+                    borderColor: '#000000',
                     backgroundColor: '#ffffff',
                     textStyle: {
-                        color: '#121212',
-                        fontFamily: 'Outfit',
+                        color: '#000000',
+                        fontFamily: 'Inter',
                         fontSize: 12,
                         fontWeight: 700
                     },
                     formatter: function (params) {
-                        let res = `<div style="font-weight: 900; margin-bottom: 6px; font-size:13px; color:#1040c0; text-transform:uppercase;">利用率: ${params[0].name}%</div>`;
+                        let text = `<div style="font-weight: 900; margin-bottom: 6px; font-size:12px; color:#ff3000; text-transform:uppercase; font-family:Inter; letter-spacing:0.05em;">利用率: ${params[0].name}%</div>`;
                         params.forEach(item => {
                             const val = parseFloat(item.value).toFixed(2);
-                            res += `<div style="display:flex; justify-content:space-between; gap:20px; font-size:12px;">
+                            text += `<div style="display:flex; justify-content:space-between; gap:20px; font-size:11px; font-family:Inter;">
                                         <span style="color:#555;">${item.seriesName}:</span>
                                         <span style="font-weight:700; color:${item.color};">${val} 万元</span>
                                     </div>`;
                         });
-                        return res;
+                        return text;
                     }
                 },
                 grid: {
-                    left: '2%',
-                    right: '2%',
-                    bottom: '8%',
-                    top: '8%',
+                    left: '1%',
+                    right: '1%',
+                    bottom: '6%',
+                    top: '6%',
                     containLabel: true
                 },
                 xAxis: {
@@ -1429,21 +1445,21 @@
                     data: Array.from({length: 101}, (_, i) => i),
                     axisLabel: {
                         formatter: '{value}%',
-                        color: '#121212',
-                        fontFamily: 'Outfit',
+                        color: '#000000',
+                        fontFamily: 'Inter',
                         fontWeight: 700,
                         fontSize: 11
                     },
                     axisLine: {
                         lineStyle: {
-                            color: '#121212',
+                            color: '#000000',
                             width: 2
                         }
                     },
                     splitLine: {
                         show: true,
                         lineStyle: {
-                            color: 'rgba(18, 18, 18, 0.05)'
+                            color: 'rgba(0, 0, 0, 0.03)'
                         }
                     }
                 },
@@ -1451,41 +1467,40 @@
                     type: 'value',
                     name: '金额 (万元)',
                     nameTextStyle: {
-                        color: '#121212',
+                        color: '#000000',
                         fontSize: 10,
                         fontWeight: 700,
                         align: 'right',
-                        fontFamily: 'Outfit'
+                        fontFamily: 'Inter'
                     },
                     axisLabel: {
-                        color: '#121212',
-                        fontFamily: 'Outfit',
+                        color: '#000000',
+                        fontFamily: 'Inter',
                         fontWeight: 700,
                         fontSize: 11
                     },
                     axisLine: {
                         lineStyle: {
-                            color: '#121212',
+                            color: '#000000',
                             width: 2
                         }
                     },
                     splitLine: {
                         show: true,
                         lineStyle: {
-                            color: 'rgba(18, 18, 18, 0.08)',
-                            width: 1
+                            color: 'rgba(0, 0, 0, 0.05)'
                         }
                     }
                 },
                 series: [
                     {
-                        name: '月度总成本',
+                        name: '月度运营成本',
                         type: 'line',
                         smooth: true,
                         symbol: 'none',
                         lineStyle: {
-                            color: '#d02020', // 包豪斯红成本虚线
-                            width: 3,
+                            color: '#ff3000', // 瑞士红成本虚线
+                            width: 2.5,
                             type: 'dashed'
                         },
                         data: []
@@ -1496,7 +1511,7 @@
                         smooth: true,
                         symbol: 'none',
                         lineStyle: {
-                            color: '#1040c0', // 包豪斯蓝收入实线
+                            color: '#000000', // 纯黑收入实线
                             width: 4
                         },
                         data: []
@@ -1504,20 +1519,20 @@
                 ]
             };
 
-            myBauhausChart.setOption(option);
+            mySwissChart.setOption(option);
         }
 
         // 重新渲染 ECharts 数据点
-        function drawBauhausChart(fixedTotal, slope, maxRev, beUDec) {
-            if (!myBauhausChart) return;
+        function drawSwissChart(fixedCost, slope, maxRev, beUDec) {
+            if (!mySwissChart) return;
 
-            const cData = [];
-            const rData = [];
+            const costData = [];
+            const revenueData = [];
 
             for (let i = 0; i <= 100; i++) {
                 const dec = i / 100;
-                cData.push(fixedTotal + (slope * dec));
-                rData.push(maxRev * dec);
+                costData.push(fixedCost + (slope * dec));
+                revenueData.push(maxRev * dec);
             }
 
             let bPercent = null;
@@ -1526,15 +1541,15 @@
 
             if (beUDec !== null && beUDec >= 0 && beUDec <= 1) {
                 bPercent = beUDec * 100;
-                bValue = fixedTotal + (slope * beUDec);
-                recentCrossPoint = { x: bPercent, y: bValue };
+                bValue = fixedCost + (slope * beUDec);
+                lastCrossIntersection = { x: bPercent, y: bValue };
 
                 areas = [
                     [
                         {
                             xAxis: 0,
                             itemStyle: {
-                                color: 'rgba(208, 32, 32, 0.04)' // 亏损区间填极淡红色
+                                color: 'rgba(255, 48, 0, 0.025)' // 亏损用超淡瑞士红填充
                             }
                         },
                         {
@@ -1545,7 +1560,7 @@
                         {
                             xAxis: Math.min(100, bPercent),
                             itemStyle: {
-                                color: 'rgba(240, 192, 32, 0.15)' // 盈利区间填经典黄色
+                                color: 'rgba(0, 0, 0, 0.02)' // 盈利直接用超淡灰色填充
                             }
                         },
                         {
@@ -1554,13 +1569,13 @@
                     ]
                 ];
             } else {
-                recentCrossPoint = null;
+                lastCrossIntersection = null;
                 areas = [
                     [
                         {
                             xAxis: 0,
                             itemStyle: {
-                                color: 'rgba(208, 32, 32, 0.04)'
+                                color: 'rgba(255, 48, 0, 0.025)'
                             }
                         },
                         {
@@ -1570,11 +1585,11 @@
                 ];
             }
 
-            myBauhausChart.setOption({
+            mySwissChart.setOption({
                 series: [
                     {
-                        name: '月度总成本',
-                        data: cData,
+                        name: '月度运营成本',
+                        data: costData,
                         markArea: {
                             silent: true,
                             data: areas
@@ -1582,36 +1597,37 @@
                     },
                     {
                         name: '月度总收入',
-                        data: rData
+                        data: revenueData
                     }
                 ]
             });
 
-            // 重新定位硬闪烁脉冲交点
-            setTimeout(relocatePulseIndicator, 50);
+            // 定位机械闪烁点
+            setTimeout(relocateSwissPulse, 50);
         }
 
-        // 重新计算机械脉冲指示器的位置
-        function relocatePulseIndicator() {
-            const ind = document.getElementById('pulse-indicator');
-            if (!myBauhausChart || !recentCrossPoint) {
-                ind.style.display = 'none';
+        // 计算物理坐标定位机械脉冲
+        function relocateSwissPulse() {
+            const pulse = document.getElementById('swiss-pulse');
+            if (!mySwissChart || !lastCrossIntersection) {
+                pulse.style.display = 'none';
                 return;
             }
 
             try {
-                const pixelXY = myBauhausChart.convertToPixel({ gridIndex: 0 }, [recentCrossPoint.x, recentCrossPoint.y]);
-                if (pixelXY && !isNaN(pixelXY[0]) && !isNaN(pixelXY[1])) {
-                    ind.style.left = pixelXY[0] + 'px';
-                    ind.style.top = pixelXY[1] + 'px';
-                    ind.style.display = 'block';
+                const pixelCoords = mySwissChart.convertToPixel({ gridIndex: 0 }, [lastCrossIntersection.x, lastCrossIntersection.y]);
+                if (pixelCoords && !isNaN(pixelCoords[0]) && !isNaN(pixelCoords[1])) {
+                    pulse.style.left = pixelCoords[0] + 'px';
+                    pulse.style.top = pixelCoords[1] + 'px';
+                    pulse.style.display = 'block';
                 } else {
-                    ind.style.display = 'none';
+                    pulse.style.display = 'none';
                 }
-            } catch (err) {
-                ind.style.display = 'none';
+            } catch (e) {
+                pulse.style.display = 'none';
             }
         }
     </script>
+
 </body>
 </html>
