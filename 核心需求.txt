@@ -1,0 +1,48 @@
+# Role
+You are an expert Frontend Developer and Financial UI/UX Designer. Create a responsive, highly polished, and professional LLM Infrastructure Break-Even Calculator web page tailored for executive presentations (向上汇报).
+
+# Design & Aesthetic Guidelines
+- **Theme:** Premium Enterprise Dark Mode (Deep slate/navy backgrounds like `#0F172A`, subtle gradients, and glassmorphism cards). Use a sophisticated Accent Color (e.g., Emerald Green for profit/break-even, Soft Violet for telemetry, and Coral Red for losses).
+- **Typography:** Clean, sans-serif typography with strong visual hierarchy. Numbers should look crisp and high-end.
+- **Interactions & Animations:** 
+  - All numerical changes must use smooth number-ticker transitions (300ms duration).
+  - Charts must animate fluidly without full-page redraw flashes when sliders move.
+  - UI cards should feel "airy" with organic, soft hover states.
+
+# Functional Architecture
+
+## 1. Input Panel (Left Column / Top Section)
+Divide into two tabs: "Quick Mode (极简模式)" and "Advanced Production Mode (专业真实模式)".
+- **Quick Mode Inputs (with Defaults):**
+  - Server Count (Slider/Input, 1 - 64, Default: 8)
+  - Hardware Package Price per Node (includes servers, switches, storage, Default: 1,500,000 RMB)
+  - Blend Token Price Offered (Slider, 1 - 50 RMB / Million Tokens, Default: 12 RMB)
+- **Advanced Mode Inputs (Accordion Expandable):**
+  - Depreciation Period (Default: 36 Months)
+  - Rack Power Limit & Cost (Default: 8kW, 6000 RMB/Month per rack)
+  - Power PUE Factor (Slider, 1.0 - 2.0, Default: 1.3)
+  - Electricity Rate (Default: 0.7 RMB / kWh)
+  - Cluster Communication Loss (Formula-driven: 3% efficiency penalty per additional node)
+  - Model Specs Picker: Presets for "70B Model (H20 Single Node TPS = 240)" or "Custom TPS"
+  - Average Context Length Factor (Dropdown: 4K - 100% throughput, 8K - 85%, 16K - 70%)
+
+## 2. Calculation Engine (Hidden/Reactive)
+- Implement both the simplified break-even math and the fully extended formula provided in standard financial modeling:
+  - Total Monthly Cost = (Hardware Dep.) + (Power Consumption * PUE * 720h * Rate) + IDC Rack Rent + Ops Overheads.
+  - Actual Monthly Token Throughput = Total Nodes * Base TPS * 720h * 3600s * Context Factor * Cluster Efficiency * System Utilization Rate.
+
+## 3. Executive Visualization Panel (Right Column / Main Focus)
+This is what the executives care about. Render two core interactive areas:
+- **KPI Summary Ribbons:** Large, animated numbers showing:
+  - [Total Monthly Cost]
+  - [Minimum Break-Even Price] (at current utilization)
+  - [Minimum Capacity Utilization Rate Required] (at current pricing)
+  - [Projected Monthly Net Profit/Loss]
+- **Interactive Break-Even Chart (ECharts or Recharts):**
+  - Plot an area/line chart where the X-axis represents "Capacity Utilization Rate (0% - 100%)" and the Y-axis represents "Monthly Financial Balance (RMB)".
+  - Mark the exact cross-section point where Revenue meets Cost with an animated pulse dot labeled "盈亏平衡点 (Break-Even Point)".
+  - Shaded green area for Profit Zone, shaded soft red for Loss Zone.
+  - As the user changes the "Blend Token Price Offered" slider, this entire curve should fluidly shift up or down in real-time, instantly revealing how price strategies affect the required operational utilization rate.
+
+# Deliverable
+Provide a fully self-contained single-file React component (using Tailwind CSS for styling and Lucide Icons/ECharts/Recharts for visuals) or a clean HTML/JS/Tailwind template. Ensure no external asset dependencies that could fail to load. Make it robust, error-proof, and breathtakingly beautiful for an executive demo.
