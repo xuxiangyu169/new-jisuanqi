@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大模型算力集群盈亏平衡分析计算器 - Linear Modern Style</title>
+    <title>大模型算力集群盈亏平衡分析计算器 - Flat Poster Style</title>
     <!-- 引入 Outfit 现代展示字体与 Inter 常用字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <!-- 引入 ECharts -->
@@ -13,39 +13,31 @@
     
     <style>
         :root {
-            /* Linear/Modern 风格系统预设 */
-            --bg-deep: #020203;
-            --bg-base: #050506;
-            --bg-elevated: #0a0a0c;
-            --surface: rgba(255, 255, 255, 0.05);
-            --surface-hover: rgba(255, 255, 255, 0.08);
+            /* Flat Design 亮色视觉系统预设 */
+            --bg-page: #F3F4F6; /* 浅灰底 */
+            --bg-card: #FFFFFF; /* 纯白卡片 */
+            --foreground: #111827; /* Gray 900 */
+            --foreground-muted: #4B5563; /* Gray 600 */
+            --foreground-subtle: #9CA3AF; /* Gray 400 */
             
-            --foreground: #ededef;
-            --foreground-muted: #8a8f98;
-            --foreground-subtle: rgba(255, 255, 255, 0.6);
+            /* 纯平无影的核心色值 */
+            --primary: #3B82F6; /* Blue 500 */
+            --primary-dark: #2563EB; /* Blue 600 */
+            --secondary: #10B981; /* Emerald 500 */
+            --secondary-dark: #059669; /* Emerald 600 */
+            --accent: #F59E0B; /* Amber 500 */
+            --accent-dark: #D97706; /* Amber 600 */
+            --danger: #EF4444; /* Red 500 */
+            --purple: #8B5CF6; /* Purple 500 */
             
-            /* 经典星际靛蓝强调色 */
-            --accent: #5e6ad2;
-            --accent-bright: #6872d9;
-            --accent-glow: rgba(94, 106, 210, 0.3);
-            --accent-glow-strong: rgba(94, 106, 210, 0.6);
-            
-            /* 语义警告与成功指示 */
-            --semantic-red: #ef4444;
-            --semantic-red-glow: rgba(239, 68, 68, 0.15);
-            --semantic-green: #10b981;
-            --semantic-green-glow: rgba(16, 185, 129, 0.15);
-            
-            --border-default: rgba(255, 255, 255, 0.06);
-            --border-hover: rgba(255, 255, 255, 0.10);
-            --border-accent: rgba(94, 106, 210, 0.30);
-            
-            /* 缓动 Timing (以 expo-out 0.16, 1, 0.3, 1 为准) */
-            --easing-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --border-default: #E5E7EB; /* Gray 200 */
+            --border-bold: #111827; /* Gray 900 粗线 */
             
             --font-display: 'Outfit', 'Inter', -apple-system, sans-serif;
             --font-sans: 'Inter', -apple-system, sans-serif;
             --font-mono: 'Fira Code', monospace;
+            
+            --easing-flat: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
@@ -56,7 +48,7 @@
 
         body {
             font-family: var(--font-sans);
-            background-color: var(--bg-base);
+            background-color: var(--bg-page);
             color: var(--foreground);
             min-height: 100vh;
             overflow-x: hidden;
@@ -65,85 +57,7 @@
             flex-direction: column;
         }
 
-        /* ==================== Layer 1: 底色渐变 ==================== */
-        .base-gradient-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(ellipse at top, #0a0a0f 0%, #050506 50%, #020203 100%);
-            z-index: -4;
-            pointer-events: none;
-        }
-
-        /* ==================== Layer 2: SVG 噪声滤镜 ==================== */
-        .noise-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            opacity: 0.015;
-            pointer-events: none;
-            z-index: -3;
-        }
-
-        /* ==================== Layer 3: 漂浮渐变光斑 ==================== */
-        .blob-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: -2;
-            overflow: hidden;
-        }
-
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            mix-blend-mode: screen;
-            animation: float-animation 20s ease-in-out infinite alternate;
-        }
-
-        .primary-blob {
-            top: -20%;
-            left: 20%;
-            width: 1000px;
-            height: 1000px;
-            background: radial-gradient(circle, rgba(94, 106, 210, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
-            filter: blur(150px);
-        }
-
-        .secondary-blob {
-            top: 35%;
-            left: -15%;
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
-            filter: blur(120px);
-            animation-duration: 25s;
-        }
-
-        .tertiary-blob {
-            bottom: -20%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(94, 106, 210, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
-            filter: blur(100px);
-            animation-duration: 18s;
-        }
-
-        @keyframes float-animation {
-            0% { transform: translateY(0px) rotate(0deg) scale(1); }
-            50% { transform: translateY(-30px) rotate(1deg) scale(1.03); }
-            100% { transform: translateY(15px) rotate(-1deg) scale(0.97); }
-        }
-
-        /* ==================== Layer 4: 网格线叠加 ==================== */
+        /* ==================== Layer 1: 印刷网格线背景 ==================== */
         .grid-overlay {
             position: fixed;
             top: 0;
@@ -151,20 +65,18 @@
             width: 100vw;
             height: 100vh;
             background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 64px 64px;
+                linear-gradient(to right, rgba(17, 24, 39, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(17, 24, 39, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
             pointer-events: none;
             z-index: -1;
         }
 
-        /* ==================== 顶部页眉 ==================== */
+        /* ==================== 顶部页眉 (纯白、扁平) ==================== */
         header {
-            padding: 32px 40px;
-            border-bottom: 1px solid var(--border-default);
-            background: rgba(5, 5, 6, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            padding: 24px 40px;
+            border-bottom: 2px solid var(--border-default);
+            background: #FFFFFF;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -174,59 +86,60 @@
         .header-title-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
 
         .header-tag {
             font-family: var(--font-mono);
             font-size: 10px;
-            font-weight: 500;
-            color: var(--accent-bright);
+            font-weight: 600;
+            color: var(--primary-dark);
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            background: rgba(94, 106, 210, 0.08);
-            border: 1px solid rgba(94, 106, 210, 0.2);
-            padding: 4px 10px;
+            background: #EFF6FF;
+            border: 2px solid #BFDBFE;
+            padding: 2px 10px;
             border-radius: 9999px;
             width: fit-content;
         }
 
         h1 {
             font-family: var(--font-display);
-            font-size: 26px;
-            font-weight: 700;
+            font-size: 28px;
+            font-weight: 800;
             letter-spacing: -0.02em;
-            background: linear-gradient(to bottom, #ffffff 40%, rgba(255, 255, 255, 0.7) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--foreground);
         }
 
         .subtitle {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--foreground-muted);
-            font-weight: 400;
+            font-weight: 500;
         }
 
         .btn-reset {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-default);
+            background: #FFFFFF;
+            border: 2px solid var(--foreground);
             color: var(--foreground);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-            transition: all 0.2s var(--easing-expo);
+            transition: transform 0.15s var(--easing-flat), background 0.15s ease;
+            box-shadow: none;
         }
 
         .btn-reset:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: var(--border-hover);
-            transform: translateY(-1px);
+            background: var(--bg-page);
+            transform: scale(1.03);
+        }
+
+        .btn-reset:active {
+            transform: scale(0.98);
         }
 
         /* ==================== 页面布局 (Bento Grid) ==================== */
@@ -242,51 +155,23 @@
             z-index: 5;
         }
 
-        /* ==================== Bento 卡片通用样式 ==================== */
+        /* ==================== Bento 卡片通用样式 (纯平、无阴影) ==================== */
         .bento-card {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.005) 100%);
-            border: 1px solid var(--border-default);
-            border-radius: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-default);
+            border-radius: 12px;
             padding: 24px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
-            transition: border-color 0.3s var(--easing-expo), box-shadow 0.3s var(--easing-expo), transform 0.3s var(--easing-expo);
-        }
-
-        /* Spotlight 聚光灯鼠标跟踪图层 */
-        .bento-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(
-                300px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
-                rgba(94, 106, 210, 0.12),
-                transparent 80%
-            );
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 1;
+            box-shadow: none; /* 彻底移除所有阴影 */
+            transition: border-color 0.2s ease, transform 0.2s var(--easing-flat);
         }
 
         .bento-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--border-hover);
-            box-shadow: 
-                0 12px 40px rgba(0, 0, 0, 0.45), 
-                0 0 50px rgba(94, 106, 210, 0.04), 
-                inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            border-color: var(--border-bold);
         }
 
-        .bento-card:hover::before {
-            opacity: 1;
-        }
-
-        /* 卡片内容包装器，确保位于 spotlight 层之上 */
         .card-inner {
             position: relative;
             z-index: 2;
@@ -307,8 +192,8 @@
 
         .tabs-header {
             display: flex;
-            background: rgba(0, 0, 0, 0.25);
-            border-bottom: 1px solid var(--border-default);
+            background: var(--bg-page);
+            border-bottom: 2px solid var(--border-default);
             padding: 6px;
         }
 
@@ -317,29 +202,28 @@
             background: transparent;
             border: none;
             color: var(--foreground-muted);
-            padding: 10px;
-            font-size: 12px;
-            font-weight: 500;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
-            border-radius: 8px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.2s var(--easing-expo);
+            transition: all 0.15s ease;
         }
 
         .tab-button.active {
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--foreground);
-            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+            background: var(--foreground);
+            color: #FFFFFF;
         }
 
         .console-body {
             padding: 24px;
             display: flex;
             flex-direction: column;
-            gap: 22px;
+            gap: 20px;
         }
 
         .tab-pane {
@@ -349,16 +233,109 @@
         .tab-pane.active {
             display: flex;
             flex-direction: column;
-            gap: 22px;
+            gap: 20px;
         }
 
-        /* 参数输入框与滑块 */
+        /* ==================== 输入分类彩色卡片包装 (重点区分标题与数字) ==================== */
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
         }
 
+        /* 1. 硬件算力与折旧 (浅蓝) */
+        .color-group-hardware {
+            background-color: #EFF6FF;
+            border: 2px solid #BFDBFE;
+            padding: 16px;
+        }
+        .color-group-hardware .label-text {
+            color: #1E40AF;
+        }
+        .color-group-hardware .value-badge {
+            background-color: #3B82F6;
+            color: #FFFFFF;
+        }
+        .color-group-hardware input[type="range"]::-webkit-slider-thumb {
+            background: #3B82F6;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 0 0 2px #3B82F6;
+        }
+
+        /* 2. 商业定价与销售 (浅黄) */
+        .color-group-business {
+            background-color: #FFFBEB;
+            border: 2px solid #FDE68A;
+            padding: 16px;
+        }
+        .color-group-business .label-text {
+            color: #78350F;
+        }
+        .color-group-business .value-badge {
+            background-color: #D97706;
+            color: #FFFFFF;
+        }
+        .color-group-business input[type="range"]::-webkit-slider-thumb {
+            background: #D97706;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 0 0 2px #D97706;
+        }
+
+        /* 3. 物理环境与电力 (浅绿) */
+        .color-group-energy {
+            background-color: #ECFDF5;
+            border: 2px solid #A7F3D0;
+            padding: 16px;
+        }
+        .color-group-energy .label-text {
+            color: #065F46;
+        }
+        .color-group-energy .value-badge {
+            background-color: #059669;
+            color: #FFFFFF;
+        }
+        .color-group-energy input[type="range"]::-webkit-slider-thumb {
+            background: #059669;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 0 0 2px #059669;
+        }
+
+        /* 4. 网络与模型性能 (浅红) */
+        .color-group-performance {
+            background-color: #FFF1F2;
+            border: 2px solid #FECDD3;
+            padding: 16px;
+        }
+        .color-group-performance .label-text {
+            color: #9F1239;
+        }
+        .color-group-performance .value-badge {
+            background-color: #E11D48;
+            color: #FFFFFF;
+        }
+        .color-group-performance input[type="range"]::-webkit-slider-thumb {
+            background: #E11D48;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 0 0 2px #E11D48;
+        }
+
+        /* 5. API 竞品基准选择 (浅紫) */
+        .color-group-benchmark {
+            background-color: #F5F3FF;
+            border: 2px solid #DDD6FE;
+            padding: 16px;
+        }
+        .color-group-benchmark .label-text {
+            color: #5B21B6;
+        }
+        .color-group-benchmark .value-badge {
+            background-color: #7C3AED;
+            color: #FFFFFF;
+        }
+
+        /* 公共标签与徽章样式 */
         .label-row {
             display: flex;
             justify-content: space-between;
@@ -367,91 +344,79 @@
 
         .label-text {
             font-size: 13px;
-            color: var(--foreground-muted);
-            font-weight: 500;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
-        .label-text i {
-            color: var(--accent-bright);
-        }
-
         .value-badge {
             font-family: var(--font-mono);
             font-size: 12px;
-            font-weight: 500;
-            color: #a5b4fc; /* 浅紫靛蓝 */
-            background: rgba(94, 106, 210, 0.06);
-            border: 1px solid rgba(94, 106, 210, 0.15);
+            font-weight: 700;
             padding: 2px 8px;
-            border-radius: 6px;
-            text-shadow: 0 0 8px rgba(165, 180, 252, 0.2);
+            border-radius: 4px;
         }
 
-        /* Linear 扁平数字输入框与下拉选择框 */
+        /* Flat 纯白带框输入框 */
         .flat-input, select {
-            background: #0a0a0c;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #FFFFFF;
+            border: 2px solid var(--border-default);
             color: var(--foreground);
-            border-radius: 8px;
+            border-radius: 6px;
             padding: 10px 14px;
             font-family: var(--font-sans);
             font-size: 13px;
+            font-weight: 600;
             outline: none;
             width: 100%;
-            transition: all 0.2s var(--easing-expo);
+            transition: all 0.15s ease;
         }
 
         .flat-input:focus, select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px var(--accent-glow);
+            border-color: var(--border-bold);
         }
 
-        /* 自定义 Linear 滑块 (Slider) */
+        /* Flat 滑块 (Slider) */
         .slider-wrapper {
             display: flex;
             align-items: center;
-            margin: 6px 0;
+            margin: 4px 0;
         }
 
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.06);
+            height: 6px;
+            background: rgba(17, 24, 39, 0.08);
             border-radius: 9999px;
             outline: none;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 14px;
-            width: 14px;
+            height: 16px;
+            width: 16px;
             border-radius: 50%;
-            background: #ffffff;
             cursor: pointer;
-            box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.8);
-            transition: all 0.15s var(--easing-expo);
+            transition: transform 0.1s ease;
         }
 
         input[type="range"]::-webkit-slider-thumb:hover {
             transform: scale(1.2);
-            background: #ffffff;
-            box-shadow: 0 0 10px var(--accent-glow-strong), 0 0 0 4px var(--accent);
         }
 
         .limits-row {
             display: flex;
             justify-content: space-between;
             font-size: 10px;
-            color: var(--foreground-subtle);
+            font-weight: 600;
+            color: var(--foreground-muted);
         }
 
-        /* 风琴折叠卡片 */
+        /* 折叠面板 (Accordion) */
         .acc-panel {
-            border-top: 1px solid var(--border-default);
+            border-top: 2px solid var(--border-default);
             margin-top: 10px;
         }
 
@@ -462,9 +427,9 @@
             padding: 16px 0 8px 0;
             cursor: pointer;
             color: var(--foreground-muted);
-            font-size: 13px;
-            font-weight: 500;
-            transition: color 0.2s;
+            font-size: 14px;
+            font-weight: 700;
+            transition: color 0.15s ease;
         }
 
         .acc-trigger:hover {
@@ -472,7 +437,7 @@
         }
 
         .acc-arrow {
-            transition: transform 0.3s var(--easing-expo);
+            transition: transform 0.2s var(--easing-flat);
         }
 
         .acc-trigger.expanded .acc-arrow {
@@ -482,7 +447,7 @@
         .acc-body {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s var(--easing-expo);
+            transition: max-height 0.3s var(--easing-flat);
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -493,7 +458,6 @@
             padding-bottom: 12px;
         }
 
-        /* 隐藏的原生下拉箭头与自定义包装 */
         .select-box {
             position: relative;
         }
@@ -513,6 +477,7 @@
             appearance: none;
             -webkit-appearance: none;
             cursor: pointer;
+            padding-right: 32px;
         }
 
         /* ==================== 右侧：Dashboard 区域 ==================== */
@@ -521,6 +486,42 @@
             flex-direction: column;
             gap: 24px;
             height: 100%;
+        }
+
+        /* API 财务生命红线横幅 (ROI Safety Redline) */
+        .roi-redline-banner {
+            border: 2px solid var(--border-default);
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s var(--easing-flat);
+        }
+
+        .roi-redline-banner.warning {
+            background-color: #FEE2E2;
+            border-color: var(--danger);
+            color: #991B1B;
+        }
+
+        .roi-redline-banner.success {
+            background-color: #D1FAE5;
+            border-color: var(--secondary);
+            color: #065F46;
+        }
+
+        .roi-banner-badge {
+            background-color: currentColor;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            font-weight: 800;
+            color: #FFFFFF;
+            display: inline-block;
         }
 
         /* KPI Card 栅格网格 */
@@ -536,18 +537,9 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
-        }
-
-        /* Top highlight borders for cards */
-        .kpi-bento::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(to right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+            background: #FFFFFF;
+            border: 2px solid var(--border-default);
+            border-radius: 10px;
         }
 
         .kpi-bento-label {
@@ -558,7 +550,8 @@
             text-transform: uppercase;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            font-weight: 700;
         }
 
         .kpi-bento-label i {
@@ -573,39 +566,26 @@
 
         .kpi-bento-value {
             font-family: var(--font-display);
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 26px;
+            font-weight: 800;
             letter-spacing: -0.02em;
         }
 
+        /* KPI 独特色彩隔离，重点突出 */
         #val-total-cost {
-            color: #c7d2fe; /* 亮靛蓝紫色 */
-            text-shadow: 0 0 12px rgba(199, 210, 254, 0.25);
+            color: #4F46E5; /* Indigo */
         }
         #val-be-price {
-            color: #fcd34d; /* 亮金黄色 */
-            text-shadow: 0 0 12px rgba(252, 211, 77, 0.3);
+            color: #D97706; /* Amber */
         }
         #val-be-utilization {
-            color: #99f6e4; /* 亮青色 */
-            text-shadow: 0 0 12px rgba(153, 246, 228, 0.3);
+            color: #059669; /* Emerald */
         }
 
         .kpi-bento-unit {
-            font-size: 10px;
-            color: var(--foreground-subtle);
-            font-family: var(--font-mono);
-        }
-
-        /* 净利润卡片动态高亮状态 */
-        .kpi-bento.profit-glowing {
-            background: radial-gradient(circle at top right, rgba(94, 106, 210, 0.06) 0%, rgba(255, 255, 255, 0.01) 80%);
-            border-color: rgba(94, 106, 210, 0.15);
-        }
-        
-        .kpi-bento.loss-glowing {
-            background: radial-gradient(circle at top right, rgba(239, 68, 68, 0.03) 0%, rgba(255, 255, 255, 0.01) 80%);
-            border-color: rgba(239, 68, 68, 0.12);
+            font-size: 11px;
+            color: var(--foreground-muted);
+            font-weight: 700;
         }
 
         /* 图表 Bento 容器 */
@@ -621,11 +601,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 2px solid var(--border-default);
+            padding-bottom: 12px;
         }
 
         .chart-head-title {
-            font-size: 15px;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 800;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -633,7 +615,7 @@
         }
 
         .chart-head-title i {
-            color: var(--accent-bright);
+            color: var(--primary-dark);
         }
 
         .chart-custom-legend {
@@ -641,6 +623,7 @@
             gap: 16px;
             font-size: 11px;
             font-family: var(--font-mono);
+            font-weight: 700;
         }
 
         .custom-legend-item {
@@ -652,7 +635,8 @@
 
         .legend-indicator-line {
             width: 16px;
-            height: 2px;
+            height: 3px;
+            border-radius: 9999px;
         }
 
         .chart-container-wrapper {
@@ -665,53 +649,60 @@
         #main-analysis-chart {
             width: 100%;
             height: 100%;
-            min-height: 400px;
+            min-height: 420px;
         }
 
-        /* 盈亏平衡物理坐标呼吸灯 */
+        /* 盈亏与防线双拐点物理坐标呼吸灯 (纯平无渐变缩放圈) */
         .glow-pulse-dot {
             position: absolute;
             width: 12px;
             height: 12px;
-            background-color: var(--accent-bright);
             border-radius: 50%;
-            box-shadow: 0 0 0 0 rgba(94, 106, 210, 0.7);
-            animation: pulse-glow 1.6s infinite;
             pointer-events: none;
             transform: translate(-50%, -50%);
             z-index: 10;
             display: none;
         }
 
-        @keyframes pulse-glow {
-            0% {
-                transform: translate(-50%, -50%) scale(0.9);
-                box-shadow: 0 0 0 0 rgba(94, 106, 210, 0.7);
-            }
-            70% {
-                transform: translate(-50%, -50%) scale(1.15);
-                box-shadow: 0 0 0 12px rgba(94, 106, 210, 0);
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(0.9);
-                box-shadow: 0 0 0 0 rgba(94, 106, 210, 0);
-            }
+        .pulse-dot-be {
+            background-color: var(--accent-dark);
+            box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 6px var(--accent);
+            animation: pulse-flat-be 1.6s infinite ease-out;
+        }
+
+        .pulse-dot-roi {
+            background-color: var(--purple);
+            box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 6px var(--purple);
+            animation: pulse-flat-roi 1.6s infinite ease-out;
+        }
+
+        @keyframes pulse-flat-be {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.5; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 12px var(--accent); }
+            100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+        }
+
+        @keyframes pulse-flat-roi {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.5; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 12px var(--purple); }
+            100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
         }
 
         /* ==================== 底部信息栏 ==================== */
         footer {
             margin-top: auto;
             padding: 24px 40px;
-            border-top: 1px solid var(--border-default);
-            background: rgba(2, 2, 3, 0.6);
-            font-size: 11px;
-            color: var(--foreground-subtle);
+            border-top: 2px solid var(--border-default);
+            background: #FFFFFF;
+            font-size: 12px;
+            color: var(--foreground-muted);
             text-align: center;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 10;
             font-family: var(--font-mono);
+            font-weight: 600;
         }
 
         .footer-desc-group {
@@ -719,99 +710,13 @@
             gap: 16px;
         }
 
-        /* ECharts Tooltip 极简化毛玻璃卡片 */
-        .tooltip-linear {
-            background: rgba(10, 10, 12, 0.9) !important;
-            backdrop-filter: blur(12px) !important;
-            -webkit-backdrop-filter: blur(12px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 8px !important;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5) !important;
+        /* ECharts Tooltip 扁平印刷卡片 */
+        .tooltip-flat {
+            background: #FFFFFF !important;
+            border: 2px solid var(--border-bold) !important;
+            border-radius: 6px !important;
+            box-shadow: none !important;
             padding: 12px !important;
-        }
-
-        /* ==================== 输入分类发光色彩系统 ==================== */
-        /* 1. 硬件算力与折旧 (靛蓝紫) */
-        .color-group-hardware .label-text {
-            color: #a5b4fc !important; /* 浅紫靛蓝标题 */
-        }
-        .color-group-hardware .label-text i {
-            color: #818cf8 !important;
-        }
-        .color-group-hardware .value-badge {
-            color: #818cf8 !important;
-            background: rgba(129, 140, 248, 0.06) !important;
-            border-color: rgba(129, 140, 248, 0.2) !important;
-            text-shadow: 0 0 8px rgba(129, 140, 248, 0.2);
-        }
-        .color-group-hardware .flat-input {
-            color: #a5b4fc !important;
-            border-color: rgba(165, 180, 252, 0.15) !important;
-            text-shadow: 0 0 8px rgba(165, 180, 252, 0.15);
-        }
-        .color-group-hardware .flat-input:focus {
-            border-color: #818cf8 !important;
-            box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.25) !important;
-        }
-
-        /* 2. 商业定价与销售 (琥珀金) */
-        .color-group-business .label-text {
-            color: #fde047 !important; /* 明黄标题 */
-        }
-        .color-group-business .label-text i {
-            color: #fbbf24 !important;
-        }
-        .color-group-business .value-badge {
-            color: #fbbf24 !important;
-            background: rgba(251, 191, 36, 0.06) !important;
-            border-color: rgba(251, 191, 36, 0.2) !important;
-            text-shadow: 0 0 8px rgba(251, 191, 36, 0.2);
-        }
-
-        /* 3. 物理环境与电力 (能源绿青) */
-        .color-group-energy .label-text {
-            color: #99f6e4 !important; /* 青色标题 */
-        }
-        .color-group-energy .label-text i {
-            color: #2dd4bf !important;
-        }
-        .color-group-energy .value-badge {
-            color: #2dd4bf !important;
-            background: rgba(45, 212, 191, 0.06) !important;
-            border-color: rgba(45, 212, 191, 0.2) !important;
-            text-shadow: 0 0 8px rgba(45, 212, 191, 0.2);
-        }
-        .color-group-energy .flat-input {
-            color: #99f6e4 !important;
-            border-color: rgba(153, 246, 228, 0.15) !important;
-            text-shadow: 0 0 8px rgba(153, 246, 228, 0.15);
-        }
-        .color-group-energy .flat-input:focus {
-            border-color: #2dd4bf !important;
-            box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.25) !important;
-        }
-
-        /* 4. 集群网络与模型性能 (性能粉红) */
-        .color-group-performance .label-text {
-            color: #fbcfe8 !important; /* 浅洋红标题 */
-        }
-        .color-group-performance .label-text i {
-            color: #f472b6 !important;
-        }
-        .color-group-performance .value-badge {
-            color: #f472b6 !important;
-            background: rgba(244, 114, 182, 0.06) !important;
-            border-color: rgba(244, 114, 182, 0.2) !important;
-            text-shadow: 0 0 8px rgba(244, 114, 182, 0.2);
-        }
-        .color-group-performance .flat-input, .color-group-performance select {
-            color: #fbcfe8 !important;
-            border-color: rgba(244, 114, 182, 0.15) !important;
-            text-shadow: 0 0 8px rgba(244, 114, 182, 0.15);
-        }
-        .color-group-performance .flat-input:focus, .color-group-performance select:focus {
-            border-color: #f472b6 !important;
-            box-shadow: 0 0 0 2px rgba(244, 114, 182, 0.25) !important;
         }
 
         /* ==================== 响应式移动端自适应 ==================== */
@@ -825,6 +730,9 @@
             }
             header {
                 padding: 16px 20px;
+                flex-direction: column;
+                gap: 14px;
+                align-items: flex-start;
             }
             footer {
                 padding: 16px 20px;
@@ -833,6 +741,10 @@
             }
             .kpi-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            .btn-reset {
+                width: 100%;
+                justify-content: center;
             }
         }
 
@@ -845,25 +757,7 @@
 </head>
 <body>
 
-    <!-- Layer 1: Base Gradient -->
-    <div class="base-gradient-bg"></div>
-
-    <!-- Layer 2: Noise Overlay -->
-    <svg class="noise-overlay" xmlns="http://www.w3.org/2000/svg">
-        <filter id="noise">
-            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/>
-        </filter>
-        <rect width="100%" height="100%" filter="url(#noise)"/>
-    </svg>
-
-    <!-- Layer 3: Floating Blobs -->
-    <div class="blob-container">
-        <div class="blob primary-blob"></div>
-        <div class="blob secondary-blob"></div>
-        <div class="blob tertiary-blob"></div>
-    </div>
-
-    <!-- Layer 4: Grid Overlay -->
+    <!-- Layer 1: Base Poster Grid Lines -->
     <div class="grid-overlay"></div>
 
     <!-- 页眉 Header -->
@@ -871,12 +765,12 @@
         <div class="header-title-wrapper">
             <div class="header-tag">LLM Infrastructure</div>
             <h1>大模型算力集群盈亏平衡分析计算器</h1>
-            <p class="subtitle">基于多维变动成本与集群通信效率的算力中心 ROI 沙盘决策演练大屏</p>
+            <p class="subtitle">基于多维变动成本与官方 DeepSeek-V4 API 竞品生命红线决策演练大屏</p>
         </div>
         <div>
             <button class="btn-reset" onclick="resetAllValues()">
-                <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i>
-                重置配置
+                <i data-lucide="rotate-ccw" style="width: 14px; height: 14px;"></i>
+                重置沙盘数据
             </button>
         </div>
     </header>
@@ -887,14 +781,33 @@
         <!-- 左侧输入面板 (col-span-2) -->
         <div class="bento-card console-card col-span-2">
             <div class="card-inner">
+                <!-- 竞品 API 定价防守基准选择 (最上方) -->
+                <div class="color-group-benchmark" style="border-bottom: 2px solid var(--border-default); border-radius: 10px 10px 0 0; border-top: none; border-left: none; border-right: none;">
+                    <div class="label-row" style="margin-bottom: 8px;">
+                        <span class="label-text">
+                            <i data-lucide="shield-alert" style="color: var(--purple);"></i>
+                            API 对比基准 (盈亏生命红线)
+                        </span>
+                        <span class="value-badge" id="badge-api-price">8.70 元/M</span>
+                    </div>
+                    <div class="select-box">
+                        <select id="select-api-benchmark" onchange="changeApiBenchmark(this.value)">
+                            <option value="pro-official" selected>DeepSeek-V4-Pro 官方原厂价 (混合 8.70 元/百万)</option>
+                            <option value="pro-channel">DeepSeek-V4-Pro 云渠道目录价 (混合 14.40 元/百万)</option>
+                            <option value="flash-official">DeepSeek-V4-Flash 官方原厂价 (混合 0.26 元/百万)</option>
+                            <option value="flash-channel">DeepSeek-V4-Flash 云渠道目录价 (混合 1.20 元/百万)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Tabs 导航 -->
                 <div class="tabs-header">
                     <button class="tab-button active" onclick="switchPane('quick')">
-                        <i data-lucide="zap" style="width: 13px; height: 13px;"></i>
-                        极简模式
+                        <i data-lucide="zap" style="width: 14px; height: 14px;"></i>
+                        极简运营模式
                     </button>
                     <button class="tab-button" onclick="switchPane('advanced')">
-                        <i data-lucide="sliders" style="width: 13px; height: 13px;"></i>
+                        <i data-lucide="sliders" style="width: 14px; height: 14px;"></i>
                         专业生产模式
                     </button>
                 </div>
@@ -932,7 +845,7 @@
                             </div>
                             <input type="number" id="field-node-price" class="flat-input" value="150" min="10" max="1000" oninput="changeParam('node-price', this.value)">
                             <div class="limits-row" style="margin-top: 4px;">
-                                <span>含算力机、交换网、存储设备折旧分摊</span>
+                                <span>含算力机、交换网、存储分摊折旧</span>
                             </div>
                         </div>
 
@@ -941,7 +854,7 @@
                             <div class="label-row">
                                 <span class="label-text">
                                     <i data-lucide="tag"></i>
-                                    混合 Token 销售单价 (元/百万)
+                                    自建 Token 销售单价 (元/百万)
                                 </span>
                                 <span class="value-badge" id="badge-token-price">12</span>
                             </div>
@@ -958,58 +871,58 @@
                     <!-- 专业真实模式 Pane -->
                     <div id="advanced-pane" class="tab-pane">
                         <!-- 同步展示的核心输入 -->
-                        <div id="advanced-sync-inputs"></div>
+                        <div id="advanced-sync-inputs" style="display: flex; flex-direction: column; gap: 20px;"></div>
 
                         <!-- 折叠面板：高级基础设施与物理环境 -->
                         <div class="acc-panel">
                             <div class="acc-trigger expanded" onclick="toggleAccordionPane(this)">
-                                <span>物理基础设施配置</span>
-                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 13px; height: 13px;"></i>
+                                <span>物理基础设施与环境配置</span>
+                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
                             </div>
                             <div class="acc-body">
                                 <!-- 折旧周期 -->
-                                <div class="input-group color-group-hardware">
+                                <div class="input-group color-group-hardware" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
                                         <span class="label-text">服务器折旧周期 (月)</span>
                                     </div>
                                     <input type="number" id="field-dep-period" class="flat-input" value="36" min="12" max="120" oninput="changeParam('dep-period', this.value)">
                                 </div>
                                 <!-- 机柜功率上限 -->
-                                <div class="input-group color-group-energy">
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
                                         <span class="label-text">单个机柜最大额定功率 (kW)</span>
                                     </div>
                                     <input type="number" id="field-rack-limit" class="flat-input" value="8" min="4" max="32" oninput="changeParam('rack-limit', this.value)">
                                 </div>
                                 <!-- 机柜月度租金 -->
-                                <div class="input-group color-group-energy">
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
                                         <span class="label-text">单个机柜租赁租金 (元/月)</span>
                                     </div>
                                     <input type="number" id="field-rack-cost" class="flat-input" value="6000" min="1000" max="30000" oninput="changeParam('rack-cost', this.value)">
                                 </div>
                                 <!-- PUE 系数 -->
-                                <div class="input-group color-group-energy">
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
                                         <span class="label-text">机房 PUE 指标系数</span>
-                                        <span class="value-badge" id="badge-pue">1.30</span>
+                                        <span class="value-badge" id="badge-pue" style="background-color: var(--secondary);">1.30</span>
                                     </div>
                                     <div class="slider-wrapper">
                                         <input type="range" id="slider-pue" min="1.0" max="2.0" step="0.05" value="1.3" oninput="changeParam('pue', this.value)">
                                     </div>
                                 </div>
                                 <!-- 电费 -->
-                                <div class="input-group color-group-energy">
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
                                         <span class="label-text">电力单价电费 (元/kWh)</span>
                                     </div>
                                     <input type="number" id="field-elec-rate" class="flat-input" value="0.7" step="0.1" min="0.1" max="3.0" oninput="changeParam('elec-rate', this.value)">
                                 </div>
                                 <!-- 通信衰减 -->
-                                <div class="input-group color-group-performance">
+                                <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
                                         <span class="label-text">集群多节点通信衰减 (%)</span>
-                                        <span class="value-badge" id="badge-comm-loss">3.0%</span>
+                                        <span class="value-badge" id="badge-comm-loss" style="background-color: var(--danger);">3.0%</span>
                                     </div>
                                     <div class="slider-wrapper">
                                         <input type="range" id="slider-comm-loss" min="0" max="10" step="0.5" value="3.0" oninput="changeParam('comm-loss', this.value)">
@@ -1022,11 +935,11 @@
                         <div class="acc-panel">
                             <div class="acc-trigger expanded" onclick="toggleAccordionPane(this)">
                                 <span>模型规格参数配置</span>
-                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 13px; height: 13px;"></i>
+                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
                             </div>
                             <div class="acc-body">
                                 <!-- 模型选择 -->
-                                <div class="input-group color-group-performance">
+                                <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
                                         <span class="label-text">模型级别预设</span>
                                     </div>
@@ -1039,14 +952,14 @@
                                     </div>
                                 </div>
                                 <!-- 自定义 TPS -->
-                                <div class="input-group color-group-performance" id="custom-tps-field-wrapper" style="display: none;">
+                                <div class="input-group color-group-performance" id="custom-tps-field-wrapper" style="display: none; background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
                                         <span class="label-text">单节点基准性能 (Tokens/s)</span>
                                     </div>
                                     <input type="number" id="field-base-tps" class="flat-input" value="240" min="10" max="10000" oninput="changeParam('base-tps', this.value)">
                                 </div>
                                 <!-- 上下文长度 -->
-                                <div class="input-group color-group-performance">
+                                <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
                                         <span class="label-text">平均上下文请求窗口</span>
                                     </div>
@@ -1064,13 +977,13 @@
                     </div>
 
                     <!-- 全局共享：系统算力负载率 (控制核心枢纽) -->
-                    <div class="input-group" style="margin-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 20px;">
+                    <div class="input-group" style="margin-top: 10px; border-top: 2px dashed var(--border-default); padding-top: 20px;">
                         <div class="label-row">
-                            <span class="label-text" style="color: var(--accent-bright); font-weight: 600;">
+                            <span class="label-text" style="color: var(--primary-dark); font-weight: 800;">
                                 <i data-lucide="gauge"></i>
-                                系统当前算力利用率 (U)
+                                系统当前实际算力利用率 (U)
                             </span>
-                            <span class="value-badge" id="badge-utilization" style="color: var(--accent-bright); border-color: rgba(94, 106, 210, 0.4); background: rgba(94, 106, 210, 0.08);">50%</span>
+                            <span class="value-badge" id="badge-utilization" style="background-color: var(--primary-dark); color: #FFFFFF;">50%</span>
                         </div>
                         <div class="slider-wrapper">
                             <input type="range" id="slider-utilization" min="0" max="100" step="1" value="50" oninput="changeParam('utilization-rate', this.value)">
@@ -1088,6 +1001,12 @@
         <!-- 右侧：Dashboard 区域 (col-span-4) -->
         <div class="col-span-4 dashboard-layout">
             
+            <!-- 自建可行性状态条 (ROI Safety Redline) -->
+            <div id="roi-redline-banner" class="roi-redline-banner success">
+                <i data-lucide="shield-check" id="roi-banner-icon"></i>
+                <div id="roi-banner-text">正在评估算力防御线...</div>
+            </div>
+
             <!-- 4 个 KPI Bento Items -->
             <div class="kpi-grid">
                 <!-- 成本 -->
@@ -1095,7 +1014,7 @@
                     <div class="card-inner">
                         <div class="kpi-bento-label">
                             <i data-lucide="calculator"></i>
-                            月度总成本 (OPEX)
+                            月度运营成本 (OPEX)
                         </div>
                         <div class="kpi-bento-value-row">
                             <span class="kpi-bento-value" id="val-total-cost">0.00</span>
@@ -1109,7 +1028,7 @@
                     <div class="card-inner">
                         <div class="kpi-bento-label">
                             <i data-lucide="trending-up"></i>
-                            盈亏平衡售价
+                            自建盈亏平衡单价
                         </div>
                         <div class="kpi-bento-value-row">
                             <span class="kpi-bento-value" id="val-be-price">0.00</span>
@@ -1123,21 +1042,21 @@
                     <div class="card-inner">
                         <div class="kpi-bento-label">
                             <i data-lucide="bar-chart-2"></i>
-                            最低平衡负载率
+                            自建最低盈亏负载率
                         </div>
                         <div class="kpi-bento-value-row">
                             <span class="kpi-bento-value" id="val-be-utilization">0.0%</span>
-                            <span class="kpi-bento-unit">负载占比</span>
+                            <span class="kpi-bento-unit">利用率临界</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- 月预计净利润 -->
-                <div class="bento-card kpi-bento" id="kpi-profit-bento">
+                <div class="bento-card kpi-bento" id="kpi-profit-bento" style="border-top-width: 4px;">
                     <div class="card-inner">
                         <div class="kpi-bento-label">
                             <i data-lucide="activity" id="kpi-profit-arrow"></i>
-                            月预计净利润
+                            预计月度净利润
                         </div>
                         <div class="kpi-bento-value-row">
                             <span class="kpi-bento-value" id="val-net-profit">0.00</span>
@@ -1152,17 +1071,21 @@
                 <div class="card-inner">
                     <div class="chart-header-bar">
                         <div class="chart-head-title">
-                            <i data-lucide="activity"></i>
-                            盈亏平衡收支解析曲线
+                            <i data-lucide="area-chart"></i>
+                            自建集群 vs API 采购盈亏平衡多线解析曲线
                         </div>
                         <div class="chart-custom-legend">
                             <div class="custom-legend-item">
-                                <span class="legend-indicator-line" style="background: var(--accent);"></span>
-                                <span>月度总收入</span>
+                                <span class="legend-indicator-line" style="background: var(--primary);"></span>
+                                <span>自建Token总收入</span>
                             </div>
                             <div class="custom-legend-item">
-                                <span class="legend-indicator-line" style="border-bottom: 2px dashed var(--foreground-muted); height: 0;"></span>
-                                <span>月度运营总成本 (包含动态电量)</span>
+                                <span class="legend-indicator-line" style="border-bottom: 2px dashed #9CA3AF; height: 0;"></span>
+                                <span>自建运营总成本</span>
+                            </div>
+                            <div class="custom-legend-item">
+                                <span class="legend-indicator-line" style="background: var(--purple);"></span>
+                                <span>API 采购替代成本</span>
                             </div>
                         </div>
                     </div>
@@ -1170,8 +1093,10 @@
                     <!-- 图表画布区域 -->
                     <div class="chart-container-wrapper">
                         <div id="main-analysis-chart"></div>
-                        <!-- 脉冲物理坐标呼吸灯 -->
-                        <div id="chart-glow-pulse" class="glow-pulse-dot"></div>
+                        <!-- 盈亏平衡收支交点 (黄色脉冲) -->
+                        <div id="chart-glow-pulse-be" class="glow-pulse-dot pulse-dot-be" title="自建收支平衡点"></div>
+                        <!-- API 划算临界点 (紫色脉冲) -->
+                        <div id="chart-glow-pulse-roi" class="glow-pulse-dot pulse-dot-roi" title="自建划算临界点 (API防线)"></div>
                     </div>
                 </div>
             </div>
@@ -1182,7 +1107,7 @@
 
     <!-- 页脚 Footer -->
     <footer>
-        <div>大模型算力集群投资回报分析系统 • Linear System v3.0</div>
+        <div>大模型算力集群 ROI 辅助决策沙盘 • Flat Poster System v4.0</div>
         <div class="footer-desc-group">
             <span>硬件折旧按双倍余额/平均分摊计算</span>
             <span>|</span>
@@ -1215,12 +1140,22 @@
             opsOverheadRatio: 0.1
         };
 
+        // API 价格基准映射数据 (输入/输出比例以 4:1 计算)
+        const apiBenchmarks = {
+            'pro-official': { name: 'DeepSeek-V4-Pro (官方原厂折合)', blended: 8.70, text: '8.70 元/M' },
+            'pro-channel': { name: 'DeepSeek-V4-Pro (云渠道目录价)', blended: 14.40, text: '14.40 元/M' },
+            'flash-official': { name: 'DeepSeek-V4-Flash (官方原厂折合)', blended: 0.26, text: '0.26 元/M' },
+            'flash-channel': { name: 'DeepSeek-V4-Flash (云渠道目录价)', blended: 1.20, text: '1.20 元/M' }
+        };
+
         let currentParams = { ...initParams };
+        let selectedApiId = 'pro-official';
         let tickerInstances = {};
         let analysisChart = null;
-        let lastCrossPoint = null;
+        let lastCrossPointBe = null;
+        let lastCrossPointRoi = null;
 
-        // 数值平滑变化组件
+        // 数值平滑变化组件 (Flat 印刷大数滚动)
         class SmoothNumberTicker {
             constructor(elementId, renderFn, startVal = 0) {
                 this.element = document.getElementById(elementId);
@@ -1229,7 +1164,7 @@
                 this.targetVal = startVal;
                 this.animFrame = null;
                 this.animStart = null;
-                this.duration = 200; // 缓动时间毫秒
+                this.duration = 200; // 缓动时间 200ms
             }
 
             update(newVal) {
@@ -1281,8 +1216,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             // 初始化克隆核心输入到高级面板
             syncCoreInputs();
-            // 初始化 Bento Spotlight 鼠标监听
-            initBentoSpotlight();
             
             // 初始化数据滚动翻页器
             tickerInstances['total-cost'] = new SmoothNumberTicker('val-total-cost', val => val.toFixed(2));
@@ -1298,7 +1231,7 @@
             window.addEventListener('resize', () => {
                 if (analysisChart) {
                     analysisChart.resize();
-                    relocatePulseDot();
+                    relocatePulseDots();
                 }
             });
         });
@@ -1341,7 +1274,7 @@
                     <div class="label-row">
                         <span class="label-text">
                             <i data-lucide="tag"></i>
-                            混合 Token 销售单价 (元/百万)
+                            自建 Token 销售单价 (元/百万)
                         </span>
                         <span class="value-badge" id="badge-token-price-adv">12</span>
                     </div>
@@ -1355,24 +1288,6 @@
                 </div>
             `;
             lucide.createIcons();
-            initBentoSpotlight(); // 给新生成的 DOM 绑定 spotlight
-        }
-
-        // 初始化所有 Bento 卡片的光标聚光灯特效
-        function initBentoSpotlight() {
-            const cards = document.querySelectorAll('.bento-card');
-            cards.forEach(card => {
-                card.removeEventListener('mousemove', spotlightMove);
-                card.addEventListener('mousemove', spotlightMove);
-            });
-        }
-
-        function spotlightMove(e) {
-            const rect = this.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            this.style.setProperty('--mouse-x', `${x}px`);
-            this.style.setProperty('--mouse-y', `${y}px`);
         }
 
         // 切换左侧表单 Pane
@@ -1391,7 +1306,7 @@
             setTimeout(() => {
                 if (analysisChart) {
                     analysisChart.resize();
-                    relocatePulseDot();
+                    relocatePulseDots();
                 }
             }, 50);
         }
@@ -1411,10 +1326,17 @@
                 customTpsWrap.style.display = 'none';
                 changeParam('base-tps', 960);
             } else {
-                customTpsWrap.style.display = 'flex';
+                customTpsWrap.style.display = 'block';
                 const userTps = document.getElementById('field-base-tps').value;
                 changeParam('base-tps', userTps);
             }
+        }
+
+        // 改变选中的 API 竞品基准
+        function changeApiBenchmark(val) {
+            selectedApiId = val;
+            document.getElementById('badge-api-price').textContent = apiBenchmarks[val].text;
+            runFinancialCalculator();
         }
 
         // 更新状态并刷新数据
@@ -1482,7 +1404,11 @@
         // 重置配置
         function resetAllValues() {
             currentParams = { ...initParams };
+            selectedApiId = 'pro-official';
             
+            document.getElementById('select-api-benchmark').value = selectedApiId;
+            document.getElementById('badge-api-price').textContent = apiBenchmarks[selectedApiId].text;
+
             document.getElementById('slider-server-count').value = currentParams.serverCount;
             document.getElementById('slider-server-count-adv').value = currentParams.serverCount;
             document.getElementById('badge-server-count').textContent = currentParams.serverCount;
@@ -1527,7 +1453,7 @@
             // 1. 物理吞吐性能
             const commEfficiency = Math.pow(1 - (currentParams.commLoss / 100), nodeCount - 1);
             const totalHours = 720;
-            const maxTokensMonth = (nodeCount * currentParams.baseTps * commEfficiency * currentParams.contextFactor * totalHours * 3600) / 1000000;
+            const maxTokensMonth = (nodeCount * currentParams.baseTps * commEfficiency * currentParams.contextFactor * totalHours * 3600) / 1000000; // 百万 Token
             
             // 2. 固定运营成本 (折旧、房租、固定运维)
             const depCostMonth = (nodeCount * currentParams.nodePrice) / currentParams.depPeriod; // 万元
@@ -1546,12 +1472,12 @@
             const currentPowerCost = idlePowerCost + (variablePowerSlope * currentUDec);
             const currentTotalOpex = fixedCostBase + currentPowerCost;
 
-            // 4. 收入与利润
+            // 4. 自建收入与利润
             const actualThroughput = maxTokensMonth * currentUDec;
             const actualRevenue = (actualThroughput * currentParams.tokenPrice) / 10000;
             const netProfit = actualRevenue - currentTotalOpex;
 
-            // 5. 求解平衡点 (U_be)
+            // 5. 求解平衡点 (U_be) & 最低平衡售价 (bePriceVal)
             const maxRevenuePotential = (maxTokensMonth * currentParams.tokenPrice) / 10000;
             const fixedCostTotal = fixedCostBase + idlePowerCost; // 固定成本 (含空闲电费)
             const netDenominator = maxRevenuePotential - variablePowerSlope;
@@ -1569,7 +1495,18 @@
                 bePriceVal = Infinity;
             }
 
-            // 6. 更新 KPI Bento
+            // 6. 求解自建与购买 API 替代成本的临界交汇利用率 (U_roi)
+            // 公式: fixedCostTotal + variablePowerSlope * U = maxTokensMonth * U * APIBlendedPrice / 10000
+            const apiPrice = apiBenchmarks[selectedApiId].blended;
+            const maxApiCostPotential = (maxTokensMonth * apiPrice) / 10000; // 万元
+            const roiDenominator = maxApiCostPotential - variablePowerSlope;
+            
+            let roiUDec = null;
+            if (roiDenominator > 0) {
+                roiUDec = fixedCostTotal / roiDenominator;
+            }
+
+            // 7. 更新 KPI Bento 数字
             tickerInstances['total-cost'].update(currentTotalOpex);
             
             // 利润状态卡片微发光调色板
@@ -1578,19 +1515,15 @@
             const netProfitValueEl = document.getElementById('val-net-profit');
             
             if (netProfit >= 0) {
-                profitBento.className = 'bento-card kpi-bento profit-glowing';
-                profitBento.style.borderTopColor = 'var(--semantic-green)';
+                profitBento.style.borderTopColor = 'var(--secondary)';
                 profitArrow.setAttribute('data-lucide', 'trending-up');
-                profitArrow.style.color = 'var(--semantic-green)';
-                netProfitValueEl.style.color = '#34d399';
-                netProfitValueEl.style.textShadow = '0 0 12px rgba(52, 211, 153, 0.25)';
+                profitArrow.style.color = 'var(--secondary)';
+                netProfitValueEl.style.color = '#059669';
             } else {
-                profitBento.className = 'bento-card kpi-bento loss-glowing';
-                profitBento.style.borderTopColor = 'var(--semantic-red)';
+                profitBento.style.borderTopColor = 'var(--danger)';
                 profitArrow.setAttribute('data-lucide', 'trending-down');
-                profitArrow.style.color = 'var(--semantic-red)';
-                netProfitValueEl.style.color = '#f87171';
-                netProfitValueEl.style.textShadow = '0 0 12px rgba(248, 113, 113, 0.25)';
+                profitArrow.style.color = 'var(--danger)';
+                netProfitValueEl.style.color = '#ef4444';
             }
             lucide.createIcons();
 
@@ -1610,14 +1543,35 @@
                 tickerInstances['be-utilization'].update('无法平衡');
             }
 
-            // 7. 渲染 ECharts 曲线
-            drawAnalysisChart(fixedCostTotal, variablePowerSlope, maxRevenuePotential, beUDec);
+            // 8. 判定 ROI 可行性红线状态并更新状态条 (ROI Safety Redline Banner)
+            const banner = document.getElementById('roi-redline-banner');
+            const bannerIcon = document.getElementById('roi-banner-icon');
+            const bannerText = document.getElementById('roi-banner-text');
+
+            const selectedApiName = apiBenchmarks[selectedApiId].name;
+            const selectedApiBlended = apiBenchmarks[selectedApiId].blended.toFixed(2);
+
+            if (bePriceVal > apiPrice) {
+                // 防线失守 (红色)
+                banner.className = 'roi-redline-banner warning';
+                bannerIcon.setAttribute('data-lucide', 'shield-alert');
+                bannerText.innerHTML = `⚠️ <b>算力防线失守！</b>自建盈亏平衡单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(2)} 元/百万</span>) <b>高于</b> 选定 API 价格 (<span class="roi-banner-badge" style="background:#B91C1C;">${selectedApiBlended} 元/百万</span>)。在此负载率下建议直接采购 <b>${selectedApiName}</b>，暂缓自建算力。`;
+            } else {
+                // 安全防御 (绿色)
+                banner.className = 'roi-redline-banner success';
+                bannerIcon.setAttribute('data-lucide', 'shield-check');
+                bannerText.innerHTML = `✅ <b>算力防御成功！</b>自建盈亏平衡单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(2)} 元/百万</span>) <b>低于</b> 选定 API 价格 (<span class="roi-banner-badge" style="background:#047857;">${selectedApiBlended} 元/百万</span>)。当前规模自建具备突出的 ROI 财务优势，防线安全。`;
+            }
+            lucide.createIcons();
+
+            // 9. 渲染 ECharts 曲线与物理脉冲拐点
+            drawAnalysisChart(fixedCostTotal, variablePowerSlope, maxRevenuePotential, maxApiCostPotential, beUDec, roiUDec);
         }
 
-        // 初始化 ECharts (Linear 暗黑系列)
+        // 初始化 ECharts (Flat 亮色系列)
         function initAnalysisChart() {
             const dom = document.getElementById('main-analysis-chart');
-            analysisChart = echarts.init(dom, 'dark', {
+            analysisChart = echarts.init(dom, null, {
                 renderer: 'canvas',
                 useDirtyRect: false
             });
@@ -1626,21 +1580,22 @@
                 backgroundColor: 'transparent',
                 tooltip: {
                     trigger: 'axis',
-                    className: 'tooltip-linear',
-                    borderColor: 'rgba(255, 255, 255, 0.08)',
-                    backgroundColor: '#0a0a0c',
+                    className: 'tooltip-flat',
+                    borderColor: '#111827',
+                    borderWidth: 2,
                     textStyle: {
-                        color: '#ededef',
+                        color: '#111827',
                         fontFamily: 'Inter',
-                        fontSize: 12
+                        fontSize: 12,
+                        fontWeight: 600
                     },
                     formatter: function (items) {
-                        let text = `<div style="font-weight: 600; font-family: Outfit; margin-bottom: 6px; font-size:13px; color:#5e6ad2;">算力利用率: ${items[0].name}%</div>`;
+                        let text = `<div style="font-weight: 800; font-family: Outfit; margin-bottom: 8px; font-size:14px; color:#111827; border-bottom: 2px solid #E5E7EB; padding-bottom: 4px;">算力利用率: ${items[0].name}%</div>`;
                         items.forEach(el => {
                             const num = parseFloat(el.value).toFixed(2);
-                            text += `<div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; font-family:Inter;">
-                                        <span style="color:#8a8f98;">${el.seriesName}:</span>
-                                        <span style="font-weight:500; color:${el.color};">${num} 万元</span>
+                            text += `<div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; font-family:Inter; margin-bottom: 4px;">
+                                        <span style="color:#4B5563;">${el.seriesName}:</span>
+                                        <span style="font-weight:800; color:${el.color};">${num} 万元</span>
                                     </div>`;
                         });
                         return text;
@@ -1659,19 +1614,21 @@
                     data: Array.from({length: 101}, (_, i) => i),
                     axisLabel: {
                         formatter: '{value}%',
-                        color: '#8a8f98',
+                        color: '#4B5563',
                         fontFamily: 'Outfit',
-                        fontSize: 11
+                        fontSize: 11,
+                        fontWeight: 700
                     },
                     axisLine: {
                         lineStyle: {
-                            color: 'rgba(255, 255, 255, 0.04)'
+                            color: '#111827',
+                            width: 2
                         }
                     },
                     splitLine: {
                         show: true,
                         lineStyle: {
-                            color: 'rgba(255, 255, 255, 0.015)'
+                            color: 'rgba(17, 24, 39, 0.05)'
                         }
                     }
                 },
@@ -1679,49 +1636,63 @@
                     type: 'value',
                     name: '金额 (万元)',
                     nameTextStyle: {
-                        color: '#8a8f98',
-                        fontSize: 10,
+                        color: '#4B5563',
+                        fontSize: 11,
+                        fontWeight: 700,
                         align: 'right',
                         fontFamily: 'Inter'
                     },
                     axisLabel: {
-                        color: '#8a8f98',
+                        color: '#4B5563',
                         fontFamily: 'Outfit',
-                        fontSize: 11
+                        fontSize: 11,
+                        fontWeight: 700
                     },
                     axisLine: {
                         lineStyle: {
-                            color: 'rgba(255, 255, 255, 0.04)'
+                            color: '#111827',
+                            width: 2
                         }
                     },
                     splitLine: {
                         show: true,
                         lineStyle: {
-                            color: 'rgba(255, 255, 255, 0.03)'
+                            color: 'rgba(17, 24, 39, 0.08)'
                         }
                     }
                 },
                 series: [
                     {
-                        name: '月度运营成本',
+                        name: '自建运营总成本',
                         type: 'line',
                         smooth: true,
                         symbol: 'none',
                         lineStyle: {
-                            color: '#8a8f98', // 灰色虚线成本
-                            width: 2,
+                            color: '#9CA3AF', // 灰色虚线成本
+                            width: 2.5,
                             type: 'dashed'
                         },
                         data: []
                     },
                     {
-                        name: '月度总收入',
+                        name: '自建Token总收入',
                         type: 'line',
                         smooth: true,
                         symbol: 'none',
                         lineStyle: {
-                            color: '#5e6ad2', // 饱和靛蓝收入实线
-                            width: 3.5
+                            color: '#3B82F6', // 亮蓝自建收入实线
+                            width: 4
+                        },
+                        data: []
+                    },
+                    {
+                        name: 'API 采购替代成本',
+                        type: 'line',
+                        smooth: true,
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#8B5CF6', // 采购 API 替代成本线 (高饱和度紫色)
+                            width: 4
                         },
                         data: []
                     }
@@ -1729,76 +1700,82 @@
             };
 
             analysisChart.setOption(option);
-            analysisChart.on('finished', relocatePulseDot);
+            analysisChart.on('finished', relocatePulseDots);
         }
 
         // 重新渲染 ECharts 数据点
-        function drawAnalysisChart(fixedC, varSlope, maxRev, beUDec) {
+        function drawAnalysisChart(fixedC, varSlope, maxRev, maxApiCost, beUDec, roiUDec) {
             if (!analysisChart) return;
 
             const cData = [];
             const rData = [];
+            const apiData = [];
 
             for (let i = 0; i <= 100; i++) {
                 const dec = i / 100;
                 cData.push(fixedC + (varSlope * dec));
                 rData.push(maxRev * dec);
+                apiData.push(maxApiCost * dec);
             }
 
-            let bPercent = null;
-            let bValue = null;
             let areas = [];
 
+            // 自建收支平衡拐点记录
             if (beUDec !== null && beUDec >= 0 && beUDec <= 1) {
-                bPercent = beUDec * 100;
-                bValue = fixedC + (varSlope * beUDec);
-                lastCrossPoint = { x: bPercent, y: bValue };
+                const bPercent = beUDec * 100;
+                const bValue = fixedC + (varSlope * beUDec);
+                lastCrossPointBe = { x: bPercent, y: bValue };
 
-                areas = [
-                    [
-                        {
-                            xAxis: 0,
-                            itemStyle: {
-                                color: 'rgba(239, 68, 68, 0.015)' // 亏损极淡红色
-                            }
-                        },
-                        {
-                            xAxis: Math.min(100, bPercent)
+                areas.push([
+                    {
+                        xAxis: 0,
+                        itemStyle: {
+                            color: 'rgba(239, 68, 68, 0.03)' // 亏损区间 (淡粉红)
                         }
-                    ],
-                    [
-                        {
-                            xAxis: Math.min(100, bPercent),
-                            itemStyle: {
-                                color: 'rgba(94, 106, 210, 0.04)' // 盈利淡靛蓝填充
-                            }
-                        },
-                        {
-                            xAxis: 100
+                    },
+                    {
+                        xAxis: Math.min(100, bPercent)
+                    }
+                ]);
+                areas.push([
+                    {
+                        xAxis: Math.min(100, bPercent),
+                        itemStyle: {
+                            color: 'rgba(16, 185, 129, 0.03)' // 盈利区间 (淡绿)
                         }
-                    ]
-                ];
+                    },
+                    {
+                        xAxis: 100
+                    }
+                ]);
             } else {
-                lastCrossPoint = null;
-                areas = [
-                    [
-                        {
-                            xAxis: 0,
-                            itemStyle: {
-                                color: 'rgba(239, 68, 68, 0.015)'
-                            }
-                        },
-                        {
-                            xAxis: 100
+                lastCrossPointBe = null;
+                areas.push([
+                    {
+                        xAxis: 0,
+                        itemStyle: {
+                            color: 'rgba(239, 68, 68, 0.03)'
                         }
-                    ]
-                ];
+                    },
+                    {
+                        xAxis: 100
+                    }
+                ]);
+            }
+
+            // 自建 vs API 临界拐点记录
+            if (roiUDec !== null && roiUDec >= 0 && roiUDec <= 1) {
+                const rPercent = roiUDec * 100;
+                const rValue = fixedC + (varSlope * roiUDec);
+                lastCrossPointRoi = { x: rPercent, y: rValue };
+            } else {
+                lastCrossPointRoi = null;
             }
 
             analysisChart.setOption({
                 series: [
                     {
-                        name: '月度运营成本',
+                        name: '自建运营总成本',
                         data: cData,
                         markArea: {
                             silent: true,
@@ -1806,35 +1783,65 @@
                         }
                     },
                     {
-                        name: '月度总收入',
+                        name: '自建Token总收入',
                         data: rData
+                    },
+                    {
+                        name: 'API 采购替代成本',
+                        data: apiData
                     }
                 ]
             });
 
             // 重新定位交点脉冲
-            setTimeout(relocatePulseDot, 50);
+            setTimeout(relocatePulseDots, 50);
         }
 
-        // 重新计算转换物理像素点，安置脉冲灯
-        function relocatePulseDot() {
-            const glowDot = document.getElementById('chart-glow-pulse');
-            if (!analysisChart || !lastCrossPoint) {
-                glowDot.style.display = 'none';
+        // 重新计算转换物理像素点，安置盈亏平衡与防线拐点的脉冲灯
+        function relocatePulseDots() {
+            const glowDotBe = document.getElementById('chart-glow-pulse-be');
+            const glowDotRoi = document.getElementById('chart-glow-pulse-roi');
+            
+            if (!analysisChart) {
+                glowDotBe.style.display = 'none';
+                glowDotRoi.style.display = 'none';
                 return;
             }
 
-            try {
-                const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPoint.x, lastCrossPoint.y]);
-                if (xy && !isNaN(xy[0]) && !isNaN(xy[1])) {
-                    glowDot.style.left = xy[0] + 'px';
-                    glowDot.style.top = xy[1] + 'px';
-                    glowDot.style.display = 'block';
-                } else {
-                    glowDot.style.display = 'none';
+            // 1. 定位自建收支平衡脉冲
+            if (lastCrossPointBe) {
+                try {
+                    const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPointBe.x, lastCrossPointBe.y]);
+                    if (xy && !isNaN(xy[0]) && !isNaN(xy[1])) {
+                        glowDotBe.style.left = xy[0] + 'px';
+                        glowDotBe.style.top = xy[1] + 'px';
+                        glowDotBe.style.display = 'block';
+                    } else {
+                        glowDotBe.style.display = 'none';
+                    }
+                } catch (err) {
+                    glowDotBe.style.display = 'none';
                 }
-            } catch (err) {
-                glowDot.style.display = 'none';
+            } else {
+                glowDotBe.style.display = 'none';
+            }
+
+            // 2. 定位 API 划算临界脉冲
+            if (lastCrossPointRoi) {
+                try {
+                    const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPointRoi.x, lastCrossPointRoi.y]);
+                    if (xy && !isNaN(xy[0]) && !isNaN(xy[1])) {
+                        glowDotRoi.style.left = xy[0] + 'px';
+                        glowDotRoi.style.top = xy[1] + 'px';
+                        glowDotRoi.style.display = 'block';
+                    } else {
+                        glowDotRoi.style.display = 'none';
+                    }
+                } catch (err) {
+                    glowDotRoi.style.display = 'none';
+                }
+            } else {
+                glowDotRoi.style.display = 'none';
             }
         }
     </script>
