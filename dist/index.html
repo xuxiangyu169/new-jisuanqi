@@ -10,6 +10,10 @@
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <!-- 引入 Lucide 图标 -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- 引入 KaTeX 的 CSS 和 JS 自动渲染 LaTeX 数学公式 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMaths()"></script>
     
     <style>
         :root {
@@ -736,15 +740,19 @@
         }
 
         .formula-body {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 14px;
+            font-weight: 500;
             color: var(--foreground);
-            background: #FFFFFF;
-            padding: 6px 10px;
-            border: 1px solid var(--border-default);
-            border-radius: 4px;
+            background: transparent;
+            padding: 4px 0;
+            border: none;
             overflow-x: auto;
+            display: block;
+        }
+
+        /* 修复 KaTeX 公式可能产生的多余纵向滚动条或溢出 */
+        .formula-body .katex-display {
+            margin: 0.3em 0;
         }
 
         .formula-desc {
@@ -757,7 +765,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-height: 480px;
+            max-height: 520px;
             overflow-y: auto;
             padding-right: 8px;
         }
@@ -1239,43 +1247,43 @@
                 <div>
                     <div class="formula-section-title">
                         <i data-lucide="calculator" style="width: 14px; height: 14px; color: var(--primary-dark);"></i>
-                        底层链式数学公式组 (核心计算逻辑)
+                        底层链式数学公式组 (LaTeX 排版数学内核)
                     </div>
                     <div class="formula-list">
                         <div class="formula-item">
                             <div class="formula-name">1. 资产总值 (CapEx)</div>
-                            <div class="formula-body">CapEx = (Price_server × N_server) + Price_network</div>
+                            <div class="formula-body">$$CapEx = (Price_{server} \times N_{server}) + Price_{network}$$</div>
                             <div class="formula-desc">整个算力节点与组网资产采购的总资本性支出。</div>
                         </div>
                         <div class="formula-item">
                             <div class="formula-name">2. 年固定资产折旧 (D_CapEx)</div>
-                            <div class="formula-body">D_CapEx = CapEx ÷ Years_depreciation</div>
+                            <div class="formula-body">$$D_{CapEx} = \frac{CapEx}{Years_{depreciation}}$$</div>
                             <div class="formula-desc">依据折旧年限红线（3年或5年）将资产进行等额年折旧分摊。</div>
                         </div>
                         <div class="formula-item">
                             <div class="formula-name">3. 年运营成本 (OpEx_annual)</div>
-                            <div class="formula-body">OpEx_annual = [ 电力开销 + 机柜租赁 + 宽带年费 + 运维人工费 ]</div>
+                            <div class="formula-body">$$OpEx_{annual} = (Power_{server} \times PUE \times 24 \times 365 \times Price_{electricity} \times N_{server}) + (Price_{cabinet} \times N_{server} \times 12) + (Bandwidth_{monthly} \times 12) + (Ops_{monthly} \times 12)$$</div>
                             <div class="formula-desc">包含算力服务器满载电费(结合PUE)、机柜租金、独享宽带和运维分摊。</div>
                         </div>
                         <div class="formula-item">
                             <div class="formula-name">4. 集群最大 Token 年产能 (M_annual)</div>
-                            <div class="formula-body">M_annual = T_speed × 86400 × 365 × (1 - Alpha_fail) ÷ 1,000,000</div>
-                            <div class="formula-desc">在不考虑空闲功耗与利用率的情况下，集群一年能产出的最大 Token 量。</div>
+                            <div class="formula-body">$$M_{annual} = \frac{T_{speed} \times 86400 \times 365 \times (1 - Alpha_{fail})}{1,000,000}$$</div>
+                            <div class="formula-desc">在不考虑空闲功耗与利用率的情况下，集群一年能产出的最大 Token 量 (单位：百万 Tokens)。</div>
                         </div>
                         <div class="formula-item">
                             <div class="formula-name">5. 实际年净利润 (P_net)</div>
-                            <div class="formula-body">P_net = (M_annual × U_rate × P_sales) - OpEx_annual - D_CapEx</div>
+                            <div class="formula-body">$$P_{net} = (M_{annual} \times U_{rate} \times P_{sales}) - OpEx_{annual} - D_{CapEx}$$</div>
                             <div class="formula-desc">年营业额减去年度运营成本(OpEx)与年度折旧费用的最终损益。</div>
                         </div>
                         <div class="formula-item">
                             <div class="formula-name">6. 盈亏平衡点利用率红线 (U_BEP)</div>
-                            <div class="formula-body">U_BEP = (OpEx_annual + D_CapEx) ÷ (M_annual × P_sales)</div>
+                            <div class="formula-body">$$U_{BEP} = \frac{OpEx_{annual} + D_{CapEx}}{M_{annual} \times P_{sales}}$$</div>
                             <div class="formula-desc">当净利润为0时反推出来的绝对保本利用率，高于此利用率自建才能保本。</div>
                         </div>
                         <div class="formula-item">
                             <div class="formula-name">7. 纯现金流回本周期 (T_cash_back)</div>
-                            <div class="formula-body">T_cash_back = CapEx ÷ (R_gross - OpEx_annual)</div>
-                            <div class="formula-desc">使用总营业额扣除运营成本后的年现金流净收入来回收 CapEx 投入的周期。</div>
+                            <div class="formula-body">$$T_{cash\_back} = \frac{CapEx}{R_{gross} - OpEx_{annual}}$$</div>
+                            <div class="formula-desc">使用总营业额扣除运营成本后的年现金流净收入来回收 CapEx 投入的周期 (其中 $R_{gross} = M_{annual} \times U_{rate} \times P_{sales}$)。</div>
                         </div>
                     </div>
                 </div>
@@ -1356,7 +1364,7 @@
 
     <!-- 页脚 Footer -->
     <footer>
-        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • Flat Poster System v5.0</div>
+        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • Flat Poster System v5.1</div>
         <div class="footer-desc-group">
             <span>硬件折旧按双倍余额/平均分摊计算</span>
             <span>|</span>
@@ -1369,6 +1377,21 @@
     <script>
         // 初始化图标
         lucide.createIcons();
+
+        // 渲染数学公式方法
+        function renderMaths() {
+            if (typeof renderMathInElement === 'function') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError : false
+                });
+            }
+        }
 
         // 默认参数定义 (完全对齐 8台昇腾910B集群运行DeepSeek-V4)
         const initParams = {
@@ -1389,7 +1412,7 @@
             alphaFail: 5, // 故障停机率：5%
             
             // 销售定价
-            tokenPrice: 1.20, // 销售价：1.20 元/百万 (与官方 1.2 对齐获客？等一下，Flash 的 API 混合均价是 0.26)
+            tokenPrice: 1.20, // 销售价：1.20 元/百万
             utilizationRate: 30 // 利用率：30%
         };
 
@@ -1495,6 +1518,8 @@
             initAnalysisChart();
             // 运行计算
             runFinancialCalculator();
+            // 渲染LaTeX数学公式
+            renderMaths();
 
             window.addEventListener('resize', () => {
                 if (analysisChart) {
@@ -1853,6 +1878,8 @@
             }
             lucide.createIcons();
 
+            tickerInstances['net-profit'].update(P_net / 10000);
+
             if (bePriceVal === Infinity) {
                 tickerInstances['be-price'].update('N/A');
             } else {
@@ -1894,142 +1921,6 @@
             drawPriceChart(OpEx_annual, D_CapEx, M_annual, P_sales, P_official, beUDec, roiUDec);
         }
 
-        // 初始化 ECharts (单价对比坐标轴)
-        function initAnalysisChart() {
-            const dom = document.getElementById('main-analysis-chart');
-            analysisChart = echarts.init(dom, null, {
-                renderer: 'canvas',
-                useDirtyRect: false
-            });
-
-            const option = {
-                backgroundColor: 'transparent',
-                tooltip: {
-                    trigger: 'axis',
-                    className: 'tooltip-flat',
-                    borderColor: '#111827',
-                    borderWidth: 2,
-                    textStyle: {
-                        color: '#111827',
-                        fontFamily: 'Inter',
-                        fontSize: 12,
-                        fontWeight: 600
-                    },
-                    formatter: function (items) {
-                        let text = `<div style="font-weight: 800; font-family: Outfit; margin-bottom: 8px; font-size:14px; color:#111827; border-bottom: 2px solid #E5E7EB; padding-bottom: 4px;">算力利用率: ${items[0].name}%</div>`;
-                        items.forEach(el => {
-                            const val = parseFloat(el.value);
-                            const displayVal = (isNaN(val) || val === null) ? 'N/A' : val.toFixed(2) + ' 元/百万';
-                            text += `<div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; font-family:Inter; margin-bottom: 4px;">
-                                        <span style="color:#4B5563;">${el.seriesName}:</span>
-                                        <span style="font-weight:800; color:${el.color};">${displayVal}</span>
-                                    </div>`;
-                        });
-                        return text;
-                    }
-                },
-                grid: {
-                    left: '2%',
-                    right: '2%',
-                    bottom: '8%',
-                    top: '8%',
-                    containLabel: true
-                },
-                xAxis: {
-                    type: 'category',
-                    boundaryGap: false,
-                    data: Array.from({length: 101}, (_, i) => i),
-                    axisLabel: {
-                        formatter: '{value}%',
-                        color: '#4B5563',
-                        fontFamily: 'Outfit',
-                        fontSize: 11,
-                        fontWeight: 700
-                    },
-                    axisLine: {
-                        lineStyle: {
-                            color: '#111827',
-                            width: 2
-                        }
-                    },
-                    splitLine: {
-                        show: true,
-                        lineStyle: {
-                            color: 'rgba(17, 24, 39, 0.05)'
-                        }
-                    }
-                },
-                yAxis: {
-                    type: 'value',
-                    name: '单价 (元 / 百万 Tokens)',
-                    nameTextStyle: {
-                        color: '#4B5563',
-                        fontSize: 11,
-                        fontWeight: 700,
-                        align: 'right',
-                        fontFamily: 'Inter'
-                    },
-                    axisLabel: {
-                        color: '#4B5563',
-                        fontFamily: 'Outfit',
-                        fontSize: 11,
-                        fontWeight: 700
-                    },
-                    axisLine: {
-                        lineStyle: {
-                            color: '#111827',
-                            width: 2
-                        }
-                    },
-                    splitLine: {
-                        show: true,
-                        lineStyle: {
-                            color: 'rgba(17, 24, 39, 0.08)'
-                        }
-                    }
-                },
-                series: [
-                    {
-                        name: '自建盈亏平衡售价',
-                        type: 'line',
-                        smooth: true,
-                        symbol: 'none',
-                        lineStyle: {
-                            color: '#9CA3AF', // 灰色虚线自建成本单价
-                            width: 2.5,
-                            type: 'dashed'
-                        },
-                        data: []
-                    },
-                    {
-                        name: '自建对外销售定价',
-                        type: 'line',
-                        smooth: false,
-                        symbol: 'none',
-                        lineStyle: {
-                            color: '#3B82F6', // 蓝色实线对外售价
-                            width: 3.5
-                        },
-                        data: []
-                    },
-                    {
-                        name: 'DeepSeek 官方定价红线',
-                        type: 'line',
-                        smooth: false,
-                        symbol: 'none',
-                        lineStyle: {
-                            color: '#EF4444', // 红色加粗实线官价红线
-                            width: 4
-                        },
-                        data: []
-                    }
-                ]
-            };
-
-            analysisChart.setOption(option);
-            analysisChart.on('finished', relocatePulseDots);
-        }
-
         // 重新渲染 ECharts 数据点
         function drawPriceChart(OpEx_annual, D_CapEx, M_annual, P_sales, P_official, beUDec, roiUDec) {
             if (!analysisChart) return;
@@ -2049,7 +1940,7 @@
                     bePriceData.push(null);
                 } else {
                     const price = (OpEx_annual + D_CapEx) / (M_annual * U);
-                    bePriceData.push(price); // 大于yMax的会自动在图上截断，但不影响ECharts渲染和坐标转换
+                    bePriceData.push(price);
                 }
 
                 // 恒为对外销售定价的水平线
@@ -2156,7 +2047,6 @@
             if (lastCrossPointBe) {
                 try {
                     const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPointBe.x, lastCrossPointBe.y]);
-                    // 如果交点在当前 Y 轴 max 以上，则不显示它
                     const yMax = analysisChart.getOption().yAxis[0].max;
                     if (xy && !isNaN(xy[0]) && !isNaN(xy[1]) && lastCrossPointBe.y <= yMax) {
                         glowDotBe.style.left = xy[0] + 'px';
