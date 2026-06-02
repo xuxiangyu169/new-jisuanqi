@@ -772,6 +772,8 @@
             align-items: center;
             border-bottom: 2px solid var(--border-default);
             padding-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .chart-head-title {
@@ -781,6 +783,8 @@
             align-items: center;
             gap: 8px;
             font-family: var(--font-display);
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .chart-head-title i {
@@ -3226,6 +3230,9 @@
                         fontFamily: 'Inter'
                     },
                     axisLabel: {
+                        formatter: function (value) {
+                            return value.toFixed(2);
+                        },
                         color: '#4B5563',
                         fontFamily: 'Outfit',
                         fontSize: 11,
@@ -3320,7 +3327,8 @@
             }
 
             // 1. 定位自建保本交点 (Be)
-            if (lastCrossPointBe) {
+            // 只有当保本点 x 坐标大于 1% 时才真正显示脉冲灯，避免 0% 零点（或者负数拉平）时无意义的脉冲在 Y 轴上遮挡文字
+            if (lastCrossPointBe && lastCrossPointBe.x > 1) {
                 try {
                     const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPointBe.x, lastCrossPointBe.y]);
                     // 使用安全全局变量进行防护判断，防止报错
@@ -3340,7 +3348,8 @@
             }
 
             // 2. 定位 DeepSeek 获客临界交点 (Roi)
-            if (lastCrossPointRoi) {
+            // 只有当优势点 x 坐标大于 1% 时才显示，避免 0% 时在 Y 轴上堆叠
+            if (lastCrossPointRoi && lastCrossPointRoi.x > 1) {
                 try {
                     const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPointRoi.x, lastCrossPointRoi.y]);
                     if (glowDotRoi && xy && !isNaN(xy[0]) && !isNaN(xy[1]) && lastCrossPointRoi.y <= currentYMax) {
