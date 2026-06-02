@@ -1061,9 +1061,56 @@
                 padding: 20px;
             }
         }
+
+        /* 智能交互名词解释悬浮气泡 (Sleek Glassmorphic Tooltip) */
+        .interactive-explainer-tooltip {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.96);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1.5px solid rgba(168, 85, 247, 0.35);
+            border-radius: 8px;
+            color: #F3F4F6;
+            padding: 12px 16px;
+            font-size: 11.5px;
+            font-family: var(--font-display), sans-serif;
+            max-width: 290px;
+            line-height: 1.5;
+            box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            z-index: 99999;
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(0.95) translateY(5px);
+            transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+            display: none;
+        }
+        
+        .interactive-explainer-tooltip.active {
+            display: block;
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .interactive-explainer-tooltip-header {
+            font-weight: 800;
+            color: #A855F7;
+            margin-bottom: 6px;
+            border-bottom: 1.2px solid rgba(168, 85, 247, 0.2);
+            padding-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+
+        .interactive-explainer-tooltip-body {
+            color: #E5E7EB;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
+    <div id="global-explainer-tooltip" class="interactive-explainer-tooltip"></div>
 
     <!-- Layer 1: Base Poster Grid Lines -->
     <div class="grid-overlay"></div>
@@ -1094,7 +1141,7 @@
 
                         <!-- 1. 硬件设施成本区 (Hardware & CapEx Specs) -->
                         <div class="acc-panel">
-                            <div class="acc-trigger expanded" onclick="toggleAccordionPane(this)">
+                            <div class="acc-trigger" onclick="toggleAccordionPane(this)">
                                 <span>1. 硬件与 CapEx 区</span>
                                 <span class="acc-subtotal" id="subtotal-hardware">总资产: 0.00 万元 | 年折旧: 0.00 万元</span>
                                 <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
@@ -2265,6 +2312,8 @@
             runFinancialCalculator();
             // 渲染LaTeX数学公式
             renderMaths();
+            // 初始化全局悬浮名词释义引擎
+            initGlobalExplainer();
 
             window.addEventListener('resize', () => {
                 if (analysisChart) {
@@ -3377,6 +3426,211 @@
             } else {
                 if (glowDotRoi) glowDotRoi.style.display = 'none';
             }
+        }
+
+        // 全局悬浮名词释义引擎
+        function initGlobalExplainer() {
+            // 创建浮窗 DOM
+            let tooltip = document.getElementById('global-explainer-tooltip');
+            if (!tooltip) {
+                tooltip = document.createElement('div');
+                tooltip.id = 'global-explainer-tooltip';
+                tooltip.className = 'interactive-explainer-tooltip';
+                document.body.appendChild(tooltip);
+            }
+
+            const glossary = {
+                // 1. 硬件设施成本区
+                "硬件与CapEx": "<b>1. 硬件设施成本与CapEx区</b>：用于测算建设智算中心所需的硬件资产投资总额（包括服务器、高速交换机、网络与存储资产等）以及产生的年度折旧费用。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "硬件与CapEx区": "<b>1. 硬件设施成本与CapEx区</b>：用于测算建设智算中心所需的硬件资产投资总额（包括服务器、高速交换机、网络与存储资产等）以及产生的年度折旧费用。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "硬件与CapEx区小计": "<b>1. 硬件设施成本与CapEx区</b>：用于测算建设智算中心所需的硬件资产投资总额（包括服务器、高速交换机、网络与存储资产等）以及产生的年度折旧费用。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "硬件设施": "N_server/Price_server：大屏智算物理硬件总投入配置区。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "总资产": "CapEx：本次测算中采购所有GPU/NPU服务器、网络连接及选配存储所需的初始硬资产资金投入总额（未扣除政府补贴）。",
+                "N_server": "集群内物理服务器台数。台数直接决定了 CapEx 投资规模、总功耗与最大可供销售的年 Token 产能。",
+                "集群服务器台数": "N_server：集群内配置的物理服务器台数。台数直接决定了 CapEx 投资规模、最大总年吞吐产能。",
+                "服务器单机价格": "Price_server：单台服务器采购单价，包含内置算力显卡（如昇腾910B或高功率GPU）等分摊费用。",
+                "Price_server": "单台服务器采购单价，包含内置算力显卡（如昇腾910B或高功率GPU）等分摊费用。",
+                "网络/光纤资产": "Price_network：配套交换机、RDMA高速光纤等配套组网资产总额。",
+                "Price_network": "配套交换机、RDMA高速光纤等配套组网资产总额。",
+                "配套组网资产": "Price_network：配套交换机、RDMA高速光纤等配套组网资产总额。",
+                "选配存储资产": "Price_storage：扩容选配的高速存储集群资产总额，不设则为0。",
+                "Price_storage": "扩容选配的高速存储集群资产总额，不设则为0。",
+                "折旧年限": "Years_depreciation：固定资产的折旧摊销年限（通常为3~5年），直接决定年折旧硬摊销成本的底座大小。",
+                "Years_depreciation": "固定资产的折旧摊销年限（通常为3~5年），直接决定年折旧硬摊销成本的底座大小。",
+                "年折旧": "D_CapEx：固定资产根据折旧年限折合到每年的折旧费用，是自建算力的重要固定财务开支。",
+                "D_CapEx": "D_CapEx：固定资产根据折旧年限折合到每年的折旧费用，是自建算力的重要固定财务开支。",
+
+                // 2. 物理运营成本区
+                "物理运营成本": "<b>2. 物理运营成本区 (OPEX)</b>：用于配置数据中心机房日常托管所产生的高额运营开支，包括电费、机柜费、公网带宽费以及日常运维费用。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "物理运营成本区": "<b>2. 物理运营成本区 (OPEX)</b>：用于配置数据中心机房日常托管所产生的高额运营开支，包括电费、机柜费、公网带宽费以及日常运维费用。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "月OPEX": "OpEx_monthly：集群每月托管、电费、带宽、运维扣减各项专项补贴后的月度实际物理开销支出。",
+                "服务器额定功耗": "Power_server：单台服务器的额定满载功耗 (单位：kW)。算力集群电费的重要基石。",
+                "Power_server": "单台服务器的额定满载功耗 (单位：kW)。算力集群电费的重要基石。",
+                "数据中心PUE": "PUE：数据中心电源使用效率指标。PUE越趋近于1说明空调用电等杂电损耗越小，机房电效越高。",
+                "PUE": "PUE：数据中心电源使用效率指标。PUE越趋近于1说明空调用电等杂电损耗越小，机房电效越高。",
+                "运行PUE": "PUE：数据中心电源使用效率指标。PUE越趋近于1说明空调用电等杂电损耗越小，机房电效越高。",
+                "电费单价": "Price_electricity::数据中心托管地的工业用电单价 (元/kWh)。",
+                "Price_electricity": "数据中心托管地的工业用电单价 (元/kWh)。",
+                "年电费": "算力中心机房设备运行一整年所消耗的电力总费用（包含PUE能效折合），受实际负载率和政策电补的直接影响。",
+                "机柜托管费": "Price_cabinet：高电密机柜单月托管费。计算中默认单台高功率服务器占用单个机柜。",
+                "Price_cabinet": "高电密机柜单月托管费。计算中默认单台高功率服务器占用单个机柜。",
+                "公网带宽费": "Bandwidth_monthly：集群向外提供公网 API 零售服务时所需的月度宽带费。",
+                "Bandwidth_monthly": "集群向外提供公网 API 零售服务时所需的月度宽带费。",
+                "日常运维费": "Ops_monthly::集群托管机房的月度人工巡检与基础运维外包等分摊费。",
+                "Ops_monthly": "集群托管机房的月度人工巡检与基础运维外包等分摊费。",
+
+                // 3. 政策与资金补贴区
+                "政策与资金补贴": "<b>3. 政策与资金补贴区</b>：配置地方政府及运营商对于先进人工智能算力集群给予的各种财政和资金补贴扶持政策。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "政策与资金补贴区": "<b>3. 政策与资金补贴区</b>：配置地方政府及运营商对于先进人工智能算力集群给予的各种财政和资金补贴扶持政策。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "设备建设补贴": "政府对智算集群首次建设给予的固定资产采购一次性资金建补比例，可冲抵部分 CapEx 资产总额。",
+                "运营资金直补": "政府对智算平台给予的每年固定金额的现金直补（万元/年），可直接冲抵年运营 OPEX 支出。",
+                "电费专项补贴": "政府或运营商对算力电费给予的减免或电费补贴比例，直接降低算力运行电费压力。",
+                "运营商带宽折扣": "网络服务商对于 RDMA 或公网高速带宽给予的折扣优惠比例，降低网络成本分摊。",
+                "年总补贴": "合并计算年度设备折旧抵扣补贴、政府运营现金直补、电费减免及网络折扣在内的年度总折合扶持资金总额。",
+
+                // 4. 营收与销售定价区
+                "营收与销售定价": "<b>4. 营收与销售定价区</b>：配置您的智算集群对客户提供 API 算力服务时的销售定价，以支持模拟测算盈利能力与大厂官方价格的博弈。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "营收与销售定价区": "<b>4. 营收与销售定价区</b>：配置您的智算集群对客户提供 API 算力服务时的销售定价，以支持模拟测算盈利能力与大厂官方价格的博弈。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "自建输入单价": "自建算力集群对外销售的输入 Token 价格（元/百万 Tokens）。",
+                "自建输出单价": "自建算力集群对外销售的输出 Token 价格（元/百万 Tokens）。",
+                "输入未命中售价": "当缓存中无历史对话，需要完整计算输入的 Token 单价。",
+                "缓存命中售价": "大模型利用 Prompt Cache（提示词缓存）命中后，因计算量减小而给予客户的优惠单价。",
+                "提示词缓存比例": "输入请求中能够命中历史 Cache 而避免二次计算的 Token 数量占比（可降低平均销售单价并吸引大客户）。",
+                "输入Token占比": "混合算力消耗中，输入 Token 占总 Tokens 吞吐的百分比（由于输入与输出计算成本不同，这极大地影响整体均价和产出）。",
+                "自建折合销售均价": "根据输入占比、缓存命中及滑块设定单价折算得出的自建实际加权销售均价。可直接同大厂进行商业对标。",
+                "P_sales": "根据输入占比、缓存命中及滑块设定单价折算得出的自建实际加权销售均价。可直接同大厂进行商业对标。",
+                "P_sales_blended": "根据输入占比、缓存命中及滑块设定单价折算得出的自建实际加权销售均价。可直接同大厂进行商业对标。",
+                "混合均价": "根据输入占比、缓存命中及滑块设定单价折算得出的自建实际加权销售均价。可直接同大厂进行商业对标。",
+                "大厂官方折合混合价": "根据输入比例折合后的大厂官方混合 API 销售均价（获客商业防线，低于此红线自建才具备获客吸引力）。",
+                "P_official": "根据输入比例折合后的大厂官方混合 API 销售均价（获客商业防线，低于此红线自建才具备获客吸引力）。",
+                "P_official_blended": "根据输入比例折合后的大厂官方混合 API 销售均价（获客商业防线，低于此红线自建才具备获客吸引力）。",
+                "大厂官方限价": "大厂（如字节跳动等）官方 API 按当前输入/输出配比折算后的混合单价，是衡量自建是否具备获客性价比的参照防线。",
+
+                // 5. 模型吞吐性能极限
+                "模型吞吐性能极限": "<b>5. 模型性能与产能极限区</b>：配置算力集群所跑的语言模型在首字计算（Prefill）及内容生成（Decoding）阶段的每秒处理速率，用以测算集群总产能。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "模型吞吐性能": "<b>5. 模型性能与产能极限区</b>：配置算力集群所跑的语言模型在首字计算（Prefill）及内容生成（Decoding）阶段的每秒处理速率，用以测算集群总产能。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "模型Prefill吞吐": "算力节点在首字预填充（Prompt 首次计算）阶段，单台设备每秒可处理的输入 Token 最大上限 (Tps)。",
+                "模型Decoding吞吐": "算力节点在增量文本生成（字逐个输出）阶段，单台设备每秒可生成的输出 Token 最大上限 (Tps)。",
+                "服务的PD分离状态": "PD分离：Prefill (预填充) 节点与 Decoding (生成) 节点在物理上独立部署。可避免长上下文预填充挤压输出，提高 20%~50% 吞吐效率。",
+                "服务的PD分离": "PD分离：Prefill (预填充) 节点与 Decoding (生成) 节点在物理上独立部署。可避免长上下文预填充挤压输出，提高 20%~50% 吞吐效率。",
+                "算力折损率": "Alpha_fail：集群因网络丢包、坏卡或系统故障等导致的年均不可用时间占比（降低年最大吞吐量）。",
+                "Alpha_fail": "Alpha_fail::集群因网络丢包、坏卡或系统故障等导致的年均不可用时间占比（降低年最大吞吐量）。",
+
+                // 6. 多模型混合部署配置
+                "多模型混合部署配置": "<b>6. 多模型混合部署（切分集群）</b>：支持将一套物理集群切分为两组，分别跑不同的语言模型（如 DeepSeek-R1 与 较小模型如 Llama 等），支持对两个子集群独立测算并加权求和。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "多模型混合部署": "<b>6. 多模型混合部署（切分集群）</b>：支持将一套物理集群切分为两组，分别跑不同的语言模型（如 DeepSeek-R1 与 较小模型如 Llama 等），支持对两个子集群独立测算并加权求和。<b>[本面板支持点击展开/折叠，请点击以展开详细的滑动控件进行修改]</b>。",
+                "混合部署节点分配": "分配给子模型 B 的物理服务器台数。主模型将自动分摊剩余台数。",
+                "混合部署": "支持将一套物理集群切分为两组，分别跑不同的语言模型（如 DeepSeek-R1 与 较小模型如 Llama 等），支持对两个子集群独立测算并加权求和。",
+                "未启用": "多模型混合部署或PD分离等高级配置目前处于关闭状态。",
+
+                // 底部滑块
+                "系统当前实际算力利用率": "U_rate：集群在全年中实际运行并产生算力营业额的时间占比（算力负载利用率）。它是盈亏最关键的胜负手。",
+                "U_rate": "U_rate：集群在全年中实际运行并产生算力负载利用率。它是盈亏最关键的胜负手。",
+                "算力利用率": "U_rate：集群在全年中实际运行并产生算力负载利用率。它是盈亏最关键的胜负手。",
+
+                // KPI 卡片
+                "月度运营成本": "OpEx：集群每月托管、电费、带宽、运维扣减各项专项补贴后的月均物理消耗成本。",
+                "月度运营成本(OPEX)": "OpEx：集群每月托管、电费、带宽、运维扣减各项专项补贴后的月均物理消耗成本。",
+                "自建盈亏平衡售价": "在当前实际负载率 U 下，自建算力若想盈亏相抵（即利润为0），所需收取的最低 Token 混合单价。随负载下降而呈指数级飙升。",
+                "保本利用率": "U_BEP：在当前设定的销售均价下，自建集群刚好达到利润为 0 时所需的临界负载率。低于该红线集群将处于净亏损状态。",
+                "预计年净利润": "P_net：年总营业收入扣减补贴后年总运营开销 (OpEx) 和年硬件资产折旧 (D_CapEx) 后的最终企业净损益。",
+                "预计年净利润(P_NET)": "P_net：年总营业收入扣减补贴后年总运营开销 (OpEx) 和年硬件资产折旧 (D_CapEx) 后的最终企业净损益。",
+                "回本周期": "T_cash_back：使用年经营性现金流入（营收 - OpEx）回收政府补贴后固定资产净投入所需的年限。越短投资回报越快。",
+                "盈亏平衡建议售价": "本大屏的核心精算输出。根据当前的算力集群硬件折旧、月度物理运营消耗、政策补贴覆盖情况，结合当前的负载利用率，算出的集群盈亏平衡自建保本售价（负载分摊售价红线）。",
+
+                // 字典/公式
+                "商业精算逻辑与因子定义字典": "华鲲智算集群的核心商业精算公式与变量字典。鼠标移动到下方具体的词条或公式标题上即可查看其物理推导释义。",
+                "动态输入因子定义库": "算力集群的变量定义。鼠标悬停在下方特定的参数词条上，即可查看其对应的系统物理释义。"
+            };
+
+            // 模糊匹配函数
+            function findGlossaryKey(text) {
+                if (!text) return null;
+                // 去除可能包含的数字、单位、冒号、小记和多余的空白字符
+                const cleanText = text.replace(/[\d\.\%\s\n：:()（）➔➕➖📌📎|万\/元]/g, '').trim();
+                if (!cleanText) return null;
+
+                // 精准匹配优先
+                if (glossary[cleanText]) return cleanText;
+
+                // 匹配 glossary 的 key 是否包含在文本中，或者文本中包含 key
+                for (const key in glossary) {
+                    if (cleanText === key || cleanText.includes(key) || key.includes(cleanText)) {
+                        return key;
+                    }
+                }
+                return null;
+            }
+
+            // 全局事件监听
+            document.addEventListener('mouseover', (e) => {
+                const target = e.target.closest('.label-text, .kpi-bento-label, .acc-trigger, .custom-legend-item, .dict-term, .dict-definition, [style*="font-size: 11px"][style*="justify-content: space-between"] > span, .acc-subtotal, .formula-name, .formula-desc, .formula-card-title, .kpi-bento-value-row, .recommended-price-card h3');
+                if (!target) return;
+
+                const text = target.innerText || target.textContent || "";
+                const key = findGlossaryKey(text);
+
+                if (key) {
+                    const explanation = glossary[key];
+                    tooltip.innerHTML = `
+                        <div class="interactive-explainer-tooltip-header">
+                            <i data-lucide="help-circle" style="width: 12px; height: 12px; color:#A855F7;"></i>
+                            <span>名词释义：${key}</span>
+                        </div>
+                        <div class="interactive-explainer-tooltip-body">
+                            ${explanation}
+                        </div>
+                    `;
+                    lucide.createIcons();
+
+                    tooltip.style.display = 'block';
+                    // 渐入
+                    requestAnimationFrame(() => {
+                        tooltip.classList.add('active');
+                    });
+
+                    // 跟随鼠标
+                    const moveHandler = (evt) => {
+                        const tooltipWidth = tooltip.offsetWidth;
+                        const tooltipHeight = tooltip.offsetHeight;
+                        const pageWidth = window.innerWidth;
+                        const pageHeight = window.innerHeight;
+
+                        let left = evt.pageX + 15;
+                        let top = evt.pageY + 15;
+
+                        // 边界检测：防止气泡超出屏幕右边界或下边界
+                        if (left + tooltipWidth > pageWidth - 20) {
+                            left = evt.pageX - tooltipWidth - 15;
+                        }
+                        if (top + tooltipHeight > pageHeight - 20) {
+                            top = evt.pageY - tooltipHeight - 15;
+                        }
+
+                        tooltip.style.left = left + 'px';
+                        tooltip.style.top = top + 'px';
+                    };
+                    target._tooltipMoveHandler = moveHandler;
+                    target.addEventListener('mousemove', moveHandler);
+                }
+            });
+
+            document.addEventListener('mouseout', (e) => {
+                const target = e.target.closest('.label-text, .kpi-bento-label, .acc-trigger, .custom-legend-item, .dict-term, .dict-definition, [style*="font-size: 11px"][style*="justify-content: space-between"] > span, .acc-subtotal, .formula-name, .formula-desc, .formula-card-title, .kpi-bento-value-row, .recommended-price-card h3');
+                if (!target) return;
+
+                tooltip.classList.remove('active');
+                setTimeout(() => {
+                    if (!tooltip.classList.contains('active')) {
+                        tooltip.style.display = 'none';
+                    }
+                }, 150);
+
+                if (target._tooltipMoveHandler) {
+                    target.removeEventListener('mousemove', target._tooltipMoveHandler);
+                    target._tooltipMoveHandler = null;
+                }
+            });
         }
     </script>
 </body>
