@@ -97,34 +97,41 @@
             font-family: 'Outfit', 'Inter', var(--font-sans);
             font-size: 11px;
             font-weight: 800;
-            color: #334155;
+            color: #78350F;
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            background: linear-gradient(145deg, #f8fafc 0%, #cbd5e1 45%, #94a3b8 80%, #64748b 100%);
-            border: 1px solid #475569;
-            padding: 5px 28px;
+            background: linear-gradient(110deg, #b8860b 0%, #e6ca65 20%, #fff3a8 40%, #e6ca65 60%, #b8860b 80%, #ffd700 100%);
+            background-size: 200% auto;
+            border: 1.5px solid #d4af37;
+            padding: 6px 30px;
             border-radius: 4px;
             width: fit-content;
             position: relative;
             box-shadow: 
-                inset 0 1px 1px rgba(255, 255, 255, 0.9),
-                0 3px 6px rgba(0, 0, 0, 0.16),
-                0 1px 2px rgba(0, 0, 0, 0.1);
-            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+                inset 0 1px 2px rgba(255, 255, 255, 0.9),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.2),
+                0 4px 8px rgba(0, 0, 0, 0.18),
+                0 1px 3px rgba(0, 0, 0, 0.12);
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-bottom: 2px solid #334155;
+            border-bottom: 2.5px solid #8b6508;
+            animation: goldShine 4s linear infinite;
+        }
+        @keyframes goldShine {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
         }
         .header-tag::before, .header-tag::after {
             content: '';
             position: absolute;
             width: 5px;
             height: 5px;
-            background: radial-gradient(circle at 1.5px 1.5px, #f1f5f9, #475569);
+            background: radial-gradient(circle at 1.5px 1.5px, #fff, #ffd700, #b8860b);
             border-radius: 50%;
-            border: 1px solid #1e293b;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 1px 1px rgba(0,0,0,0.4);
+            border: 1px solid #8b6508;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 1px rgba(0,0,0,0.5);
             top: 50%;
             transform: translateY(-50%);
         }
@@ -1053,7 +1060,7 @@
     <header>
         <div class="header-title-wrapper">
             <div class="header-tag">产品与解决方案 / 智能计算PDT / AI开发部</div>
-            <h1>华鲲大模型算力集群盈亏平衡计算器 <span class="version-badge">v2.4.2</span></h1>
+            <h1>华鲲大模型算力集群盈亏平衡计算器 <span class="version-badge">v2.4.3</span></h1>
             <p class="subtitle">基于多维变动成本与大厂 API 价格获客防线的商业化精算决策大屏</p>
         </div>
         <div>
@@ -1618,6 +1625,7 @@
             </div>
 
             <!-- 盈亏平衡建议售价突出精算栏 -->
+                        <!-- 盈亏平衡建议售价突出精算栏 -->
             <div class="bento-card recommended-price-card">
                 <div class="card-inner" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.06) 0%, rgba(59, 130, 246, 0.06) 100%); border: 2px solid rgba(168, 85, 247, 0.3); border-radius: 6px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
@@ -1627,11 +1635,115 @@
                         <div>
                             <h3 style="font-size: 13px; font-weight: 800; color: #1e1b4b; margin: 0; display: flex; align-items: center; gap: 6px;">
                                 盈亏平衡建议售价 (负载分摊售价红线)
-                                <span class="badge-u-current" id="val-suggest-u-badge" style="background: rgba(168, 85, 247, 0.12); color: #8B5CF6; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700;">U = 30%</span>
+                                <span class="badge-u-current" id="val-suggest-u-badge" style="background: rgba(168, 85, 247, 0.12); color: #8B5CF6; font-size: 10.5px; padding: 2px 6px; border-radius: 4px; font-weight: 700;">U = 30%</span>
                             </h3>
-                            <p style="font-size: 11px; color: #4B5563; margin: 4px 0 0 0; font-weight: 500;">精算公式：(年折旧 D_CapEx + 净年运营成本 OpEx_net) / 实际 Token 年产能 M_annual</p>
+                            <div id="val-suggest-price-formula" style="font-size: 11.5px; color: #4B5563; margin: 6px 0 0 0; font-weight: 500; min-height: 26px;">
+                                <!-- 动态 LaTeX 公式区域 -->
+                            </div>
                         </div>
                     </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 10px; color: #6B7280; font-weight: 700; display: block; margin-bottom: 2px;">建议最低销售均价</span>
+                        <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 4px;">
+                            <span class="kpi-bento-value" id="val-suggest-price-highlight" style="font-size: 24px; font-weight: 900; color: #8B5CF6; font-family: var(--font-outfit); text-shadow: 0 2px 4px rgba(168, 85, 247, 0.1);">0.00</span>
+                            <span class="kpi-bento-unit" style="font-size: 11px; color: #8B5CF6; font-weight: 700;">元/百万 Tokens</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 集群配置及环境参数可视化汇总看板 -->
+            <div class="bento-card selected-config-summary-card" style="margin-top: 16px;">
+                <div class="card-inner" style="padding: 16px; background: linear-gradient(135deg, rgba(255,255,255,0.75) 0%, rgba(248,250,252,0.8) 100%); border: 1.5px solid rgba(226, 232, 240, 0.9); border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                    <h3 style="font-size: 13px; font-weight: 800; color: #1e1b4b; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
+                        <i data-lucide="sliders-horizontal" style="color: #8b5cf6; width: 14px; height: 14px;"></i>
+                        已选集群参数与物理环境可视化汇总看板
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                        <!-- 1. 物理设施与 CapEx -->
+                        <div style="background: rgba(255, 255, 255, 0.9); border: 1.2px solid #e2e8f0; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 4px; border-bottom: 1.2px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 2px;">
+                                <i data-lucide="server" style="color: #3b82f6; width: 12px; height: 12px;"></i>
+                                物理设施与 CapEx
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>集群总台数:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-server-count">8 台</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>单机售价:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-node-price">140 万元</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>网络/存储选配:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-net-storage">0.0/0.0 万元</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 4px;">
+                                <span>净 CapEx 投资:</span>
+                                <span style="font-weight: 800; color: #3b82f6;" id="summary-capex-net">1120.00 万元</span>
+                            </div>
+                        </div>
+
+                        <!-- 2. 物理运营与补贴 -->
+                        <div style="background: rgba(255, 255, 255, 0.9); border: 1.2px solid #e2e8f0; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 4px; border-bottom: 1.2px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 2px;">
+                                <i data-lucide="zap" style="color: #eab308; width: 12px; height: 12px;"></i>
+                                物理运营与补贴
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>运行 PUE:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-pue">1.30</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>电费单价:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-elec-rate">0.80 元/度</span>
+                            </div>
+                            <div style="font-size: 10px; color: #64748b; line-height: 1.35; border-top: 1px dashed #e2e8f0; padding-top: 4px;" id="summary-subsidy-details">
+                                建补: 0% | 运直补: 0万<br>电补: 0% | 网折: 0%
+                            </div>
+                        </div>
+
+                        <!-- 3. 大模型及计算效能 -->
+                        <div style="background: rgba(255, 255, 255, 0.9); border: 1.2px solid #e2e8f0; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 4px; border-bottom: 1.2px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 2px;">
+                                <i data-lucide="cpu" style="color: #10b981; width: 12px; height: 12px;"></i>
+                                算力效能与模型
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>服务的PD分离:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-pd">未启用</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>算力折损率:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-fail-rate">5%</span>
+                            </div>
+                            <div style="font-size: 10px; color: #10b981; font-weight: 700; line-height: 1.3; border-top: 1px dashed #e2e8f0; padding-top: 4px;" id="summary-model-deploy">
+                                模型: DeepSeek-R1 (8台)
+                            </div>
+                        </div>
+
+                        <!-- 4. 运行负载与销售定价 -->
+                        <div style="background: rgba(255, 255, 255, 0.9); border: 1.2px solid #e2e8f0; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 4px; border-bottom: 1.2px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 2px;">
+                                <i data-lucide="coins" style="color: #a855f7; width: 12px; height: 12px;"></i>
+                                负载率与销售定价
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>负载利用率 U:</span>
+                                <span style="font-weight: 800; color: #a855f7;" id="summary-utilization">30%</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 4px;">
+                                <span>自建销售均价:</span>
+                                <span style="font-weight: 700; color: #3b82f6;" id="summary-sales-price">3.22 元/M</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>大厂官方限价:</span>
+                                <span style="font-weight: 700; color: #ef4444;" id="summary-official-price">4.50 元/M</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
                     <div style="text-align: right;">
                         <span style="font-size: 10px; color: #6B7280; font-weight: 700; display: block; margin-bottom: 2px;">建议最低销售均价</span>
                         <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 4px;">
@@ -1852,7 +1964,3614 @@
 
     <!-- 页脚 Footer -->
     <footer>
-        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • 商业精算沙盘 v2.0.0</div>
+        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • 商业精算沙盘 v2.4.3</div>
+        <div class="footer-desc-group">
+            <span>硬件折旧按双倍余额/平均分摊计算</span>
+            <span>|</span>
+            <span>算力年最大 Tokens 年产能公式包含 Alpha_fail 故障率</span>
+            <span>|</span>
+            <span>电费基于动态算力功耗曲线</span>
+        </div>
+    </footer>
+
+    <script>
+        // 全局错误捕获并写入 DOM
+        window.onerror = function(message, source, lineno, colno, error) {
+            const div = document.createElement('div');
+            div.id = 'js-debug-error-banner';
+            div.style.position = 'fixed';
+            div.style.top = '0';
+            div.style.left = '0';
+            div.style.width = '100%';
+            div.style.background = '#ef4444';
+            div.style.color = '#ffffff';
+            div.style.padding = '15px';
+            div.style.zIndex = '999999';
+            div.style.fontFamily = 'monospace';
+            div.style.fontSize = '14px';
+            div.style.whiteSpace = 'pre-wrap';
+            div.style.borderBottom = '4px solid #7f1d1d';
+            div.innerHTML = '🚨 JS ERROR: ' + message + '\nat ' + source + ':' + lineno + ':' + colno + '\n' + (error ? error.stack : '');
+            document.body.appendChild(div);
+        };
+        window.addEventListener('unhandledrejection', function(event) {
+            const div = document.createElement('div');
+            div.id = 'js-debug-reject-banner';
+            div.style.position = 'fixed';
+            div.style.top = '100px';
+            div.style.left = '0';
+            div.style.width = '100%';
+            div.style.background = '#f59e0b';
+            div.style.color = '#ffffff';
+            div.style.padding = '15px';
+            div.style.zIndex = '999999';
+            div.style.fontFamily = 'monospace';
+            div.style.fontSize = '14px';
+            div.style.whiteSpace = 'pre-wrap';
+            div.style.borderBottom = '4px solid #78350f';
+            div.innerHTML = '🚨 UNHANDLED REJECTION: ' + event.reason;
+            document.body.appendChild(div);
+        });
+
+        // 初始化图标
+        lucide.createIcons();
+
+        // 渲染数学公式方法
+        function renderMaths() {
+            if (typeof renderMathInElement === 'function') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError : false
+                });
+            }
+        }
+
+        // 默认参数定义
+        const initParams = {
+            serverCount: 8,
+            nodePrice: 140, // 万元/台
+            priceNetwork: 0, // 配套网络，万元
+            priceStorage: 0, // 选配存储常规硬件，万元
+            depYears: 3, // 折旧年限
+            powerServer: 5.6,
+            pue: 1.3,
+            elecRate: 0.8,
+            rackCost: 6500,
+            bandwidth: 3000,
+            opsCost: 15000,
+            
+            // 补贴细分
+            subsidyGovHardware: 0, // 政府硬件采购补贴率 (%)
+            subsidyGovOps: 0,      // 政府年度运营财政补贴 (万元/年)
+            subsidyCarrierElec: 0, // 运营商电费现金补贴率 (%)
+            subsidyCarrierNetwork: 0, // 运营商网络租赁带宽折扣率 (%)
+
+            // 模型规格 (A)
+            modelName: 'DeepSeek-R1',
+            nodeTpsPrefill: 60000,
+            nodeTpsDecoding: 15000,
+            alphaFail: 5,
+            
+            // 销售定价与流量占比 (A)
+            tokenPriceInput: 3.00,
+            tokenPriceOutput: 12.00,
+            tokenPriceCache: 0.80,
+            ratioInput: 80,
+            ratioCache: 30,
+            utilizationRate: 30,
+
+            // PD 分离
+            pdSeparationEnabled: false,
+            ratioPrefillNodes: 33, // Prefill 节点占比
+            lossPdScheduling: 10,   // PD 调度损失 (%)
+
+            // 混合部署
+            mixedDeploymentEnabled: false,
+            mixedClusters: [
+                {
+                    modelId: 'qwen-3.7-max',
+                    nodeCount: 4,
+                    tokenPriceInput: 9.00,
+                    tokenPriceOutput: 27.00,
+                    tokenPriceCache: 0.90,
+                    ratioInput: 80,
+                    ratioCache: 30
+                }
+            ]
+        };
+
+        // 大模型配置清单 (升级至2026年最新四大前沿型号) 
+        // 包含起步物理节点 minNodes 校验
+        const modelPresets = {
+            'deepseek-r1': {
+                name: 'DeepSeek-R1',
+                input: 4.00,
+                output: 12.00,
+                cache: 0.50,
+                defaultPrefill: 12000,
+                defaultDecoding: 3000,
+                defaultSalesPriceInput: 3.00,
+                defaultSalesPriceOutput: 9.00,
+                defaultSalesPriceCache: 0.40,
+                minNodes: 4, // FP16部署起步 NPU
+                deployInfo: '昇腾 910B (64GB) 私有部署推荐：FP16需 4台 | FP8需 2台 (使用 PP=4, TP=8 混合并行)'
+            },
+            'deepseek-v4-pro': {
+                name: 'DeepSeek-V4-Pro',
+                input: 3.00,
+                output: 6.00,
+                cache: 0.025,
+                defaultPrefill: 8000,
+                defaultDecoding: 2000,
+                defaultSalesPriceInput: 2.40,
+                defaultSalesPriceOutput: 4.80,
+                defaultSalesPriceCache: 0.02,
+                minNodes: 8, // FP16 需 8台
+                deployInfo: '昇腾 910B (64GB) 私有部署推荐：FP16需 8台 | FP8需 4台 (1.6T 超大 MoE 旗舰)'
+            },
+            'deepseek-v4-flash': {
+                name: 'DeepSeek-V4-Flash',
+                input: 0.98,
+                output: 1.96,
+                cache: 0.098,
+                defaultPrefill: 30000,
+                defaultDecoding: 8000,
+                defaultSalesPriceInput: 0.80,
+                defaultSalesPriceOutput: 1.60,
+                defaultSalesPriceCache: 0.08,
+                minNodes: 1, // 轻量 1台即可
+                deployInfo: '昇腾 910B (64GB) 私有部署推荐：1台即可流畅运行 (284B 轻量级 MoE)'
+            },
+            'qwen-3.7-max': {
+                name: 'Qwen-3.7-Max',
+                input: 12.00,
+                output: 36.00,
+                cache: 1.20,
+                defaultPrefill: 10000,
+                defaultDecoding: 2500,
+                defaultSalesPriceInput: 9.00,
+                defaultSalesPriceOutput: 27.00,
+                defaultSalesPriceCache: 0.90,
+                minNodes: 1, // 自建混部 1台起
+                deployInfo: '阿里百炼旗舰模型，自建混合部署需 1台 (以开源大版本部署)'
+            },
+            'qwen-3.6-plus': {
+                name: 'Qwen-3.6-Plus',
+                input: 2.00,
+                output: 12.00,
+                cache: 0.20,
+                defaultPrefill: 25000,
+                defaultDecoding: 6000,
+                defaultSalesPriceInput: 1.60,
+                defaultSalesPriceOutput: 9.60,
+                defaultSalesPriceCache: 0.16,
+                minNodes: 1,
+                deployInfo: '通义中坚模型自建部署需 1台，支持超长上下文'
+            },
+            'glm-5.1': {
+                name: 'GLM-5.1',
+                input: 6.00,
+                output: 24.00,
+                cache: 0.00,
+                defaultPrefill: 12000,
+                defaultDecoding: 3000,
+                defaultSalesPriceInput: 4.50,
+                defaultSalesPriceOutput: 18.00,
+                defaultSalesPriceCache: 0.00,
+                minNodes: 4, // 稀疏注意力 FP16 需 4台
+                deployInfo: '昇腾 910B (64GB) 私有部署推荐：FP16需 4台 | FP8需 2台 (采用稀疏注意力架构)'
+            },
+            'glm-5': {
+                name: 'GLM-5',
+                input: 4.00,
+                output: 18.00,
+                cache: 0.00,
+                defaultPrefill: 12000,
+                defaultDecoding: 3000,
+                defaultSalesPriceInput: 3.20,
+                defaultSalesPriceOutput: 14.40,
+                defaultSalesPriceCache: 0.00,
+                minNodes: 4, // FP16 需 4台
+                deployInfo: '昇腾 910B (64GB) 私有部署推荐：FP16需 4台 | FP8需 2台 (高性价比 744B MoE)'
+            },
+            'kimi-k2.6': {
+                name: 'Kimi-K2.6',
+                input: 6.50,
+                output: 27.00,
+                cache: 1.10,
+                defaultPrefill: 10000,
+                defaultDecoding: 2500,
+                defaultSalesPriceInput: 5.00,
+                defaultSalesPriceOutput: 20.00,
+                defaultSalesPriceCache: 0.80,
+                minNodes: 5, // FP16 需 5台
+                deployInfo: '昇腾 910B (64GB) 私有部署推荐：FP16需 5台 | FP8需 3台 (支持原生INT4量化)'
+            }
+        };
+
+        let currentParams = { ...initParams };
+        let selectedModelId = 'deepseek-r1';
+        let tickerInstances = {};
+        let analysisChart = null;
+        let lastCrossPointBe = null;
+        let lastCrossPointRoi = null;
+        let currentYMax = 5.0;
+
+        // 数值平滑变化组件
+        class SmoothNumberTicker {
+            constructor(elementId, renderFn, startVal = 0) {
+                this.element = document.getElementById(elementId);
+                this.renderFn = renderFn;
+                this.currentVal = startVal;
+                this.targetVal = startVal;
+                this.animFrame = null;
+                this.animStart = null;
+                this.duration = 200;
+            }
+
+            update(newVal) {
+                if (newVal === this.targetVal && this.element.textContent !== '') return;
+                
+                if (typeof newVal === 'string') {
+                    if (this.animFrame) cancelAnimationFrame(this.animFrame);
+                    this.element.textContent = newVal;
+                    this.targetVal = newVal;
+                    this.currentVal = 0;
+                    return;
+                }
+
+                if (isNaN(this.currentVal)) {
+                    this.currentVal = 0;
+                }
+
+                this.startVal = this.currentVal;
+                this.targetVal = newVal;
+                this.animStart = null;
+
+                if (this.animFrame) {
+                    cancelAnimationFrame(this.animFrame);
+                }
+
+                const frameTick = (timestamp) => {
+                    if (!this.animStart) this.animStart = timestamp;
+                    const elapsed = timestamp - this.animStart;
+                    const progress = Math.min(elapsed / this.duration, 1);
+                    
+                    const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                    this.currentVal = this.startVal + (this.targetVal - this.startVal) * ease;
+                    this.element.textContent = this.renderFn(this.currentVal);
+
+                    if (progress < 1) {
+                        this.animFrame = requestAnimationFrame(frameTick);
+                    } else {
+                        this.currentVal = this.targetVal;
+                        this.element.textContent = this.renderFn(this.targetVal);
+                        this.animFrame = null;
+                    }
+                };
+
+                this.animFrame = requestAnimationFrame(frameTick);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // 初始化同步高级面板
+            syncCoreInputs();
+            
+            // 初始化数据滚动翻页器
+            tickerInstances['total-cost'] = new SmoothNumberTicker('val-total-cost', val => val.toFixed(2));
+            tickerInstances['be-price'] = new SmoothNumberTicker('val-be-price', val => typeof val === 'number' ? val.toFixed(2) : val);
+            tickerInstances['be-utilization'] = new SmoothNumberTicker('val-be-utilization', val => typeof val === 'number' ? (val * 100).toFixed(1) + '%' : val);
+            tickerInstances['net-profit'] = new SmoothNumberTicker('val-net-profit', val => (val >= 0 ? '+' : '') + val.toFixed(2));
+
+            // 初始化 ECharts
+            initAnalysisChart();
+            // 运行计算
+            runFinancialCalculator();
+            // 渲染LaTeX数学公式
+            renderMaths();
+
+            window.addEventListener('resize', () => {
+                if (analysisChart) {
+                    analysisChart.resize();
+                    relocatePulseDots();
+                }
+            });
+        });
+
+        // 动态渲染子集群混合部署面板 UI 
+        function renderMixedClusters() {
+            const container = document.getElementById('mixed-config-container');
+            if (!container) return;
+
+            // 计算已经被子集群分去的节点总数
+            let allocated = 0;
+            currentParams.mixedClusters.forEach(c => allocated += c.nodeCount);
+            let N_A = Math.max(0, currentParams.serverCount - allocated);
+
+            const configA = modelPresets[selectedModelId];
+            const minNodesA = configA ? configA.minNodes : 0;
+            
+            let html = '';
+            
+            // 1. 主集群节点控制
+            html += `<div style="background: rgba(59, 130, 246, 0.04); border: 1.5px solid #bfdbfe; border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="font-size: 11px; font-weight: 800; color: #1e40af; display:flex; justify-content:space-between; align-items:center;">
+                    <span>🚀 子集群 A 部署：主模型 ${configA ? configA.name : '未知'}</span>
+                    <span style="font-family: monospace; font-weight: 700; background: #3b82f6; color:#fff; padding: 1px 6px; border-radius:3px;">${N_A} 台</span>
+                </div>`;
+            
+            if (N_A < minNodesA) {
+                html += `<div style="font-size: 10px; color:#ef4444; font-weight:700; margin-top:2px;">
+                    ⚠️ 主集群剩余台数 ${N_A} 低于起步节点限制 ${minNodesA}台，该模型将无法运行！
+                </div>`;
+            }
+            html += `</div>`;
+
+            // 2. 循环遍历子集群
+            currentParams.mixedClusters.forEach((cluster, index) => {
+                const configSub = modelPresets[cluster.modelId];
+                const minNodesSub = configSub ? configSub.minNodes : 0;
+                
+                html += `<div class="mixed-cluster-item" style="border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 14px; background: #f8fafc; position: relative; margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="font-size: 11px; font-weight: 800; color: #334155; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px;">
+                        <span>🤖 子集群 #${index + 1} 部署</span>
+                        <button type="button" onclick="deleteMixedCluster(${index})" style="background:#fee2e2; border:1px solid #fecaca; color:#ef4444; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; cursor:pointer;">
+                            删除
+                        </button>
+                    </div>
+                    
+                    <!-- 模型选择 -->
+                    <div class="input-group" style="background:transparent; border:none; padding:0;">
+                        <span class="label-text" style="font-size:11px; color:#475569;">模型基准预设</span>
+                        <div class="select-box" style="margin-top:2px;">
+                            <select style="padding:6px; font-size:12px;" onchange="changeMixedClusterParam(${index}, 'modelId', this.value)">`;
+                
+                Object.keys(modelPresets).forEach(mId => {
+                    const sel = (mId === cluster.modelId) ? 'selected' : '';
+                    html += `<option value="${mId}" ${sel}>${modelPresets[mId].name}</option>`;
+                });
+                
+                html += `        </select>
+                        </div>
+                    </div>
+                    
+                    <!-- 节点数控制 -->
+                    <div class="input-group" style="background:transparent; border:none; padding:0;">
+                        <div class="label-row" style="font-size:11px; color:#475569;">
+                            <span>分配服务器节点数</span>
+                            <span class="value-badge" style="background:#475569; color:#fff; font-size:11px; padding:1px 6px; font-family:var(--font-mono);">${cluster.nodeCount}台</span>
+                        </div>
+                        <div class="slider-wrapper" style="display: flex; align-items: center; gap: 8px; margin-top:4px;">
+                            <button type="button" class="btn-step" style="width:20px; height:20px; font-size:12px;" onclick="adjustMixedClusterNodes(${index}, -1)">-</button>
+                            <input type="range" min="0" max="${currentParams.serverCount}" step="1" value="${cluster.nodeCount}" oninput="changeMixedClusterParam(${index}, 'nodeCount', this.value)" style="flex:1; height:4px;">
+                            <button type="button" class="btn-step" style="width:20px; height:20px; font-size:12px;" onclick="adjustMixedClusterNodes(${index}, 1)">+</button>
+                        </div>`;
+                
+                if (cluster.nodeCount < minNodesSub && cluster.nodeCount > 0) {
+                    html += `<div style="font-size:10px; color:#ef4444; font-weight:700; margin-top:2px;">
+                        ⚠️ 分配台数低于该模型起步限制 ${minNodesSub}台，将无法运行！
+                    </div>`;
+                }
+                
+                html += `</div>
+                    
+                    <!-- 售价与配比细分 -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div>
+                            <span class="label-text" style="font-size: 10px; color:#475569;">自建输入售价 (元/M)</span>
+                            <input type="number" class="flat-input" style="padding: 4px 6px; font-size: 11px; margin-top: 2px;" value="${cluster.tokenPriceInput}" step="0.1" oninput="changeMixedClusterParam(${index}, 'tokenPriceInput', this.value)">
+                        </div>
+                        <div>
+                            <span class="label-text" style="font-size: 10px; color:#475569;">自建输出售价 (元/M)</span>
+                            <input type="number" class="flat-input" style="padding: 4px 6px; font-size: 11px; margin-top: 2px;" value="${cluster.tokenPriceOutput}" step="0.1" oninput="changeMixedClusterParam(${index}, 'tokenPriceOutput', this.value)">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div>
+                            <span class="label-text" style="font-size: 10px; color:#475569;">自建缓存售价 (元/M)</span>
+                            <input type="number" class="flat-input" style="padding: 4px 6px; font-size: 11px; margin-top: 2px;" value="${cluster.tokenPriceCache}" step="0.1" oninput="changeMixedClusterParam(${index}, 'tokenPriceCache', this.value)">
+                        </div>
+                        <div>
+                            <span class="label-text" style="font-size: 10px; color:#475569;">输入流量占比 (%)</span>
+                            <input type="number" class="flat-input" style="padding: 4px 6px; font-size: 11px; margin-top: 2px;" value="${cluster.ratioInput}" step="5" oninput="changeMixedClusterParam(${index}, 'ratioInput', this.value)">
+                        </div>
+                    </div>
+                    <div>
+                        <span class="label-text" style="font-size: 10px; color:#475569;">缓存命中占比 (%)</span>
+                        <input type="number" class="flat-input" style="padding: 4px 6px; font-size: 11px; margin-top: 2px;" value="${cluster.ratioCache}" step="5" oninput="changeMixedClusterParam(${index}, 'ratioCache', this.value)">
+                    </div>
+                </div>`;
+            });
+
+            // 3. 添加按钮
+            html += `<button type="button" onclick="addMixedCluster()" style="margin-top:12px; width:100%; border:2px dashed #cbd5e1; background:#fff; color:#475569; padding:8px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s ease;">
+                ➕ 新增混合部署子集群
+            </button>`;
+
+            // 如果总台数超载
+            if (allocated > currentParams.serverCount) {
+                html += `<div style="margin-top:10px; background:#fee2e2; border:1px solid #fecaca; color:#ef4444; padding:8px; border-radius:6px; font-size:11px; font-weight:700;">
+                    ⚠️ 超载警告：子集群分配总数 ${allocated}台 大于物理集群服务器总数 ${currentParams.serverCount}台，主集群台数被迫降为 0！
+                </div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function addMixedCluster() {
+            // 默认添加一个 qwen-3.7-max 模型，占用 1 台
+            currentParams.mixedClusters.push({
+                modelId: 'qwen-3.7-max',
+                nodeCount: 1,
+                tokenPriceInput: 9.00,
+                tokenPriceOutput: 27.00,
+                tokenPriceCache: 0.90,
+                ratioInput: 80,
+                ratioCache: 30
+            });
+            syncCoreInputs();
+            runFinancialCalculator();
+        }
+
+        function deleteMixedCluster(index) {
+            currentParams.mixedClusters.splice(index, 1);
+            syncCoreInputs();
+            runFinancialCalculator();
+        }
+
+        function adjustMixedClusterNodes(index, delta) {
+            const cluster = currentParams.mixedClusters[index];
+            if (cluster) {
+                let currentAllocatedOthers = 0;
+                currentParams.mixedClusters.forEach((c, idx) => {
+                    if (idx !== index) currentAllocatedOthers += c.nodeCount;
+                });
+                const remainingN = Math.max(0, currentParams.serverCount - currentAllocatedOthers);
+                let val = cluster.nodeCount + delta;
+                val = Math.min(Math.max(val, 0), remainingN);
+                cluster.nodeCount = val;
+                syncCoreInputs();
+                runFinancialCalculator();
+            }
+        }
+
+        function changeMixedClusterParam(index, key, val) {
+            const cluster = currentParams.mixedClusters[index];
+            if (!cluster) return;
+
+            const floatVal = parseFloat(val);
+            if (key === 'modelId') {
+                cluster.modelId = val;
+                // 联动同步预设均价
+                const config = modelPresets[val];
+                if (config) {
+                    cluster.tokenPriceInput = config.defaultSalesPriceInput;
+                    cluster.tokenPriceOutput = config.defaultSalesPriceOutput;
+                    cluster.tokenPriceCache = config.defaultSalesPriceCache;
+                }
+            } else if (key === 'nodeCount') {
+                // 校验台数范围
+                let currentAllocatedOthers = 0;
+                currentParams.mixedClusters.forEach((c, idx) => {
+                    if (idx !== index) currentAllocatedOthers += c.nodeCount;
+                });
+                const remainingN = Math.max(0, currentParams.serverCount - currentAllocatedOthers);
+                cluster.nodeCount = Math.min(Math.max(Math.round(floatVal), 0), remainingN);
+            } else if (key === 'tokenPriceInput') {
+                cluster.tokenPriceInput = floatVal;
+            } else if (key === 'tokenPriceOutput') {
+                cluster.tokenPriceOutput = floatVal;
+            } else if (key === 'tokenPriceCache') {
+                cluster.tokenPriceCache = floatVal;
+            } else if (key === 'ratioInput') {
+                cluster.ratioInput = Math.round(floatVal);
+            } else if (key === 'ratioCache') {
+                cluster.ratioCache = Math.round(floatVal);
+            }
+
+            syncCoreInputs();
+            runFinancialCalculator();
+        }
+
+        // 同步所有 DOM 控件的值
+        function syncCoreInputs() {
+            // 模型预设 A 下拉
+            const selPreset = document.getElementById('select-model-preset');
+            if (selPreset) selPreset.value = selectedModelId;
+
+            // 1. 硬件
+            const sliderCountAdv = document.getElementById('slider-adv-server-count');
+            if (sliderCountAdv) sliderCountAdv.value = currentParams.serverCount;
+            const badgeCountAdv = document.getElementById('badge-adv-server-count');
+            if (badgeCountAdv) badgeCountAdv.textContent = currentParams.serverCount;
+
+            const fldPriceAdv = document.getElementById('field-adv-node-price');
+            if (fldPriceAdv) fldPriceAdv.value = currentParams.nodePrice;
+
+            const fldNet = document.getElementById('field-network-price');
+            if (fldNet) fldNet.value = currentParams.priceNetwork;
+
+            const fldStore = document.getElementById('field-storage-price');
+            if (fldStore) fldStore.value = currentParams.priceStorage;
+
+            const selDep = document.getElementById('select-dep-years');
+            if (selDep) selDep.value = currentParams.depYears;
+
+            // 2. 物理运营
+            const fldPwr = document.getElementById('field-power-server');
+            if (fldPwr) fldPwr.value = currentParams.powerServer;
+
+            const sliderPue = document.getElementById('slider-pue');
+            if (sliderPue) sliderPue.value = currentParams.pue;
+            const badgePue = document.getElementById('badge-pue');
+            if (badgePue) badgePue.textContent = currentParams.pue.toFixed(2);
+
+            const fldElec = document.getElementById('field-elec-rate');
+            if (fldElec) fldElec.value = currentParams.elecRate;
+
+            const fldRack = document.getElementById('field-rack-cost');
+            if (fldRack) fldRack.value = currentParams.rackCost;
+
+            const fldBand = document.getElementById('field-bandwidth');
+            if (fldBand) fldBand.value = currentParams.bandwidth;
+
+            const fldOps = document.getElementById('field-ops-cost');
+            if (fldOps) fldOps.value = currentParams.opsCost;
+
+            // 3. 补贴
+            const sliderGovH = document.getElementById('slider-subsidy-gov-hardware');
+            if (sliderGovH) sliderGovH.value = currentParams.subsidyGovHardware;
+            const badgeGovH = document.getElementById('badge-subsidy-gov-hardware');
+            if (badgeGovH) badgeGovH.textContent = currentParams.subsidyGovHardware + '%';
+
+            const fldGovOps = document.getElementById('field-subsidy-gov-ops');
+            if (fldGovOps) fldGovOps.value = currentParams.subsidyGovOps;
+
+            const sliderCarE = document.getElementById('slider-subsidy-carrier-elec');
+            if (sliderCarE) sliderCarE.value = currentParams.subsidyCarrierElec;
+            const badgeCarE = document.getElementById('badge-subsidy-carrier-elec');
+            if (badgeCarE) badgeCarE.textContent = currentParams.subsidyCarrierElec + '%';
+
+            const sliderCarN = document.getElementById('slider-subsidy-carrier-network');
+            if (sliderCarN) sliderCarN.value = currentParams.subsidyCarrierNetwork;
+            const badgeCarN = document.getElementById('badge-subsidy-carrier-network');
+            if (badgeCarN) badgeCarN.textContent = currentParams.subsidyCarrierNetwork + '%';
+
+            // 4. 营收 pricing (A)
+            const sliderPriceInAdv = document.getElementById('slider-adv-token-price-input');
+            if (sliderPriceInAdv) sliderPriceInAdv.value = currentParams.tokenPriceInput;
+            const badgePriceInAdv = document.getElementById('badge-adv-token-price-input');
+            if (badgePriceInAdv) badgePriceInAdv.textContent = currentParams.tokenPriceInput.toFixed(2);
+
+            const sliderPriceOutAdv = document.getElementById('slider-adv-token-price-output');
+            if (sliderPriceOutAdv) sliderPriceOutAdv.value = currentParams.tokenPriceOutput;
+            const badgePriceOutAdv = document.getElementById('badge-adv-token-price-output');
+            if (badgePriceOutAdv) badgePriceOutAdv.textContent = currentParams.tokenPriceOutput.toFixed(2);
+
+            const sliderPriceCacheAdv = document.getElementById('slider-adv-token-price-cache');
+            if (sliderPriceCacheAdv) sliderPriceCacheAdv.value = currentParams.tokenPriceCache;
+            const badgePriceCacheAdv = document.getElementById('badge-adv-token-price-cache');
+            if (badgePriceCacheAdv) badgePriceCacheAdv.textContent = currentParams.tokenPriceCache.toFixed(2);
+
+            const sliderRatioInAdv = document.getElementById('slider-adv-ratio-input');
+            if (sliderRatioInAdv) sliderRatioInAdv.value = currentParams.ratioInput;
+            const badgeRatioInAdv = document.getElementById('badge-adv-ratio-input');
+            if (badgeRatioInAdv) badgeRatioInAdv.textContent = currentParams.ratioInput + '%';
+
+            const sliderRatioCacheAdv = document.getElementById('slider-adv-ratio-cache');
+            if (sliderRatioCacheAdv) sliderRatioCacheAdv.value = currentParams.ratioCache;
+            const badgeRatioCacheAdv = document.getElementById('badge-adv-ratio-cache');
+            if (badgeRatioCacheAdv) badgeRatioCacheAdv.textContent = currentParams.ratioCache + '%';
+
+            // 5. 吞吐性能 & PD 分离
+            const fldPrefill = document.getElementById('field-t-prefill');
+            if (fldPrefill) fldPrefill.value = currentParams.nodeTpsPrefill;
+
+            const fldDec = document.getElementById('field-t-decoding');
+            if (fldDec) fldDec.value = currentParams.nodeTpsDecoding;
+
+            const sliderFail = document.getElementById('slider-alpha-fail');
+            if (sliderFail) sliderFail.value = currentParams.alphaFail;
+            const badgeFail = document.getElementById('badge-alpha-fail');
+            if (badgeFail) badgeFail.textContent = currentParams.alphaFail + '%';
+
+            const chkPd = document.getElementById('checkbox-pd-separation');
+            if (chkPd) chkPd.checked = currentParams.pdSeparationEnabled;
+            
+            const pdContainer = document.getElementById('pd-config-container');
+            if (pdContainer) pdContainer.style.display = currentParams.pdSeparationEnabled ? 'flex' : 'none';
+
+            const sliderPrefillNode = document.getElementById('slider-ratio-prefill-nodes');
+            if (sliderPrefillNode) sliderPrefillNode.value = currentParams.ratioPrefillNodes;
+            const badgePrefillNode = document.getElementById('badge-ratio-prefill-nodes');
+            if (badgePrefillNode) badgePrefillNode.textContent = currentParams.ratioPrefillNodes + '%';
+
+            const sliderLossPd = document.getElementById('slider-loss-pd-scheduling');
+            if (sliderLossPd) sliderLossPd.value = currentParams.lossPdScheduling;
+            const badgeLossPd = document.getElementById('badge-loss-pd-scheduling');
+            if (badgeLossPd) badgeLossPd.textContent = currentParams.lossPdScheduling + '%';
+
+            // 6. 混合部署
+            const chkMixed = document.getElementById('checkbox-mixed-deployment');
+            if (chkMixed) chkMixed.checked = currentParams.mixedDeploymentEnabled;
+
+            const mixedContainer = document.getElementById('mixed-config-container');
+            if (mixedContainer) mixedContainer.style.display = currentParams.mixedDeploymentEnabled ? 'flex' : 'none';
+
+            renderMixedClusters();
+
+            // 全局共享负载
+            const sliderUtil = document.getElementById('slider-utilization');
+            if (sliderUtil) sliderUtil.value = currentParams.utilizationRate;
+            const badgeUtil = document.getElementById('badge-utilization');
+            if (badgeUtil) badgeUtil.textContent = currentParams.utilizationRate + '%';
+
+            // 动态计算售价滑块轨道上代表官方定价的红点位置
+            const configA = modelPresets[selectedModelId];
+            if (configA) {
+                const dotIn = document.getElementById('dot-official-price-input');
+                if (dotIn) {
+                    const pct = ((configA.input - 0.1) / (30.0 - 0.1)) * 100;
+                    dotIn.style.left = `${Math.min(Math.max(pct, 0), 100)}%`;
+                    dotIn.setAttribute('title', `大厂官方输入价: ${configA.input.toFixed(2)} 元/M`);
+                }
+                const dotOut = document.getElementById('dot-official-price-output');
+                if (dotOut) {
+                    const pct = ((configA.output - 0.2) / (60.0 - 0.2)) * 100;
+                    dotOut.style.left = `${Math.min(Math.max(pct, 0), 100)}%`;
+                    dotOut.setAttribute('title', `大厂官方输出价: ${configA.output.toFixed(2)} 元/M`);
+                }
+                const dotCache = document.getElementById('dot-official-price-cache');
+                if (dotCache) {
+                    const pct = ((configA.cache - 0.02) / (10.00 - 0.02)) * 100;
+                    dotCache.style.left = `${Math.min(Math.max(pct, 0), 100)}%`;
+                    dotCache.setAttribute('title', `大厂官方缓存价: ${configA.cache.toFixed(2)} 元/M`);
+                }
+            }
+        }
+
+        // 台数微调按钮
+        function adjustServerCount(delta) {
+            const slider = document.getElementById('slider-adv-server-count');
+            if (slider) {
+                let val = parseInt(slider.value) + delta;
+                val = Math.min(Math.max(val, 1), 384);
+                slider.value = val;
+                changeParam('server-count', val);
+            }
+        }
+
+        // 修改参数驱动核心
+        function changeParam(key, val) {
+            const floatVal = parseFloat(val);
+            
+            switch (key) {
+                case 'server-count':
+                    currentParams.serverCount = Math.round(floatVal);
+                    break;
+                case 'node-price':
+                    currentParams.nodePrice = floatVal;
+                    break;
+                case 'network-price':
+                    currentParams.priceNetwork = floatVal;
+                    break;
+                case 'storage-price':
+                    currentParams.priceStorage = floatVal;
+                    break;
+                case 'dep-years':
+                    currentParams.depYears = Math.round(floatVal);
+                    break;
+                case 'power-server':
+                    currentParams.powerServer = floatVal;
+                    break;
+                case 'pue':
+                    currentParams.pue = floatVal;
+                    break;
+                case 'elec-rate':
+                    currentParams.elecRate = floatVal;
+                    break;
+                case 'rack-cost':
+                    currentParams.rackCost = floatVal;
+                    break;
+                case 'bandwidth':
+                    currentParams.bandwidth = floatVal;
+                    break;
+                case 'ops-cost':
+                    currentParams.opsCost = floatVal;
+                    break;
+                
+                // 补贴
+                case 'subsidy-gov-hardware':
+                    currentParams.subsidyGovHardware = Math.round(floatVal);
+                    break;
+                case 'subsidy-gov-ops':
+                    currentParams.subsidyGovOps = floatVal;
+                    break;
+                case 'subsidy-carrier-elec':
+                    currentParams.subsidyCarrierElec = Math.round(floatVal);
+                    break;
+                case 'subsidy-carrier-network':
+                    currentParams.subsidyCarrierNetwork = Math.round(floatVal);
+                    break;
+                
+                // 营收 A
+                case 'token-price-input':
+                    currentParams.tokenPriceInput = floatVal;
+                    break;
+                case 'token-price-output':
+                    currentParams.tokenPriceOutput = floatVal;
+                    break;
+                case 'token-price-cache':
+                    currentParams.tokenPriceCache = floatVal;
+                    break;
+                case 'ratio-input':
+                    currentParams.ratioInput = Math.round(floatVal);
+                    break;
+                case 'ratio-cache':
+                    currentParams.ratioCache = Math.round(floatVal);
+                    break;
+
+                // 吞吐与 PD
+                case 't-prefill':
+                    currentParams.nodeTpsPrefill = floatVal;
+                    break;
+                case 't-decoding':
+                    currentParams.nodeTpsDecoding = floatVal;
+                    break;
+                case 'alpha-fail':
+                    currentParams.alphaFail = floatVal;
+                    break;
+                case 'pd-separation':
+                    currentParams.pdSeparationEnabled = val; // Boolean
+                    break;
+                case 'ratio-prefill-nodes':
+                    currentParams.ratioPrefillNodes = Math.round(floatVal);
+                    break;
+                case 'loss-pd-scheduling':
+                    currentParams.lossPdScheduling = Math.round(floatVal);
+                    break;
+
+                // 混合部署
+                case 'mixed-deployment':
+                    currentParams.mixedDeploymentEnabled = val; // Boolean
+                    break;
+
+                case 'utilization-rate':
+                    currentParams.utilizationRate = Math.round(floatVal);
+                    break;
+            }
+
+            syncCoreInputs();
+            runFinancialCalculator();
+        }
+
+        // 重置配置
+        function resetAllValues() {
+            currentParams = { ...initParams };
+            // 调用 changeModelPreset 即可自动重置文字并刷新
+            changeModelPreset('deepseek-r1');
+        }
+
+        // 财务核心精算大引擎
+        function runFinancialCalculator() {
+            // ==================== 1. 基础物理设施与 CapEx 测算 ====================
+            const N_server = currentParams.serverCount;
+            const Price_server = currentParams.nodePrice * 10000;
+            const Price_network = currentParams.priceNetwork * 10000;
+            const Price_storage = currentParams.priceStorage * 10000;
+            const Years_depreciation = currentParams.depYears;
+
+            // 总 CapEx = 服务器采购价 + 网络资产 + 选配存储资产
+            const CapEx = (Price_server * N_server) + Price_network + Price_storage;
+            const subsidyGovHardwareRatio = currentParams.subsidyGovHardware / 100;
+            // 政府建设补贴后的净 CapEx
+            const CapEx_net = CapEx * (1 - subsidyGovHardwareRatio);
+            const D_CapEx = CapEx_net / Years_depreciation;
+
+            // ==================== 2. 多模型混合集群节点数分配计算 ====================
+            let N_allocated_subs = 0;
+            if (currentParams.mixedDeploymentEnabled && currentParams.mixedClusters) {
+                currentParams.mixedClusters.forEach(c => N_allocated_subs += c.nodeCount);
+            }
+            // 主模型 A 的物理节点数 (主集群自动占用剩下所有节点)
+            let N_A = N_server;
+            if (currentParams.mixedDeploymentEnabled) {
+                N_A = Math.max(0, N_server - N_allocated_subs);
+            }
+
+            const modelConfigA = modelPresets[selectedModelId];
+            const minNodesA = modelConfigA ? modelConfigA.minNodes : 0;
+
+            // 节点电费静态与变动计算公共系数
+            const Power_server = currentParams.powerServer;
+            const PUE = currentParams.pue;
+            const Price_electricity = currentParams.elecRate;
+            const Price_cabinet = currentParams.rackCost;
+            const Bandwidth_monthly = currentParams.bandwidth;
+            const Ops_monthly = currentParams.opsCost;
+            const Alpha_fail = currentParams.alphaFail / 100;
+            const U_rate = currentParams.utilizationRate / 100;
+
+            const subsidyCarrierElecRatio = currentParams.subsidyCarrierElec / 100;
+            const subsidyCarrierNetworkRatio = currentParams.subsidyCarrierNetwork / 100;
+            const subsidyGovOpsVal = currentParams.subsidyGovOps * 10000;
+
+            // 电费计算系数：年满载总电费
+            const powerCostAnnualMaxRaw = Power_server * PUE * 24 * 365 * Price_electricity * N_server;
+            // 折减电费
+            function powerCostRawWithUtil(u) {
+                return powerCostAnnualMaxRaw * (0.4 + 0.6 * u);
+            }
+            const powerCostAnnualRaw = powerCostRawWithUtil(U_rate);
+            const powerCostAnnualSubsidized = powerCostAnnualRaw * (1 - subsidyCarrierElecRatio);
+
+            const cabinetCostAnnual = Price_cabinet * N_server * 12;
+            const bandwidthCostAnnual = Bandwidth_monthly * 12;
+            const bandwidthCostAnnualNet = bandwidthCostAnnual * (1 - subsidyCarrierNetworkRatio);
+            const opsCostAnnual = Ops_monthly * 12;
+
+            // 扣除补贴与折扣后的年运营成本 OpEx
+            const OpEx_annual = powerCostAnnualSubsidized + cabinetCostAnnual + bandwidthCostAnnualNet + opsCostAnnual - subsidyGovOpsVal;
+
+            // ==================== 3. 模型 A (主模型) 产能与售价 ====================
+            const T_prefill_A = currentParams.nodeTpsPrefill;
+            const T_decoding_A = currentParams.nodeTpsDecoding;
+            const R_input_A = currentParams.ratioInput / 100;
+            const R_output_A = 1 - R_input_A;
+            const R_cache_A = currentParams.ratioCache / 100;
+
+            let T_speed_A = 0;
+            // 考虑物理起步台数限制限制，低于起步节点无法运行
+            if (N_A >= minNodesA) {
+                if (currentParams.pdSeparationEnabled) {
+                    const rPrefill = currentParams.ratioPrefillNodes / 100;
+                    const rDecoding = 1 - rPrefill;
+                    const lossPd = currentParams.lossPdScheduling / 100;
+                    T_speed_A = Math.min((rPrefill * T_prefill_A) / R_input_A, (rDecoding * T_decoding_A) / R_output_A) * (1 - lossPd);
+                } else {
+                    T_speed_A = 1 / ((R_input_A / T_prefill_A) + (R_output_A / T_decoding_A));
+                }
+            } else {
+                T_speed_A = 0; // 跑不起来
+            }
+
+            // 自建折合售价 A (三轨)
+            const P_sales_A = (currentParams.tokenPriceCache * R_input_A * R_cache_A) +
+                              (currentParams.tokenPriceInput * R_input_A * (1 - R_cache_A)) +
+                              (currentParams.tokenPriceOutput * R_output_A);
+            // 官方折合售价 A (三轨)
+            const P_official_A = (modelConfigA.cache * R_input_A * R_cache_A) +
+                                  (modelConfigA.input * R_input_A * (1 - R_cache_A)) +
+                                  (modelConfigA.output * R_output_A);
+
+            const M_annual_A = (T_speed_A * 86400 * 365 * (1 - Alpha_fail) * N_A) / 1000000;
+
+            // ==================== 4. 遍历多子集群 产能与售价加权累加 ====================
+            let M_annual = M_annual_A;
+            let sum_M_P_sales = M_annual_A * P_sales_A;
+            let sum_M_P_official = M_annual_A * P_official_A;
+            let subClustersInfoText = '';
+
+            if (currentParams.mixedDeploymentEnabled && currentParams.mixedClusters) {
+                currentParams.mixedClusters.forEach((cluster, index) => {
+                    const config = modelPresets[cluster.modelId];
+                    if (!config) return;
+                    const minNodes = config.minNodes;
+                    const nodeCount = cluster.nodeCount;
+                    
+                    let T_speed_sub = 0;
+                    // 考虑最低物理节点限制限制
+                    if (nodeCount >= minNodes) {
+                        const T_prefill_sub = config.defaultPrefill;
+                        const T_decoding_sub = config.defaultDecoding;
+                        const R_input_sub = cluster.ratioInput / 100;
+                        const R_output_sub = 1 - R_input_sub;
+                        
+                        if (currentParams.pdSeparationEnabled) {
+                            const rPrefill = currentParams.ratioPrefillNodes / 100;
+                            const rDecoding = 1 - rPrefill;
+                            const lossPd = currentParams.lossPdScheduling / 100;
+                            T_speed_sub = Math.min((rPrefill * T_prefill_sub) / R_input_sub, (rDecoding * T_decoding_sub) / R_output_sub) * (1 - lossPd);
+                        } else {
+                            T_speed_sub = 1 / ((R_input_sub / T_prefill_sub) + (R_output_sub / T_decoding_sub));
+                        }
+                    } else {
+                        T_speed_sub = 0; // 跑不起来
+                    }
+                    
+                    const M_annual_sub = (T_speed_sub * 86400 * 365 * (1 - Alpha_fail) * nodeCount) / 1000000;
+                    
+                    // 折合售价 sub
+                    const R_input_sub = cluster.ratioInput / 100;
+                    const R_output_sub = 1 - R_input_sub;
+                    const R_cache_sub = cluster.ratioCache / 100;
+                    const P_sales_sub = (cluster.tokenPriceCache * R_input_sub * R_cache_sub) +
+                                        (cluster.tokenPriceInput * R_input_sub * (1 - R_cache_sub)) +
+                                        (cluster.tokenPriceOutput * R_output_sub);
+                    
+                    const P_official_sub = (config.cache * R_input_sub * R_cache_sub) +
+                                            (config.input * R_input_sub * (1 - R_cache_sub)) +
+                                            (config.output * R_output_sub);
+                    
+                    M_annual += M_annual_sub;
+                    sum_M_P_sales += M_annual_sub * P_sales_sub;
+                    sum_M_P_official += M_annual_sub * P_official_sub;
+                    
+                    if (nodeCount > 0) {
+                        subClustersInfoText += ` | 子#${index+1}:${nodeCount}台(${config.name})`;
+                    }
+                });
+            }
+
+            // ==================== 5. 整体混合产能、售价与财务指标 ====================
+            let P_sales = P_sales_A;
+            let P_official = P_official_A;
+            if (M_annual > 0) {
+                P_sales = sum_M_P_sales / M_annual;
+                P_official = sum_M_P_official / M_annual;
+            }
+
+            // 年总营业额与利润
+            const R_gross = M_annual * U_rate * P_sales;
+            const P_net = R_gross - OpEx_annual - D_CapEx;
+
+            // 回本年限
+            const netCashFlowAnnual = R_gross - OpEx_annual;
+            let T_cash_back = Infinity;
+            if (netCashFlowAnnual > 0) {
+                T_cash_back = CapEx_net / netCashFlowAnnual;
+            }
+
+            // ==================== 6. 利用率 U 一次方程求解 BEP 保本点 ====================
+            const maxElecAnnualNet = powerCostAnnualMaxRaw * (1 - subsidyCarrierElecRatio);
+            const elecSlope = maxElecAnnualNet * 0.6;
+            const elecIntercept = maxElecAnnualNet * 0.4;
+            const fixedOpExNoElec = cabinetCostAnnual + bandwidthCostAnnualNet + opsCostAnnual - subsidyGovOpsVal;
+
+            let beUDec = null;
+            const denominatorBEP = M_annual * P_sales - elecSlope;
+            if (Math.abs(denominatorBEP) > 1e-4) {
+                beUDec = (elecIntercept + fixedOpExNoElec + D_CapEx) / denominatorBEP;
+            }
+
+            // 同样求解官方获客防线点
+            let roiUDec = null;
+            const denominatorROI = M_annual * P_official - elecSlope;
+            if (Math.abs(denominatorROI) > 1e-4) {
+                roiUDec = (elecIntercept + fixedOpExNoElec + D_CapEx) / denominatorROI;
+            }
+
+            // 盈亏平衡单价 (在当前 U_rate 下自建 of 每百万Token保本成本价)
+            let bePriceVal = Infinity;
+            if (M_annual > 0 && U_rate > 0) {
+                bePriceVal = (OpEx_annual + D_CapEx) / (M_annual * U_rate);
+            }
+
+            // 更新建议售价精算横幅
+            const suggestPriceHighlight = document.getElementById('val-suggest-price-highlight');
+            if (suggestPriceHighlight) {
+                if (isFinite(bePriceVal)) {
+                    if (bePriceVal <= 0) {
+                        suggestPriceHighlight.textContent = '0.000 (已保本/补贴覆盖)';
+                        suggestPriceHighlight.style.color = '#10B981'; // 绿色
+                    } else {
+                        suggestPriceHighlight.textContent = bePriceVal.toFixed(3);
+                        suggestPriceHighlight.style.color = '#8B5CF6'; // 紫色
+                    }
+                } else {
+                    suggestPriceHighlight.textContent = '无法计算';
+                    suggestPriceHighlight.style.color = '#ef4444'; // 红色
+                }
+            }
+            const suggestUBadge = document.getElementById('val-suggest-u-badge');
+            if (suggestUBadge) {
+                suggestUBadge.textContent = `U = ${(U_rate * 100).toFixed(0)}%`;
+            }
+
+            // ==================== 7. 渲染折叠小计标签 ====================
+            const hardwareSubEl = document.getElementById('subtotal-hardware');
+            if (hardwareSubEl) {
+                hardwareSubEl.textContent = `总资产: ${(CapEx / 10000).toFixed(2)} 万元 | 年折旧: ${(D_CapEx / 10000).toFixed(2)} 万元`;
+            }
+            const opexSubEl = document.getElementById('subtotal-opex');
+            if (opexSubEl) {
+                opexSubEl.textContent = `月OPEX: ${(OpEx_annual / 12 / 10000).toFixed(2)} 万元 | 年电费: ${(powerCostAnnualSubsidized / 10000).toFixed(2)} 万元`;
+            }
+            const subsidySubEl = document.getElementById('subtotal-subsidy');
+            if (subsidySubEl) {
+                const subsidyGovTotal = (CapEx * subsidyGovHardwareRatio / Years_depreciation) + subsidyGovOpsVal;
+                const subsidyCarrierTotal = (powerCostAnnualRaw * subsidyCarrierElecRatio) + (bandwidthCostAnnual * subsidyCarrierNetworkRatio);
+                subsidySubEl.textContent = `年总补贴: ${((subsidyGovTotal + subsidyCarrierTotal) / 10000).toFixed(2)} 万元`;
+            }
+            const revenueSubEl = document.getElementById('subtotal-revenue');
+            if (revenueSubEl) {
+                revenueSubEl.textContent = `混合均价: ${P_sales.toFixed(3)} 元/M | 年营收: ${(R_gross / 10000).toFixed(2)} 万元`;
+            }
+            const performanceSubEl = document.getElementById('subtotal-performance');
+            if (performanceSubEl) {
+                if (currentParams.pdSeparationEnabled) {
+                    performanceSubEl.textContent = `PD模式 | 混合吞吐: ${Math.round(T_speed_A).toLocaleString()} Tok/s`;
+                } else {
+                    performanceSubEl.textContent = `阿姆达尔 | 混合吞吐: ${Math.round(T_speed_A).toLocaleString()} Tok/s`;
+                }
+            }
+            const mixedSubEl = document.getElementById('subtotal-mixed');
+            if (mixedSubEl) {
+                if (currentParams.mixedDeploymentEnabled) {
+                    mixedSubEl.textContent = `混合部署: 启用 | A:${N_A}台${subClustersInfoText}`;
+                } else {
+                    mixedSubEl.textContent = `混合部署: 未启用`;
+                }
+            }
+
+            // ==================== 8. 刷新“已选配置及环境参数可视化汇总看板” ====================
+            const summaryServerCount = document.getElementById('summary-server-count');
+            if (summaryServerCount) summaryServerCount.textContent = `${N_server} 台`;
+
+            const summaryNodePrice = document.getElementById('summary-node-price');
+            if (summaryNodePrice) summaryNodePrice.textContent = `${currentParams.nodePrice} 万元`;
+
+            const summaryNetStorage = document.getElementById('summary-net-storage');
+            if (summaryNetStorage) {
+                summaryNetStorage.textContent = `${(currentParams.priceNetwork).toFixed(1)}/${(currentParams.priceStorage).toFixed(1)} 万元`;
+            }
+
+            const summaryCapexNet = document.getElementById('summary-capex-net');
+            if (summaryCapexNet) summaryCapexNet.textContent = `${(CapEx_net / 10000).toFixed(2)} 万元`;
+
+            const summaryPue = document.getElementById('summary-pue');
+            if (summaryPue) summaryPue.textContent = PUE.toFixed(2);
+
+            const summaryElecRate = document.getElementById('summary-elec-rate');
+            if (summaryElecRate) summaryElecRate.textContent = `${Price_electricity.toFixed(2)} 元/度`;
+
+            const summarySubsidyDetails = document.getElementById('summary-subsidy-details');
+            if (summarySubsidyDetails) {
+                summarySubsidyDetails.innerHTML = `建补: ${currentParams.subsidyGovHardware}% | 运直补: ${currentParams.subsidyGovOps}万<br>电补: ${currentParams.subsidyCarrierElec}% | 网折: ${currentParams.subsidyCarrierNetwork}%`;
+            }
+
+            const summaryPd = document.getElementById('summary-pd');
+            if (summaryPd) summaryPd.textContent = currentParams.pdSeparationEnabled ? '已启用' : '未启用';
+
+            const summaryFailRate = document.getElementById('summary-fail-rate');
+            if (summaryFailRate) summaryFailRate.textContent = `${currentParams.alphaFail}%`;
+
+            const summaryModelDeploy = document.getElementById('summary-model-deploy');
+            if (summaryModelDeploy) {
+                let deployText = `主选: ${modelConfigA ? modelConfigA.name : '未知'}`;
+                if (currentParams.mixedDeploymentEnabled) {
+                    let activeModels = [`A:${N_A}台` + (N_A < minNodesA && minNodesA > 0 ? '(未满足起步)' : '')];
+                    if (currentParams.mixedClusters) {
+                        currentParams.mixedClusters.forEach((c, index) => {
+                            const config = modelPresets[c.modelId];
+                            const mMin = config ? config.minNodes : 0;
+                            if (config && c.nodeCount > 0) {
+                                activeModels.push(`#${index+1}:${c.nodeCount}台` + (c.nodeCount < mMin && mMin > 0 ? '(未满足)' : ''));
+                            }
+                        });
+                    }
+                    deployText = `混合: ` + activeModels.join(' | ');
+                } else {
+                    deployText = `单模型: ${modelConfigA ? modelConfigA.name : '未知'} (${N_A}台)` + (N_A < minNodesA && minNodesA > 0 ? ' <span style="color:#ef4444;">(未满足起步)</span>' : '');
+                }
+                summaryModelDeploy.innerHTML = deployText;
+            }
+
+            const summaryUtilization = document.getElementById('summary-utilization');
+            if (summaryUtilization) summaryUtilization.textContent = `${(U_rate * 100).toFixed(0)}%`;
+
+            const summarySalesPrice = document.getElementById('summary-sales-price');
+            if (summarySalesPrice) summarySalesPrice.textContent = `${P_sales.toFixed(3)} 元/M`;
+
+            const summaryOfficialPrice = document.getElementById('summary-official-price');
+            if (summaryOfficialPrice) summaryOfficialPrice.textContent = `${P_official.toFixed(3)} 元/M`;
+
+            // ==================== 8.5 渲染 LaTeX 公式卡片并动态代入当前真实数值 ====================
+            const setHtml = (id, html) => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = html;
+            };
+
+            let latexFormula = '';
+            const dCapExWan = (D_CapEx / 10000).toFixed(2);
+            const opExWan = (OpEx_annual / 10000).toFixed(2);
+            const mAnnualStr = M_annual.toFixed(2);
+            const uRateStr = (U_rate * 100).toFixed(0);
+            
+            let resultStr = '';
+            if (isFinite(bePriceVal)) {
+                if (bePriceVal <= 0) {
+                    resultStr = '0.000 \\text{ (已保本/补贴覆盖)}';
+                } else {
+                    resultStr = bePriceVal.toFixed(3) + ' \\text{ 元/百万 Tokens}';
+                }
+            } else {
+                resultStr = '\\text{无法计算}';
+            }
+
+            latexFormula = `P_{suggest} = \\frac{D_{CapEx} + OpEx_{net}}{M_{annual} \\cdot U} = \\frac{${dCapExWan}\\text{ 万元} + ${opExWan === '0.00' ? '0.00' : opExWan}\\text{ 万元}}{${mAnnualStr}\\text{ M} \\times ${uRateStr}\\%} = {\\color{purple}${resultStr}}`;
+
+            const formulaEl = document.getElementById('val-suggest-price-formula');
+            if (formulaEl && typeof katex !== 'undefined') {
+                katex.render(latexFormula, formulaEl, {
+                    displayMode: true,
+                    throwOnError: false
+                });
+            } else if (formulaEl) {
+                formulaEl.textContent = '$$ ' + latexFormula + ' $$';
+            }
+
+            // 更新 LaTeX 底部的推导明细 (高亮最终得数)
+            setHtml('calc-detail-capex', 
+                `📌 <b>数据推导</b>：CapEx = (单机 ${(Price_server/10000).toFixed(1)}万元 × ${N_server}台) + 网络 ${(Price_network/10000).toFixed(1)}万元 + 存储 ${(Price_storage/10000).toFixed(1)}万元 = <b class="result-val">${(CapEx/10000).toFixed(2)} 万元</b>`);
+            
+            setHtml('calc-detail-d-capex', 
+                `📌 <b>数据推导</b>：D_CapEx = [ ${((CapEx)/10000).toFixed(2)}万元(总资产) × (1 - 设备补贴 ${currentParams.subsidyGovHardware}%)] / ${Years_depreciation}年折旧 = <b class="result-val">${(D_CapEx/10000).toFixed(2)} 万元/年</b>`);
+            
+            setHtml('calc-detail-opex', 
+                `📌 <b>数据推导</b>：OpEx_annual = 年电费 ${(powerCostAnnualSubsidized/10000).toFixed(2)}万元(电费补贴 ${currentParams.subsidyCarrierElec}%) <br>` +
+                `+ 机柜租金 ${(cabinetCostAnnual/10000).toFixed(2)}万元 + 带宽费 ${(bandwidthCostAnnualNet/10000).toFixed(2)}万元(网络补贴 ${currentParams.subsidyCarrierNetwork}%) + 运维 ${(opsCostAnnual/10000).toFixed(2)}万元 <br>` +
+                `- 政府固定直补 ${currentParams.subsidyGovOps.toFixed(1)}万元/年 = <b class="result-val">${(OpEx_annual/10000).toFixed(2)} 万元/年 (折合 ${(OpEx_annual/12/10000).toFixed(2)} 万元/月)</b>`);
+            
+            if (currentParams.pdSeparationEnabled) {
+                setHtml('calc-detail-t-speed', 
+                    `📌 <b>数据推导 (服务的PD分离模式)</b>：T_speed = min [ (Prefill占比 ${currentParams.ratioPrefillNodes}% × ${T_prefill_A.toLocaleString()} Tps) / ${R_input_A.toFixed(2)}输入 , (Decoding占比 ${(100-currentParams.ratioPrefillNodes)}% × ${T_decoding_A.toLocaleString()} Tps) / ${R_output_A.toFixed(2)}输出 ] <br>` +
+                    `× (1 - 调度折损 ${currentParams.lossPdScheduling}%) = <b class="result-val">${Math.round(T_speed_A).toLocaleString()} Tokens/s/台</b>`);
+            } else {
+                setHtml('calc-detail-t-speed', 
+                    `📌 <b>数据推导 (阿姆达尔混合吞吐模式)</b>：T_speed = 1 / [ (${(R_input_A*100).toFixed(0)}%输入占比 / ${T_prefill_A.toLocaleString()} Prefill) + (${(R_output_A*100).toFixed(0)}%输出占比 / ${T_decoding_A.toLocaleString()} Decoding) ] = <b class="result-val">${Math.round(T_speed_A).toLocaleString()} Tokens/s/台</b>`);
+            }
+            
+            // 拼装多模型产能推导
+            let detailsMAnnual = `📌 <b>数据推导</b>：M_annual = [ 模型A产能 ${M_annual_A.toFixed(1)}M`;
+            if (currentParams.mixedDeploymentEnabled && currentParams.mixedClusters) {
+                currentParams.mixedClusters.forEach((c, index) => {
+                    const config = modelPresets[c.modelId];
+                    if (config && c.nodeCount > 0) {
+                        let T_speed_sub = 0;
+                        if (c.nodeCount >= config.minNodes) {
+                            const R_input_sub = c.ratioInput / 100;
+                            if (currentParams.pdSeparationEnabled) {
+                                const rPrefill = currentParams.ratioPrefillNodes / 100;
+                                const rDecoding = 1 - rPrefill;
+                                const lossPd = currentParams.lossPdScheduling / 100;
+                                T_speed_sub = Math.min((rPrefill * config.defaultPrefill) / R_input_sub, (rDecoding * config.defaultDecoding) / (1 - R_input_sub)) * (1 - lossPd);
+                            } else {
+                                T_speed_sub = 1 / ((R_input_sub / config.defaultPrefill) + ((1 - R_input_sub) / config.defaultDecoding));
+                            }
+                        }
+                        const M_annual_sub = (T_speed_sub * 86400 * 365 * (1 - Alpha_fail) * c.nodeCount) / 1000000;
+                        detailsMAnnual += ` + 子#${index+1}产能 ${M_annual_sub.toFixed(1)}M`;
+                    }
+                });
+            }
+            detailsMAnnual += ` ] = <b class="result-val">${M_annual.toFixed(2)} 百万 Tokens/年 (全集群)</b>`;
+            setHtml('calc-detail-m-annual', detailsMAnnual);
+            
+            if (currentParams.mixedDeploymentEnabled) {
+                let detailsPSales = `📌 <b>数据推导 (多模型混合加权售价)</b>：P_blended = ( [ 售价A ${P_sales_A.toFixed(2)}元 × 产能A ${M_annual_A.toFixed(1)}M ]`;
+                if (currentParams.mixedClusters) {
+                    currentParams.mixedClusters.forEach((c, index) => {
+                        const config = modelPresets[c.modelId];
+                        if (config && c.nodeCount > 0) {
+                            const R_input_sub = c.ratioInput / 100;
+                            const R_output_sub = 1 - R_input_sub;
+                            const R_cache_sub = c.ratioCache / 100;
+                            const P_sales_sub = (c.tokenPriceCache * R_input_sub * R_cache_sub) +
+                                                (c.tokenPriceInput * R_input_sub * (1 - R_cache_sub)) +
+                                                (c.tokenPriceOutput * R_output_sub);
+                            
+                            let T_speed_sub = 0;
+                            if (c.nodeCount >= config.minNodes) {
+                                if (currentParams.pdSeparationEnabled) {
+                                    const rPrefill = currentParams.ratioPrefillNodes / 100;
+                                    const rDecoding = 1 - rPrefill;
+                                    const lossPd = currentParams.lossPdScheduling / 100;
+                                    T_speed_sub = Math.min((rPrefill * config.defaultPrefill) / R_input_sub, (rDecoding * config.defaultDecoding) / R_output_sub) * (1 - lossPd);
+                                } else {
+                                    T_speed_sub = 1 / ((R_input_sub / config.defaultPrefill) + (R_output_sub / config.defaultDecoding));
+                                }
+                            }
+                            const M_annual_sub = (T_speed_sub * 86400 * 365 * (1 - Alpha_fail) * c.nodeCount) / 1000000;
+                            detailsPSales += ` + [ 售价#${index+1} ${P_sales_sub.toFixed(2)}元 × 产能#${index+1} ${M_annual_sub.toFixed(1)}M ]`;
+                        }
+                    });
+                }
+                detailsPSales += ` ) / 总产能 ${M_annual.toFixed(1)}M = <b class="result-val">${P_sales.toFixed(3)} 元/百万 Tokens</b>`;
+                setHtml('calc-detail-p-sales', detailsPSales);
+            } else {
+                setHtml('calc-detail-p-sales', 
+                    `📌 <b>数据推导</b>：P_sales = 缓存命中价 ${currentParams.tokenPriceCache.toFixed(2)}元 × [${(R_input_A*100).toFixed(0)}% × ${currentParams.ratioCache}%] + 输入未命中价 ${currentParams.tokenPriceInput.toFixed(2)}元 × [${(R_input_A*100).toFixed(0)}% × ${(100 - currentParams.ratioCache)}%] <br>` +
+                    `+ 输出价 ${currentParams.tokenPriceOutput.toFixed(2)}元 × ${(R_output_A*100).toFixed(0)}% = <b class="result-val">${P_sales.toFixed(3)} 元/百万 Tokens</b>`);
+            }
+            
+            setHtml('calc-detail-p-net', 
+                `📌 <b>数据推导</b>：P_net = [ ${M_annual.toFixed(2)}M(总产能) × 实际利用率 ${(U_rate*100).toFixed(0)}% × 混合销售价 ${P_sales.toFixed(3)}元/M ] - 年运营费 ${(OpEx_annual/10000).toFixed(2)}万元 - 年折旧 ${(D_CapEx/10000).toFixed(2)}万元 = <b class="result-val">${(P_net/10000).toFixed(2)} 万元/年</b>`);
+            
+            setHtml('calc-detail-u-bep', 
+                `📌 <b>数据推导</b>：U_BEP = [ 年非电运营费 ${(fixedOpExNoElec/10000).toFixed(2)}万元 + 年折旧 ${(D_CapEx/10000).toFixed(2)}万元 + 静态电费 ${(elecIntercept/10000).toFixed(2)}万元 ] / (年总产能 ${M_annual.toFixed(2)}M × 均价 ${P_sales.toFixed(3)}元/M - 变动电费斜率 ${(elecSlope/10000).toFixed(2)}万元) = <b class="result-val">${beUDec !== null && beUDec >= 0 && beUDec <= 1 ? (beUDec * 100).toFixed(2) + '%' : beUDec > 1 ? '无法保本(利用率需求>100%)' : '无法保本'}</b>`);
+            
+            if (P_net > 0 && netCashFlowAnnual > 0) {
+                setHtml('calc-detail-t-cashback', 
+                    `📌 <b>数据推导</b>：T_cashback = 净投资 ${(CapEx_net/10000).toFixed(2)}万元 / [ 年营收 ${(R_gross/10000).toFixed(2)}万元 - 年运营费 ${(OpEx_annual/10000).toFixed(2)}万元 ] = <b class="result-val">${T_cash_back.toFixed(1)} 年</b>`);
+            } else {
+                setHtml('calc-detail-t-cashback', 
+                    `📌 <b>数据推导</b>：纯现金流回收期 = 净投资 ${(CapEx_net/10000).toFixed(2)}万元 / [ 营收减运营现金净流入 <b>${(netCashFlowAnnual/10000).toFixed(2)}万元</b> ] = <b class="result-val">无法回本 (经营现金流净亏损)</b>`);
+            }
+
+            // ==================== 9. 更新 KPI 大数面板 (转换为“万元”单位) ====================
+            tickerInstances['total-cost'].update(OpEx_annual / 12 / 10000); // 月运营费 (万元)
+            tickerInstances['net-profit'].update(P_net / 10000); // 年净利润 (万元/年)
+
+            // 回本周期显示
+            const cashbackEl = document.getElementById('val-cashback-period');
+            if (P_net <= 0) {
+                cashbackEl.innerHTML = `回本周期: <span style="color:#ef4444; font-weight:800;">无法回本 (净亏损)</span>`;
+            } else if (T_cash_back === Infinity || T_cash_back > 100) {
+                cashbackEl.innerHTML = `回本周期: <span style="color:#ef4444; font-weight:800;">无法回本 (运营开销过高)</span>`;
+            } else {
+                cashbackEl.innerHTML = `回本周期: <span style="color:#059669; font-weight:800;">${T_cash_back.toFixed(1)} 年</span>`;
+            }
+
+            // 利润状态卡片调色
+            const profitBento = document.getElementById('kpi-profit-bento');
+            const profitArrow = document.getElementById('kpi-profit-arrow');
+            const netProfitValueEl = document.getElementById('val-net-profit');
+            if (P_net >= 0) {
+                profitBento.style.borderTopColor = 'var(--secondary)';
+                profitArrow.setAttribute('data-lucide', 'trending-up');
+                profitArrow.style.color = 'var(--secondary)';
+                netProfitValueEl.style.color = '#059669';
+            } else {
+                profitBento.style.borderTopColor = 'var(--danger)';
+                profitArrow.setAttribute('data-lucide', 'trending-down');
+                profitArrow.style.color = 'var(--danger)';
+                netProfitValueEl.style.color = '#ef4444';
+            }
+            lucide.createIcons();
+
+            if (bePriceVal === Infinity) {
+                tickerInstances['be-price'].update('N/A');
+            } else {
+                tickerInstances['be-price'].update(bePriceVal);
+            }
+
+            if (beUDec !== null && beUDec >= 0 && beUDec <= 1) {
+                tickerInstances['be-utilization'].update(beUDec);
+            } else if (beUDec > 1) {
+                tickerInstances['be-utilization'].update('>100%');
+            } else {
+                tickerInstances['be-utilization'].update('无法平衡');
+            }
+
+            // ==================== 9.5 算力防御状态条 `#roi-redline-banner` 动态联动 ====================
+            const roiBanner = document.getElementById('roi-redline-banner');
+            const roiBannerText = document.getElementById('roi-banner-text');
+            const roiBannerIcon = document.getElementById('roi-banner-icon');
+
+            if (roiBanner && roiBannerText) {
+                // 清除已有的状态类
+                roiBanner.classList.remove('success', 'warning', 'danger');
+                
+                if (P_net >= 0) {
+                    // 安全状态 (Success)
+                    roiBanner.classList.add('success');
+                    if (roiBannerIcon) {
+                        roiBannerIcon.outerHTML = `<i data-lucide="shield-check" id="roi-banner-icon"></i>`;
+                    }
+                    const bePctStr = beUDec !== null && beUDec >= 0 && beUDec <= 1 ? (beUDec * 100).toFixed(1) + '%' : '无法保本';
+                    roiBannerText.innerHTML = `自建已突破盈亏平衡线（保本点负载率需求: <b style="font-size:14px; font-weight:800; text-decoration:underline;">${bePctStr}</b>），当前处于盈利防御区，年化净利润预计约 <b style="font-size:14px; font-weight:800; text-decoration:underline;">${(P_net / 10000).toFixed(2)} 万元</b>。`;
+                } else {
+                    // 亏损状态，判断是否有价格优势
+                    if (P_sales < P_official) {
+                        // 警示状态 (Warning)：自建价格便宜，但负载率不够导致亏损
+                        roiBanner.classList.add('warning');
+                        if (roiBannerIcon) {
+                            roiBannerIcon.outerHTML = `<i data-lucide="alert-triangle" id="roi-banner-icon"></i>`;
+                        }
+                        const priceSaving = ((P_official - P_sales) / P_official * 100).toFixed(1);
+                        const bePctStr = beUDec !== null && beUDec >= 0 && beUDec <= 1 ? (beUDec * 100).toFixed(1) + '%' : '无法保本';
+                        roiBannerText.innerHTML = `算力防御警报：当前自建折合销售均价较大厂官方 API 便宜 <b style="font-size:14px; font-weight:800;">${priceSaving}%</b>，具备获客优势；但因运行负载率不足（当前 ${(U_rate*100).toFixed(0)}% < 保本点 ${bePctStr}），仍处于年亏损 <b style="font-size:14px; font-weight:800;">${Math.abs(P_net / 10000).toFixed(2)} 万元</b> 状态。建议加速导入业务负载。`;
+                    } else {
+                        // 高危状态 (Danger)：自建价格贵，且亏损
+                        roiBanner.classList.add('danger');
+                        if (roiBannerIcon) {
+                            roiBannerIcon.outerHTML = `<i data-lucide="shield-alert" id="roi-banner-icon"></i>`;
+                        }
+                        const priceOverage = ((P_sales - P_official) / P_official * 100).toFixed(1);
+                        roiBannerText.innerHTML = `高危警告：当前自建折合销售价已高于大厂官方混合API价（溢出 <b style="font-size:14px; font-weight:800;">${priceOverage}%</b>），且算力集群年亏损 <b style="font-size:14px; font-weight:800;">${Math.abs(P_net / 10000).toFixed(2)} 万元</b>。算力方案已完全丧失商业可行性。`;
+                    }
+                }
+                lucide.createIcons();
+            }
+
+            // ==================== 10. 装配 ECharts 绘图数据 ====================
+            const bePriceData = [];
+            const salesPriceData = [];
+            const officialPriceData = [];
+            
+            // 为 Y 轴定调最大显示高度
+            const maxPrice = Math.max(P_sales, P_official);
+            let yMax = maxPrice * 1.5;
+
+            // 考虑在100%或50%利用率下的自建保本售价，融入绘图区以展示无法保本时的合理趋势，防止高估或低估
+            let bepAt100 = (elecIntercept + fixedOpExNoElec + D_CapEx + elecSlope) / M_annual;
+            let bepAt50 = (elecIntercept + fixedOpExNoElec + D_CapEx + elecSlope * 0.5) / (M_annual * 0.5);
+            if (isFinite(bepAt50) && bepAt50 > 0) {
+                yMax = Math.max(yMax, Math.min(bepAt50, bepAt100 * 2.5)) * 1.25;
+            }
+            if (yMax <= 0 || isNaN(yMax)) yMax = 5.0;
+            currentYMax = yMax;
+
+            for (let i = 0; i <= 100; i++) {
+                const u = i / 100;
+                let beVal = 0;
+                if (u === 0) {
+                    beVal = null;
+                } else {
+                    beVal = (elecIntercept + fixedOpExNoElec + D_CapEx + elecSlope * u) / (M_annual * u);
+                }
+                
+                if (beVal !== null && (beVal > yMax * 3 || beVal < 0 || isNaN(beVal))) {
+                    bePriceData.push(null); // 一维数值数组，无 [i, val] 结构
+                } else {
+                    bePriceData.push(beVal);
+                }
+                
+                salesPriceData.push(P_sales);
+                officialPriceData.push(P_official);
+            }
+
+            const areas = [];
+            if (beUDec !== null && beUDec >= 0 && beUDec <= 1) {
+                const bPercent = beUDec * 100;
+                lastCrossPointBe = { x: bPercent, y: P_sales };
+
+                areas.push([
+                    {
+                        xAxis: 0,
+                        itemStyle: {
+                            color: 'rgba(239, 68, 68, 0.03)'
+                        }
+                    },
+                    {
+                        xAxis: Math.min(100, bPercent)
+                    }
+                ]);
+                areas.push([
+                    {
+                        xAxis: Math.min(100, bPercent),
+                        itemStyle: {
+                            color: 'rgba(16, 185, 129, 0.03)'
+                        }
+                    },
+                    {
+                        xAxis: 100
+                    }
+                ]);
+            } else {
+                lastCrossPointBe = null;
+                areas.push([
+                    {
+                        xAxis: 0,
+                        itemStyle: {
+                            color: 'rgba(239, 68, 68, 0.03)'
+                        }
+                    },
+                    {
+                        xAxis: 100
+                    }
+                ]);
+            }
+
+            if (roiUDec !== null && roiUDec >= 0 && roiUDec <= 1) {
+                const rPercent = roiUDec * 100;
+                lastCrossPointRoi = { x: rPercent, y: P_official };
+            } else {
+                lastCrossPointRoi = null;
+            }
+
+            const suggestLineData = Array.from({length: 101}, () => (isFinite(bePriceVal) && bePriceVal > 0) ? bePriceVal : isFinite(bePriceVal) ? 0 : null);
+
+            // 将参数更新到 ECharts 实例上
+            analysisChart.setOption({
+                yAxis: {
+                    max: yMax
+                },
+                series: [
+                    {
+                        name: '自建盈亏平衡售价',
+                        type: 'line',
+                        data: bePriceData,
+                        markArea: {
+                            silent: true,
+                            data: areas
+                        }
+                    },
+                    {
+                        name: '自建折合销售均价',
+                        type: 'line',
+                        data: salesPriceData
+                    },
+                    {
+                        name: '大厂官方折合混合价',
+                        type: 'line',
+                        data: officialPriceData
+                    },
+                    {
+                        name: '负载分摊建议售价',
+                        type: 'line',
+                        data: suggestLineData
+                    }
+                ]
+            });
+
+            // 重新定位交点脉冲
+            setTimeout(() => {
+                relocatePulseDots();
+                if (analysisChart) {
+                    analysisChart.dispatchAction({
+                        type: 'showTip',
+                        seriesIndex: 0,
+                        dataIndex: Math.round(currentParams.utilizationRate)
+                    });
+                }
+            }, 50);
+        }
+
+        // 初始化 ECharts 实例图表
+        function initAnalysisChart() {
+            const chartDom = document.getElementById('main-analysis-chart');
+            if (!chartDom) return;
+            
+            analysisChart = echarts.init(chartDom);
+            const option = {
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                    borderColor: '#111827',
+                    borderWidth: 2,
+                    textStyle: {
+                        color: '#111827',
+                        fontFamily: 'Inter',
+                        fontSize: 12
+                    },
+                    formatter: function (params) {
+                        let text = `<div style="font-family:var(--font-mono); font-size:11px; font-weight:700; border-bottom:1px solid #E5E7EB; padding-bottom:4px; margin-bottom:4px;">实际运行负载利用率: ${params[0].name}%</div>`;
+                        params.forEach(el => {
+                            let displayVal = '计算中...';
+                            let val = el.value;
+                            if (Array.isArray(val)) {
+                                val = val.length > 1 ? val[1] : val[0];
+                            } else if (val && typeof val === 'object' && val.value !== undefined) {
+                                val = Array.isArray(val.value) ? val.value[1] : val.value;
+                            }
+                            console.log("DEBUG_TOOLTIP_VALUE:", el.seriesName, "value:", el.value, "typeof:", typeof el.value, "val:", val);
+                            
+                            if (typeof val === 'number' && !isNaN(val) && isFinite(val)) {
+                                displayVal = val.toFixed(3) + ' 元/M';
+                            } else if (val === null || val === undefined || isNaN(val) || !isFinite(val)) {
+                                displayVal = '超出阈值';
+                            }
+                            
+                            text += `<div style="display:flex; justify-content:space-between; gap:16px; margin:2px 0; font-size:11px;">
+                                        <span style="color:#4B5563;">${el.seriesName}:</span>
+                                        <span style="font-weight:800; color:${el.color};">${displayVal}</span>
+                                    </div>`;
+                        });
+                        return text;
+                    }
+                },
+                grid: {
+                    left: '2%',
+                    right: '2%',
+                    bottom: '8%',
+                    top: '8%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: Array.from({length: 101}, (_, i) => i),
+                    axisLabel: {
+                        formatter: '{value}%',
+                        color: '#4B5563',
+                        fontFamily: 'Outfit',
+                        fontSize: 11,
+                        fontWeight: 700
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#111827',
+                            width: 2
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(17, 24, 39, 0.05)'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '折合单价 (元/百万 Tokens)',
+                    nameTextStyle: {
+                        color: '#4B5563',
+                        fontFamily: 'Inter',
+                        fontSize: 10,
+                        fontWeight: 700,
+                        padding: [0, 0, 0, 80]
+                    },
+                    axisLabel: {
+                        color: '#4B5563',
+                        fontFamily: 'Outfit',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        formatter: '{value}'
+                    },
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: '#111827',
+                            width: 2
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(17, 24, 39, 0.05)'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: '自建盈亏平衡售价',
+                        type: 'line',
+                        data: [],
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#F59E0B',
+                            width: 2,
+                            type: 'dashed'
+                        },
+                        itemStyle: {
+                            color: '#F59E0B'
+                        }
+                    },
+                    {
+                        name: '自建折合销售均价',
+                        type: 'line',
+                        data: [],
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#3B82F6',
+                            width: 3.5
+                        },
+                        itemStyle: {
+                            color: '#3B82F6'
+                        }
+                    },
+                    {
+                        name: '大厂官方折合混合价',
+                        type: 'line',
+                        data: [],
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#EF4444',
+                            width: 2.5
+                        },
+                        itemStyle: {
+                            color: '#EF4444'
+                        }
+                    },
+                    {
+                        name: '负载分摊建议售价',
+                        type: 'line',
+                        data: [],
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#A855F7',
+                            width: 2,
+                            type: 'dotted'
+                        },
+                        itemStyle: {
+                            color: '#A855F7'
+                        }
+                    }
+                ]
+            };
+            analysisChart.setOption(option);
+        }
+
+        // 重排两个拐点脉冲的物理位置
+        function relocatePulseDots() {
+            if (!analysisChart) return;
+            
+            const relocate = (point, dotElId) => {
+                const dot = document.getElementById(dotElId);
+                if (!dot) return;
+                
+                if (point && point.x >= 0 && point.x <= 100 && point.y >= 0 && point.y <= currentYMax) {
+                    const coords = analysisChart.convertToPixel({ gridIndex: 0 }, [Math.round(point.x), point.y]);
+                    if (coords && !isNaN(coords[0]) && !isNaN(coords[1])) {
+                        const gridRect = analysisChart.getDom().getBoundingClientRect();
+                        dot.style.left = coords[0] + 'px';
+                        dot.style.top = coords[1] + 'px';
+                        dot.style.display = 'block';
+                        return;
+                    }
+                }
+                dot.style.display = 'none';
+            };
+            
+            relocate(lastCrossPointBe, 'chart-glow-pulse-be');
+            relocate(lastCrossPointRoi, 'chart-glow-pulse-roi');
+        }
+</script>
+    <!-- 引入 Lucide 图标 -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- 引入 KaTeX 的 CSS 和 JS 自动渲染 LaTeX 数学公式 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMaths()"></script>
+    
+    <style>
+        :root {
+            /* Flat Design 亮色视觉系统预设 */
+            --bg-page: #F3F4F6; /* 浅灰底 */
+            --bg-card: #FFFFFF; /* 纯白卡片 */
+            --foreground: #111827; /* Gray 900 */
+            --foreground-muted: #4B5563; /* Gray 600 */
+            --foreground-subtle: #9CA3AF; /* Gray 400 */
+            
+            /* 纯平无影的核心色值 */
+            --primary: #3B82F6; /* Blue 500 */
+            --primary-dark: #2563EB; /* Blue 600 */
+            --secondary: #10B981; /* Emerald 500 */
+            --secondary-dark: #059669; /* Emerald 600 */
+            --accent: #F59E0B; /* Amber 500 */
+            --accent-dark: #D97706; /* Amber 600 */
+            --danger: #EF4444; /* Red 500 */
+            --purple: #8B5CF6; /* Purple 500 */
+            
+            --border-default: #E5E7EB; /* Gray 200 */
+            --border-bold: #111827; /* Gray 900 粗线 */
+            
+            --font-display: 'Outfit', 'Inter', -apple-system, sans-serif;
+            --font-sans: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'Fira Code', monospace;
+            
+            --easing-flat: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-page);
+            color: var(--foreground);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==================== Layer 1: 印刷网格线背景 ==================== */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: 
+                linear-gradient(to right, rgba(17, 24, 39, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(17, 24, 39, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ==================== 顶部页眉 (纯白、扁平) ==================== */
+        header {
+            padding: 24px 40px;
+            border-bottom: 2px solid var(--border-default);
+            background: #FFFFFF;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .header-tag {
+            font-family: 'Outfit', 'Inter', var(--font-sans);
+            font-size: 11px;
+            font-weight: 800;
+            color: #78350F;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            background: linear-gradient(110deg, #b8860b 0%, #e6ca65 20%, #fff3a8 40%, #e6ca65 60%, #b8860b 80%, #ffd700 100%);
+            background-size: 200% auto;
+            border: 1.5px solid #d4af37;
+            padding: 6px 30px;
+            border-radius: 4px;
+            width: fit-content;
+            position: relative;
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.9),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.2),
+                0 4px 8px rgba(0, 0, 0, 0.18),
+                0 1px 3px rgba(0, 0, 0, 0.12);
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2.5px solid #8b6508;
+            animation: goldShine 4s linear infinite;
+        }
+        @keyframes goldShine {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+        .header-tag::before, .header-tag::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: radial-gradient(circle at 1.5px 1.5px, #fff, #ffd700, #b8860b);
+            border-radius: 50%;
+            border: 1px solid #8b6508;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 1px rgba(0,0,0,0.5);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .header-tag::before {
+            left: 10px;
+        }
+        .header-tag::after {
+            right: 10px;
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--foreground);
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--foreground-muted);
+            font-weight: 500;
+        }
+
+        .btn-reset {
+            background: #FFFFFF;
+            border: 2px solid var(--foreground);
+            color: var(--foreground);
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.15s var(--easing-flat), background 0.15s ease;
+            box-shadow: none;
+        }
+
+        .btn-reset:hover {
+            background: var(--bg-page);
+            transform: scale(1.03);
+        }
+
+        .btn-reset:active {
+            transform: scale(0.98);
+        }
+
+        /* ==================== 页面布局 (Bento Grid) ==================== */
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 24px;
+            padding: 32px 40px;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            z-index: 5;
+        }
+
+        /* ==================== Bento 卡片通用样式 (纯平、无阴影) ==================== */
+        .bento-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-default);
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: none;
+            transition: border-color 0.2s ease, transform 0.2s var(--easing-flat);
+        }
+
+        .bento-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--border-bold);
+        }
+
+        .card-inner {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==================== 6列网格跨度分配 ==================== */
+        .col-span-2 { grid-column: span 2; }
+        .col-span-4 { grid-column: span 4; }
+        .col-span-6 { grid-column: span 6; }
+
+        /* ==================== 左侧：控制台面板 ==================== */
+        .console-card {
+            padding: 0;
+            height: fit-content;
+        }
+
+        .tabs-header {
+            display: flex;
+            background: var(--bg-page);
+            border-bottom: 2px solid var(--border-default);
+            padding: 6px;
+        }
+
+        .tab-button {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--foreground-muted);
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .tab-button.active {
+            background: var(--foreground);
+            color: #FFFFFF;
+        }
+
+        .console-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ==================== 输入分类彩色卡片包装 ==================== */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
+        }
+
+        /* 1. 硬件算力与折旧 (浅蓝) */
+        .color-group-hardware {
+            background-color: #EFF6FF;
+            border: 2px solid #BFDBFE;
+            padding: 16px;
+        }
+        .color-group-hardware .label-text {
+            color: #1E40AF;
+        }
+        .color-group-hardware .value-badge {
+            background-color: #3B82F6;
+            color: #FFFFFF;
+        }
+        .color-group-hardware input[type="range"]::-webkit-slider-thumb {
+            background: #3B82F6;
+            box-shadow: 0 0 0 2px #3B82F6;
+        }
+
+        /* 2. 商业定价与销售 (浅黄) */
+        .color-group-business {
+            background-color: #FFFBEB;
+            border: 2px solid #FDE68A;
+            padding: 16px;
+        }
+        .color-group-business .label-text {
+            color: #78350F;
+        }
+        .color-group-business .value-badge {
+            background-color: #D97706;
+            color: #FFFFFF;
+        }
+        .color-group-business input[type="range"]::-webkit-slider-thumb {
+            background: #D97706;
+            box-shadow: 0 0 0 2px #D97706;
+        }
+
+        /* 3. 物理环境与电力 (浅绿) */
+        .color-group-energy {
+            background-color: #ECFDF5;
+            border: 2px solid #A7F3D0;
+            padding: 16px;
+        }
+        .color-group-energy .label-text {
+            color: #065F46;
+        }
+        .color-group-energy .value-badge {
+            background-color: #059669;
+            color: #FFFFFF;
+        }
+        .color-group-energy input[type="range"]::-webkit-slider-thumb {
+            background: #059669;
+            box-shadow: 0 0 0 2px #059669;
+        }
+
+        /* 4. 网络与模型性能 (浅红) */
+        .color-group-performance {
+            background-color: #FFF1F2;
+            border: 2px solid #FECDD3;
+            padding: 16px;
+        }
+        .color-group-performance .label-text {
+            color: #9F1239;
+        }
+        .color-group-performance .value-badge {
+            background-color: #E11D48;
+            color: #FFFFFF;
+        }
+        .color-group-performance input[type="range"]::-webkit-slider-thumb {
+            background: #E11D48;
+            box-shadow: 0 0 0 2px #E11D48;
+        }
+
+        /* 5. 政策与资金补贴 (浅紫) */
+        .color-group-subsidy {
+            background-color: #F5F3FF;
+            border: 2px solid #DDD6FE;
+            padding: 16px;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .color-group-subsidy .label-text {
+            color: #5B21B6;
+        }
+        .color-group-subsidy .value-badge {
+            background-color: #7C3AED;
+            color: #FFFFFF;
+        }
+        .color-group-subsidy input[type="range"]::-webkit-slider-thumb {
+            background: #7C3AED;
+            box-shadow: 0 0 0 2px #7C3AED;
+        }
+
+        /* 折叠标题小计标签 */
+        .acc-trigger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .acc-subtotal {
+            font-size: 11px;
+            font-weight: 700;
+            background: #FFFFFF;
+            border: 1px solid rgba(156, 163, 175, 0.3);
+            color: var(--primary-dark);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: auto;
+            margin-right: 8px;
+            font-family: var(--font-mono);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 底部公式代入明细容器 */
+        .formula-calc-detail {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #F8FAFC;
+            border-left: 3px solid var(--primary-dark);
+            border-radius: 0 6px 6px 0;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #334155;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+            border: 1px solid #E2E8F0;
+            border-left-width: 3px;
+        }
+
+        /* 标题版本号徽章 */
+        .version-badge {
+            font-size: 11px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #FFFFFF;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            vertical-align: middle;
+            margin-left: 10px;
+            font-weight: 800;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
+        /* 公共标签与徽章样式 */
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .label-text {
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .value-badge {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* Flat 纯白带框输入框 */
+        .flat-input, select {
+            background: #FFFFFF;
+            border: 2px solid var(--border-default);
+            color: var(--foreground);
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 600;
+            outline: none;
+            width: 100%;
+            transition: all 0.15s ease;
+        }
+
+        .flat-input:focus, select:focus {
+            border-color: var(--border-bold);
+        }
+
+        /* Flat 滑块 (Slider) */
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            margin: 4px 0;
+            position: relative;
+        }
+        .btn-step {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            border: 2px solid var(--border-bold);
+            background: #FFFFFF;
+            color: #111827;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+            user-select: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .btn-step:hover {
+            background: var(--primary);
+            color: #FFFFFF;
+            border-color: var(--primary);
+        }
+        .btn-step:active {
+            transform: scale(0.9);
+        }
+        .slider-official-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #EF4444;
+            border: 2px solid #FFFFFF;
+            border-radius: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: auto;
+            box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+            z-index: 10;
+            cursor: help;
+            transition: left 0.2s ease-out;
+        }
+        .slider-official-dot:hover {
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.9);
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: rgba(17, 24, 39, 0.08);
+            border-radius: 9999px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 0 0 2px var(--primary);
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .limits-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--foreground-muted);
+        }
+
+        /* 折叠面板 (Accordion) - 实体扁平框区分设计 */
+        .acc-panel {
+            border: 2px solid var(--border-bold) !important;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: #FFFFFF;
+            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.04);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .acc-panel:hover {
+            border-color: var(--primary) !important;
+            box-shadow: 4px 4px 0px rgba(59, 130, 246, 0.08);
+        }
+
+        /* 底端 LaTeX 公式得数突出红色高亮样式 */
+        .formula-calc-detail b.result-val {
+            color: #EF4444 !important;
+            font-weight: 800;
+            font-size: 12px;
+            text-decoration: underline;
+        }
+
+        .acc-trigger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0 8px 0;
+            cursor: pointer;
+            color: var(--foreground-muted);
+            font-size: 14px;
+            font-weight: 700;
+            transition: color 0.15s ease;
+        }
+
+        .acc-trigger:hover {
+            color: var(--foreground);
+        }
+
+        .acc-arrow {
+            transition: transform 0.2s var(--easing-flat);
+        }
+
+        .acc-trigger.expanded .acc-arrow {
+            transform: rotate(180deg);
+        }
+
+        .acc-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s var(--easing-flat);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .acc-trigger.expanded + .acc-body {
+            max-height: 1200px;
+            padding-bottom: 12px;
+        }
+
+        .select-box {
+            position: relative;
+        }
+
+        .select-box::after {
+            content: "▼";
+            font-size: 8px;
+            color: var(--foreground-muted);
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            padding-right: 32px;
+        }
+
+        /* ==================== 右侧：Dashboard 区域 ==================== */
+        .dashboard-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            height: 100%;
+        }
+
+        /* API 财务生命红线横幅 (ROI Safety Redline) */
+        .roi-redline-banner {
+            border: 2px solid var(--border-default);
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s var(--easing-flat);
+        }
+
+        .roi-redline-banner.warning {
+            background-color: #FFFBEB;
+            border-color: #F59E0B;
+            color: #92400E;
+        }
+
+        .roi-redline-banner.danger {
+            background-color: #FEE2E2;
+            border-color: #EF4444;
+            color: #991B1B;
+        }
+
+        .roi-redline-banner.success {
+            background-color: #D1FAE5;
+            border-color: var(--secondary);
+            color: #065F46;
+        }
+
+        .roi-banner-badge {
+            background-color: currentColor;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            font-weight: 800;
+            color: #FFFFFF;
+            display: inline-block;
+        }
+
+        /* KPI Card 栅格网格 */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        /* KPI Bento Item */
+        .kpi-bento {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #FFFFFF;
+            border: 2px solid var(--border-default);
+            border-radius: 10px;
+        }
+
+        .kpi-bento-label {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            letter-spacing: 0.05em;
+            color: var(--foreground-muted);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+        }
+
+        .kpi-bento-label i {
+            font-size: 13px;
+        }
+
+        .kpi-bento-value-row {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .kpi-bento-value {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        /* KPI 颜色 */
+        #val-total-cost { color: #4F46E5; } /* OPEX: Indigo */
+        #val-be-price { color: #D97706; } /* 平衡售价: Amber */
+        #val-be-utilization { color: #059669; } /* 最低负载率: Emerald */
+
+        .kpi-bento-unit {
+            font-size: 11px;
+            color: var(--foreground-muted);
+            font-weight: 700;
+        }
+
+        /* 图表 Bento 容器 */
+        .chart-bento {
+            flex: 1;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chart-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-default);
+            padding-bottom: 12px;
+        }
+
+        .chart-head-title {
+            font-size: 16px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-display);
+        }
+
+        .chart-head-title i {
+            color: var(--primary-dark);
+        }
+
+        .chart-custom-legend {
+            display: flex;
+            gap: 16px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            font-weight: 700;
+        }
+
+        .custom-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--foreground-muted);
+        }
+
+        .legend-indicator-line {
+            width: 16px;
+            height: 3px;
+            border-radius: 9999px;
+        }
+
+        .chart-container-wrapper {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            height: 100%;
+        }
+
+        #main-analysis-chart {
+            width: 100%;
+            height: 100%;
+            min-height: 420px;
+        }
+
+        /* 盈亏平衡与防线双拐点物理坐标呼吸灯 (纯平无渐变缩放圈) */
+        .glow-pulse-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            display: none;
+        }
+
+        .pulse-dot-be {
+            background-color: var(--accent-dark);
+            box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 6px var(--accent);
+            animation: pulse-flat-be 1.6s infinite ease-out;
+        }
+
+        .pulse-dot-roi {
+            background-color: var(--purple);
+            box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 6px var(--purple);
+            animation: pulse-flat-roi 1.6s infinite ease-out;
+        }
+
+        @keyframes pulse-flat-be {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.5; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 12px var(--accent); }
+            100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+        }
+
+        @keyframes pulse-flat-roi {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.5; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 12px var(--purple); }
+            100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+        }
+
+        /* ==================== 底部：核心公式与因子字典看板 (大 Bento) ==================== */
+        .formula-card {
+            background: #FFFFFF;
+            border: 2px solid var(--border-default);
+            border-radius: 12px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .formula-card-title {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid var(--border-default);
+            padding-bottom: 12px;
+        }
+
+        .formula-card-title i {
+            color: var(--primary);
+        }
+
+        .formula-section-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--foreground);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 公式网格：双列响应式排版 */
+        .formula-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .formula-item {
+            background: var(--bg-page);
+            border: 1px solid var(--border-default);
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .formula-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--foreground-muted);
+        }
+
+        .formula-body {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--foreground);
+            background: transparent;
+            padding: 4px 0;
+            border: none;
+            overflow-x: auto;
+            display: block;
+            width: 100%;
+        }
+
+        .formula-body .katex-display {
+            margin: 0.3em 0;
+        }
+
+        .formula-desc {
+            font-size: 11px;
+            color: var(--foreground-muted);
+            font-weight: 500;
+        }
+
+        /* 字典网格：4列响应式卡片排版 (完全解决左右挤压截断问题) */
+        .dict-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            width: 100%;
+        }
+
+        .dict-item {
+            background: var(--bg-page);
+            border: 1px solid var(--border-default);
+            border-radius: 8px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+        }
+
+        .dict-term {
+            font-family: var(--font-mono);
+            font-weight: 800;
+            color: var(--primary-dark);
+        }
+
+        .dict-definition {
+            color: var(--foreground-muted);
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* ==================== 页脚 ==================== */
+        footer {
+            margin-top: auto;
+            padding: 24px 40px;
+            border-top: 2px solid var(--border-default);
+            background: #FFFFFF;
+            font-size: 12px;
+            color: var(--foreground-muted);
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            font-family: var(--font-mono);
+            font-weight: 600;
+        }
+
+        .footer-desc-group {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* ECharts Tooltip 扁平印刷卡片 */
+        .tooltip-flat {
+            background: #FFFFFF !important;
+            border: 2px solid var(--border-bold) !important;
+            border-radius: 6px !important;
+            box-shadow: none !important;
+            padding: 12px !important;
+        }
+
+        /* ==================== 响应式移动端自适应 ==================== */
+        @media (max-width: 1200px) {
+            .dict-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .formula-list {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .dict-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 1024px) {
+            main {
+                grid-template-columns: minmax(0, 1fr);
+                padding: 16px;
+            }
+            .col-span-2, .col-span-4, .col-span-6 {
+                grid-column: span 1;
+            }
+            header {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 14px;
+                align-items: flex-start;
+            }
+            footer {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .kpi-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .btn-reset {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .kpi-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .dict-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .formula-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Layer 1: Base Poster Grid Lines -->
+    <div class="grid-overlay"></div>
+
+    <!-- 页眉 Header -->
+    <header>
+        <div class="header-title-wrapper">
+            <div class="header-tag">产品与解决方案 / 智能计算PDT / AI开发部</div>
+            <h1>华鲲大模型算力集群盈亏平衡计算器 <span class="version-badge">v2.4.3</span></h1>
+            <p class="subtitle">基于多维变动成本与大厂 API 价格获客防线的商业化精算决策大屏</p>
+        </div>
+        <div>
+            <button class="btn-reset" onclick="resetAllValues()">
+                <i data-lucide="rotate-ccw" style="width: 14px; height: 14px;"></i>
+                重置沙盘数据
+            </button>
+        </div>
+    </header>
+
+    <!-- 主体内容 (Bento Grid) -->
+    <main class="bento-grid">
+        
+        <!-- 左侧输入面板 (col-span-2) -->
+        <div class="bento-card console-card col-span-2">
+            <div class="card-inner">
+                <div class="console-body" style="padding: 20px;">
+                    <div id="advanced-pane" class="advanced-container" style="display: flex; flex-direction: column; gap: 16px;">
+
+                        <!-- 1. 硬件设施成本区 (Hardware & CapEx Specs) -->
+                        <div class="acc-panel">
+                            <div class="acc-trigger expanded" onclick="toggleAccordionPane(this)">
+                                <span>1. 硬件与 CapEx 区</span>
+                                <span class="acc-subtotal" id="subtotal-hardware">总资产: 0.00 万元 | 年折旧: 0.00 万元</span>
+                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="acc-body">
+                                <!-- 服务器台数 -->
+                                <div class="input-group color-group-hardware" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">集群服务器台数 (N_server)</span>
+                                        <span class="value-badge" id="badge-adv-server-count">8</span>
+                                    </div>
+                                    <div class="slider-wrapper" style="display: flex; align-items: center; gap: 8px;">
+                                        <button type="button" class="btn-step" onclick="adjustServerCount(-1)">-</button>
+                                        <input type="range" id="slider-adv-server-count" min="1" max="384" step="1" value="8" oninput="changeParam('server-count', this.value)" style="flex: 1;">
+                                        <button type="button" class="btn-step" onclick="adjustServerCount(1)">+</button>
+                                    </div>
+                                    <div class="limits-row">
+                                        <span>1 台</span>
+                                        <span>384 台</span>
+                                    </div>
+                                </div>
+                                <!-- 单台采购价 -->
+                                <div class="input-group color-group-hardware" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">单台服务器采购价 (Price_server)</span>
+                                    </div>
+                                    <input type="number" id="field-adv-node-price" class="flat-input" value="140" min="10" max="1000" oninput="changeParam('node-price', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：万元 / 台</span>
+                                    </div>
+                                </div>
+                                <!-- 配套网络组网资产 -->
+                                <div class="input-group color-group-hardware" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">配套网络与组网资产 (Price_network)</span>
+                                    </div>
+                                    <input type="number" id="field-network-price" class="flat-input" value="0" min="0" max="1000" oninput="changeParam('network-price', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：万元 (用于计算 CapEx 总额)</span>
+                                    </div>
+                                </div>
+                                <!-- 选配存储与常规硬件资产 -->
+                                <div class="input-group color-group-hardware" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">选配存储与常规硬件资产 (Price_storage)</span>
+                                    </div>
+                                    <input type="number" id="field-storage-price" class="flat-input" value="0" min="0" max="2000" oninput="changeParam('storage-price', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：万元 (用于计算 CapEx 总额)</span>
+                                    </div>
+                                </div>
+                                <!-- 折旧年限 -->
+                                <div class="input-group color-group-hardware" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">折旧年限红线 (Years_depreciation)</span>
+                                    </div>
+                                    <div class="select-box">
+                                        <select id="select-dep-years" onchange="changeParam('dep-years', this.value)">
+                                            <option value="3" selected>3 年折旧期</option>
+                                            <option value="5">5 年折旧期</option>
+                                            <option value="7">7 年折旧期</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. 物理运营成本区 (OpEx Specs) -->
+                        <div class="acc-panel">
+                            <div class="acc-trigger" onclick="toggleAccordionPane(this)">
+                                <span>2. 物理运营成本区</span>
+                                <span class="acc-subtotal" id="subtotal-opex">月OPEX: 0.00 万元 | 年电费: 0.00 万元</span>
+                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="acc-body">
+                                <!-- 单台满载功耗 -->
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">单台满载功耗 (Power_server)</span>
+                                    </div>
+                                    <input type="number" id="field-power-server" class="flat-input" value="5.6" step="0.1" min="1.0" max="20.0" oninput="changeParam('power-server', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：kW</span>
+                                    </div>
+                                </div>
+                                <!-- PUE 系数 -->
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">机房 PUE 指标系数 (PUE)</span>
+                                        <span class="value-badge" id="badge-pue" style="background-color: var(--secondary);">1.30</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-pue" min="1.0" max="2.0" step="0.05" value="1.3" oninput="changeParam('pue', this.value)">
+                                    </div>
+                                </div>
+                                <!-- 电费 -->
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">工业电费单价 (Price_electricity)</span>
+                                    </div>
+                                    <input type="number" id="field-elec-rate" class="flat-input" value="0.8" step="0.1" min="0.1" max="3.0" oninput="changeParam('elec-rate', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：元 / kWh</span>
+                                    </div>
+                                </div>
+                                <!-- 机柜租金 -->
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">单个机柜月租金 (Price_cabinet)</span>
+                                    </div>
+                                    <input type="number" id="field-rack-cost" class="flat-input" value="6500" min="1000" max="30000" oninput="changeParam('rack-cost', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：元 / 月 / 台</span>
+                                    </div>
+                                </div>
+                                <!-- 公网带宽 -->
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">公网带宽月费 (Bandwidth_monthly)</span>
+                                    </div>
+                                    <input type="number" id="field-bandwidth" class="flat-input" value="3000" min="0" max="50000" oninput="changeParam('bandwidth', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：元 / 月</span>
+                                    </div>
+                                </div>
+                                <!-- 月运维费 -->
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">人工技术运维分摊 (Ops_monthly)</span>
+                                    </div>
+                                    <input type="number" id="field-ops-cost" class="flat-input" value="15000" min="0" max="100000" oninput="changeParam('ops-cost', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：元 / 月</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. 政策与资金补贴区 (Subsidy Specs) -->
+                        <div class="acc-panel">
+                            <div class="acc-trigger" onclick="toggleAccordionPane(this)">
+                                <span>3. 政策与资金补贴区</span>
+                                <span class="acc-subtotal" id="subtotal-subsidy">年总补贴: 0.00 万元</span>
+                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="acc-body">
+                                <div style="font-size: 11px; font-weight: 700; color: var(--primary-dark); margin-bottom: 8px; border-bottom: 1px dashed var(--border-default); padding-bottom: 4px;">🏢 政府扶持补贴</div>
+                                <!-- 政府设备采购补贴比例 -->
+                                <div class="input-group color-group-subsidy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">政府设备采购补贴率 (Gov_subsidy_hardware)</span>
+                                        <span class="value-badge" id="badge-subsidy-gov-hardware">0%</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-subsidy-gov-hardware" min="0" max="50" step="5" value="0" oninput="changeParam('subsidy-gov-hardware', this.value)">
+                                    </div>
+                                    <div class="limits-row">
+                                        <span>0% (无补贴)</span>
+                                        <span>50% (补一半)</span>
+                                    </div>
+                                </div>
+                                <!-- 政府年度运营财政补贴 -->
+                                <div class="input-group color-group-subsidy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">政府年度运营财政补贴 (Gov_subsidy_ops)</span>
+                                    </div>
+                                    <input type="number" id="field-subsidy-gov-ops" class="flat-input" value="0" min="0" max="1000" oninput="changeParam('subsidy-gov-ops', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：万元 / 年</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="font-size: 11px; font-weight: 700; color: var(--secondary-dark); margin-top: 12px; margin-bottom: 8px; border-bottom: 1px dashed var(--border-default); padding-bottom: 4px;">⚡ 运营商协议补贴</div>
+                                <!-- 运营商电费补贴比例 -->
+                                <div class="input-group color-group-subsidy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">运营商电费现金补贴率 (Carrier_subsidy_elec)</span>
+                                        <span class="value-badge" id="badge-subsidy-carrier-elec">0%</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-subsidy-carrier-elec" min="0" max="50" step="5" value="0" oninput="changeParam('subsidy-carrier-elec', this.value)">
+                                    </div>
+                                    <div class="limits-row">
+                                        <span>0% (无减免)</span>
+                                        <span>50% (电费减半)</span>
+                                    </div>
+                                </div>
+                                <!-- 运营商网络租用补贴比例 -->
+                                <div class="input-group color-group-subsidy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">网络租赁带宽费折扣率 (Carrier_subsidy_network)</span>
+                                        <span class="value-badge" id="badge-subsidy-carrier-network">0%</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-subsidy-carrier-network" min="0" max="50" step="5" value="0" oninput="changeParam('subsidy-carrier-network', this.value)">
+                                    </div>
+                                    <div class="limits-row">
+                                        <span>0% (无折扣)</span>
+                                        <span>50% (宽带费减半)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. 营收与销售定价区 (Revenue & Sales Specs) -->
+                        <div class="acc-panel">
+                            <div class="acc-trigger" onclick="toggleAccordionPane(this)">
+                                <span>4. 营收与销售定价区</span>
+                                <span class="acc-subtotal" id="subtotal-revenue">混合均价: 0.000 元/M | 年营收: 0.00 万元</span>
+                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="acc-body">
+                                <!-- 模型规格选择 -->
+                                <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0; margin-bottom: 12px;">
+                                    <div class="label-row">
+                                        <span class="label-text">
+                                            <i data-lucide="cpu" style="width: 14px; height: 14px;"></i>
+                                            大模型基准选择 (Model Preset)
+                                        </span>
+                                    </div>
+                                    <div class="select-box">
+                                        <select id="select-model-preset" onchange="changeModelPreset(this.value)">
+                                            <option value="deepseek-r1" selected>DeepSeek-R1 (旗舰推理/671B)</option>
+                                            <option value="deepseek-v4-pro">DeepSeek-V4-Pro (官方旗舰MoE/1.6T)</option>
+                                            <option value="deepseek-v4-flash">DeepSeek-V4-Flash (轻量代理MoE/284B)</option>
+                                            <option value="qwen-3.7-max">Qwen-3.7-Max (百炼旗舰闭源/约1T)</option>
+                                            <option value="qwen-3.6-plus">Qwen-3.6-Plus (百炼中坚闭源/193B)</option>
+                                            <option value="glm-5.1">GLM-5.1 (智谱旗舰开源/744B)</option>
+                                            <option value="glm-5">GLM-5 (智谱性价比MoE/744B)</option>
+                                            <option value="kimi-k2.6">Kimi-K2.6 (月暗旗舰开源/1T)</option>
+                                        </select>
+                                    </div>
+                                    <div id="model-pricing-static-info" style="font-size: 11px; color: #E11D48; font-weight: 700; margin-top: 6px; display: flex; justify-content: space-between;">
+                                        <span>输入未命中: 4.00 元/M</span>
+                                        <span>缓存命中: 0.50 元/M</span>
+                                        <span>输出: 12.00 元/M</span>
+                                    </div>
+                                    <div id="model-deployment-info" style="font-size: 10.5px; color: var(--foreground-muted); margin-top: 6px; border-top: 1px dashed var(--border-default); padding-top: 6px; line-height: 1.4;">
+                                        部署建议: 昇腾 910B (64GB) 私有部署推荐：FP16需 4台 | FP8需 2台 (使用 PP=4, TP=8 混合并行)
+                                    </div>
+                                </div>
+                                <!-- 对外输入售价 -->
+                                <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">对外输入售价 (P_sales_input)</span>
+                                        <span class="value-badge" id="badge-adv-token-price-input">3.00</span>
+                                    </div>
+                                    <div class="slider-wrapper" style="position: relative;">
+                                        <input type="range" id="slider-adv-token-price-input" min="0.1" max="30.0" step="0.1" value="3.0" oninput="changeParam('token-price-input', this.value)">
+                                        <div class="slider-official-dot" id="dot-official-price-input" title="官方售价"></div>
+                                    </div>
+                                </div>
+                                <!-- 对外输出售价 -->
+                                <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">对外输出售价 (P_sales_output)</span>
+                                        <span class="value-badge" id="badge-adv-token-price-output">12.00</span>
+                                    </div>
+                                    <div class="slider-wrapper" style="position: relative;">
+                                        <input type="range" id="slider-adv-token-price-output" min="0.2" max="60.0" step="0.2" value="12.0" oninput="changeParam('token-price-output', this.value)">
+                                        <div class="slider-official-dot" id="dot-official-price-output" title="官方售价"></div>
+                                    </div>
+                                </div>
+                                <!-- 对外缓存售价 -->
+                                <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">对外缓存售价 (P_sales_cache)</span>
+                                        <span class="value-badge" id="badge-adv-token-price-cache">0.80</span>
+                                    </div>
+                                    <div class="slider-wrapper" style="position: relative;">
+                                        <input type="range" id="slider-adv-token-price-cache" min="0.02" max="10.00" step="0.05" value="0.80" oninput="changeParam('token-price-cache', this.value)">
+                                        <div class="slider-official-dot" id="dot-official-price-cache" title="官方售价"></div>
+                                    </div>
+                                </div>
+                                <!-- 输入 Token 占比 -->
+                                <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">输入 Token 占比 (Ratio_input)</span>
+                                        <span class="value-badge" id="badge-adv-ratio-input">80%</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-adv-ratio-input" min="50" max="95" step="1" value="80" oninput="changeParam('ratio-input', this.value)">
+                                    </div>
+                                </div>
+                                <!-- 缓存命中率 -->
+                                <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">缓存命中率 (Ratio_cache)</span>
+                                        <span class="value-badge" id="badge-adv-ratio-cache">30%</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-adv-ratio-cache" min="0" max="90" step="5" value="30" oninput="changeParam('ratio-cache', this.value)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. 模型吞吐性能极限 (Model Specs) -->
+                        <div class="acc-panel">
+                            <div class="acc-trigger" onclick="toggleAccordionPane(this)">
+                                <span>5. 模型吞吐性能极限</span>
+                                <span class="acc-subtotal" id="subtotal-performance">混合吞吐: 0 Tok/s</span>
+                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="acc-body">
+                                <!-- PD 分离开关 -->
+                                <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0; flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <span class="label-text" style="font-weight: 700;">启用服务的 PD 分离部署</span>
+                                    <input type="checkbox" id="checkbox-pd-separation" onchange="changeParam('pd-separation', this.checked)" style="width: 18px; height: 18px; cursor: pointer;">
+                                </div>
+                                
+                                <!-- Prefill 节点占比与调度折损 -->
+                                <div id="pd-config-container" style="display: none; flex-direction: column; gap: 10px; margin-bottom: 12px; padding: 8px; background: rgba(59, 130, 246, 0.03); border-radius: 6px; border: 1px dashed rgba(59, 130, 246, 0.2);">
+                                    <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
+                                        <div class="label-row">
+                                            <span class="label-text">Prefill 节点占比 (Ratio_prefill_nodes)</span>
+                                            <span class="value-badge" id="badge-ratio-prefill-nodes">33%</span>
+                                        </div>
+                                        <div class="slider-wrapper">
+                                            <input type="range" id="slider-ratio-prefill-nodes" min="10" max="90" step="1" value="33" oninput="changeParam('ratio-prefill-nodes', this.value)">
+                                        </div>
+                                        <div class="limits-row">
+                                            <span>10% (偏Decoding)</span>
+                                            <span>90% (偏Prefill)</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
+                                        <div class="label-row">
+                                            <span class="label-text">PD 调度折损系数 (Loss_pd_scheduling)</span>
+                                            <span class="value-badge" id="badge-loss-pd-scheduling">10%</span>
+                                        </div>
+                                        <div class="slider-wrapper">
+                                            <input type="range" id="slider-loss-pd-scheduling" min="0" max="30" step="1" value="10" oninput="changeParam('loss-pd-scheduling', this.value)">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 输入 Prefill 吞吐 -->
+                                <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">输入 Prefill 吞吐速率 (T_prefill)</span>
+                                    </div>
+                                    <input type="number" id="field-t-prefill" class="flat-input" value="60000" min="1000" max="1000000" oninput="changeParam('t-prefill', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：Tokens / s</span>
+                                    </div>
+                                </div>
+                                <!-- 输出 Decoding 吞吐 -->
+                                <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">输出 Decoding 吞吐速率 (T_decoding)</span>
+                                    </div>
+                                    <input type="number" id="field-t-decoding" class="flat-input" value="15000" min="1000" max="500000" oninput="changeParam('t-decoding', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：Tokens / s</span>
+                                    </div>
+                                </div>
+                                <!-- 综合故障停机率 -->
+                                <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">综合故障停机率 (Alpha_fail)</span>
+                                        <span class="value-badge" id="badge-alpha-fail" style="background-color: var(--danger);">5%</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-alpha-fail" min="0" max="30" step="1" value="5" oninput="changeParam('alpha-fail', this.value)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6. 多模型混合部署配置 (Mixed Deployment Specs) -->
+                        <div class="acc-panel">
+                            <div class="acc-trigger" onclick="toggleAccordionPane(this)">
+                                <span>6. 多模型混合部署配置</span>
+                                <span class="acc-subtotal" id="subtotal-mixed">混合部署: 未启用</span>
+                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="acc-body">
+                                <!-- 启用混合部署开关 -->
+                                <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0; flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <span class="label-text" style="font-weight: 700;">启用多模型子集群混合部署</span>
+                                    <input type="checkbox" id="checkbox-mixed-deployment" onchange="changeParam('mixed-deployment', this.checked)" style="width: 18px; height: 18px; cursor: pointer;">
+                                </div>
+                                
+                                <div id="mixed-config-container" style="display: none; flex-direction: column; gap: 12px; border-top: 1px dashed var(--border-default); padding-top: 8px;">
+                                    <div style="font-size: 11px; font-weight: 700; color: var(--primary-dark); padding-bottom: 2px;">🚀 子集群 A 部署：模型 A (主选模型)</div>
+                                    <!-- 子集群 A 分配节点数 -->
+                                    <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                                        <div class="label-row">
+                                            <span class="label-text">模型 A 节点分配数 (N_A)</span>
+                                            <span class="value-badge" id="badge-mixed-nodes-a">4</span>
+                                        </div>
+                                        <div class="slider-wrapper" style="display: flex; align-items: center; gap: 8px;">
+                                            <button type="button" class="btn-step" onclick="adjustMixedNodesA(-1)">-</button>
+                                            <input type="range" id="slider-mixed-nodes-a" min="1" max="7" step="1" value="4" oninput="changeParam('mixed-nodes-a', this.value)" style="flex: 1;">
+                                            <button type="button" class="btn-step" onclick="adjustMixedNodesA(1)">+</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="font-size: 11px; font-weight: 700; color: var(--secondary-dark); border-top: 1px dashed var(--border-default); padding-top: 8px; padding-bottom: 2px;">🤖 子集群 B 部署：模型 B (备选模型)</div>
+                                    <!-- 子集群 B 模型预设选择 -->
+                                    <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                                        <div class="label-row">
+                                            <span class="label-text">模型 B 基准预设选择</span>
+                                        </div>
+                                        <div class="select-box">
+                                            <select id="select-model-preset-b" onchange="changeParam('model-preset-b', this.value)">
+                                                <option value="qwen-3.7-max" selected>Qwen-3.7-Max (百炼旗舰闭源/约1T)</option>
+                                                <option value="deepseek-r1">DeepSeek-R1 (旗舰推理/671B)</option>
+                                                <option value="deepseek-v4-pro">DeepSeek-V4-Pro (官方旗舰MoE/1.6T)</option>
+                                                <option value="deepseek-v4-flash">DeepSeek-V4-Flash (轻量代理MoE/284B)</option>
+                                                <option value="qwen-3.6-plus">Qwen-3.6-Plus (百炼中坚闭源/193B)</option>
+                                                <option value="glm-5.1">GLM-5.1 (智谱旗舰开源/744B)</option>
+                                                <option value="glm-5">GLM-5 (智谱性价比MoE/744B)</option>
+                                                <option value="kimi-k2.6">Kimi-K2.6 (月暗旗舰开源/1T)</option>
+                                            </select>
+                                        </div>
+                                        <div style="font-size: 11px; margin-top: 4px; display: flex; justify-content: space-between; color: var(--foreground-muted);">
+                                            <span>分配节点数 (N_B): <b id="val-mixed-nodes-b">4</b> 台</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 模型 B 对外自建售价配置 -->
+                                    <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 2px;">
+                                        <div>
+                                            <span class="label-text" style="font-size: 11px;">输入售价 (P_input_B)</span>
+                                            <input type="number" id="field-mixed-input-price-b" class="flat-input" style="padding: 6px; font-size: 12px; margin-top: 2px;" value="3.0" step="0.1" oninput="changeParam('mixed-input-price-b', this.value)">
+                                        </div>
+                                        <div>
+                                            <span class="label-text" style="font-size: 11px;">输出售价 (P_output_B)</span>
+                                            <input type="number" id="field-mixed-output-price-b" class="flat-input" style="padding: 6px; font-size: 12px; margin-top: 2px;" value="12.0" step="0.1" oninput="changeParam('mixed-output-price-b', this.value)">
+                                        </div>
+                                    </div>
+                                    <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                        <div>
+                                            <span class="label-text" style="font-size: 11px;">缓存命中率B</span>
+                                            <input type="number" id="field-mixed-ratio-cache-b" class="flat-input" style="padding: 6px; font-size: 12px; margin-top: 2px;" value="30" step="5" oninput="changeParam('mixed-ratio-cache-b', this.value)">
+                                        </div>
+                                        <div>
+                                            <span class="label-text" style="font-size: 11px;">输入占比B</span>
+                                            <input type="number" id="field-mixed-ratio-input-b" class="flat-input" style="padding: 6px; font-size: 12px; margin-top: 2px;" value="80" step="5" oninput="changeParam('mixed-ratio-input-b', this.value)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 全局共享：系统算力负载率 (控制核心枢纽) -->
+                    <div class="input-group" style="margin-top: 10px; border-top: 2px dashed var(--border-default); padding-top: 20px;">
+                        <div class="label-row">
+                            <span class="label-text" style="color: var(--primary-dark); font-weight: 800;">
+                                <i data-lucide="gauge"></i>
+                                系统当前实际算力利用率 (U_rate)
+                            </span>
+                            <span class="value-badge" id="badge-utilization" style="background-color: var(--primary-dark); color: #FFFFFF;">30%</span>
+                        </div>
+                        <div class="slider-wrapper">
+                            <input type="range" id="slider-utilization" min="0" max="100" step="1" value="30" oninput="changeParam('utilization-rate', this.value)">
+                        </div>
+                        <div class="limits-row">
+                            <span>0% (空载)</span>
+                            <span>100% (满载)</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧：Dashboard 区域 (col-span-4) -->
+        <div class="col-span-4 dashboard-layout">
+            
+            <!-- 自建可行性状态条 (ROI Safety Redline) -->
+            <div id="roi-redline-banner" class="roi-redline-banner success">
+                <i data-lucide="shield-check" id="roi-banner-icon"></i>
+                <div id="roi-banner-text">正在评估算力防御线...</div>
+            </div>
+
+            <!-- 4 个 KPI Bento Items -->
+            <div class="kpi-grid">
+                <!-- 成本 -->
+                <div class="bento-card kpi-bento">
+                    <div class="card-inner">
+                        <div class="kpi-bento-label">
+                            <i data-lucide="calculator"></i>
+                            月度运营成本 (OpEx)
+                        </div>
+                        <div class="kpi-bento-value-row">
+                            <span class="kpi-bento-value" id="val-total-cost">0.00</span>
+                            <span class="kpi-bento-unit">万元/月</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 自建保本单价 -->
+                <div class="bento-card kpi-bento">
+                    <div class="card-inner">
+                        <div class="kpi-bento-label">
+                            <i data-lucide="trending-up"></i>
+                            自建盈亏平衡售价
+                        </div>
+                        <div class="kpi-bento-value-row">
+                            <span class="kpi-bento-value" id="val-be-price">0.00</span>
+                            <span class="kpi-bento-unit">元/百万</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 自建最低保本负载率 -->
+                <div class="bento-card kpi-bento">
+                    <div class="card-inner">
+                        <div class="kpi-bento-label">
+                            <i data-lucide="bar-chart-2"></i>
+                            保本利用率 (U_BEP)
+                        </div>
+                        <div class="kpi-bento-value-row">
+                            <span class="kpi-bento-value" id="val-be-utilization">0.0%</span>
+                            <span class="kpi-bento-unit">保本临界</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 年净利润 (带回本周期) -->
+                <div class="bento-card kpi-bento" id="kpi-profit-bento" style="border-top-width: 4px;">
+                    <div class="card-inner">
+                        <div class="kpi-bento-label">
+                            <i data-lucide="activity" id="kpi-profit-arrow"></i>
+                            预计年净利润 (P_net)
+                        </div>
+                        <div class="kpi-bento-value-row" style="margin-bottom: 2px;">
+                            <span class="kpi-bento-value" id="val-net-profit">0.00</span>
+                            <span class="kpi-bento-unit">万元/年</span>
+                        </div>
+                        <div style="font-size: 11px; font-weight: 700; color: var(--foreground-muted);" id="val-cashback-period">
+                            回本周期: 计算中...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 盈亏平衡建议售价突出精算栏 -->
+                        <!-- 盈亏平衡建议售价突出精算栏 -->
+            <div class="bento-card recommended-price-card">
+                <div class="card-inner" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.06) 0%, rgba(59, 130, 246, 0.06) 100%); border: 2px solid rgba(168, 85, 247, 0.3); border-radius: 6px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="price-icon-badge" style="background: #8B5CF6; color: #fff; padding: 8px; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 8px rgba(168, 85, 247, 0.3);">
+                            <i data-lucide="coins" style="width: 18px; height: 18px;"></i>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 13px; font-weight: 800; color: #1e1b4b; margin: 0; display: flex; align-items: center; gap: 6px;">
+                                盈亏平衡建议售价 (负载分摊售价红线)
+                                <span class="badge-u-current" id="val-suggest-u-badge" style="background: rgba(168, 85, 247, 0.12); color: #8B5CF6; font-size: 10.5px; padding: 2px 6px; border-radius: 4px; font-weight: 700;">U = 30%</span>
+                            </h3>
+                            <div id="val-suggest-price-formula" style="font-size: 11.5px; color: #4B5563; margin: 6px 0 0 0; font-weight: 500; min-height: 26px;">
+                                <!-- 动态 LaTeX 公式区域 -->
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 10px; color: #6B7280; font-weight: 700; display: block; margin-bottom: 2px;">建议最低销售均价</span>
+                        <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 4px;">
+                            <span class="kpi-bento-value" id="val-suggest-price-highlight" style="font-size: 24px; font-weight: 900; color: #8B5CF6; font-family: var(--font-outfit); text-shadow: 0 2px 4px rgba(168, 85, 247, 0.1);">0.00</span>
+                            <span class="kpi-bento-unit" style="font-size: 11px; color: #8B5CF6; font-weight: 700;">元/百万 Tokens</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 集群配置及环境参数可视化汇总看板 -->
+            <div class="bento-card selected-config-summary-card" style="margin-top: 16px;">
+                <div class="card-inner" style="padding: 16px; background: linear-gradient(135deg, rgba(255,255,255,0.75) 0%, rgba(248,250,252,0.8) 100%); border: 1.5px solid rgba(226, 232, 240, 0.9); border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                    <h3 style="font-size: 13px; font-weight: 800; color: #1e1b4b; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
+                        <i data-lucide="sliders-horizontal" style="color: #8b5cf6; width: 14px; height: 14px;"></i>
+                        已选集群参数与物理环境可视化汇总看板
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                        <!-- 1. 物理设施与 CapEx -->
+                        <div style="background: rgba(255, 255, 255, 0.9); border: 1.2px solid #e2e8f0; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 4px; border-bottom: 1.2px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 2px;">
+                                <i data-lucide="server" style="color: #3b82f6; width: 12px; height: 12px;"></i>
+                                物理设施与 CapEx
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>集群总台数:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-server-count">8 台</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>单机售价:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-node-price">140 万元</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>网络/存储选配:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-net-storage">0.0/0.0 万元</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 4px;">
+                                <span>净 CapEx 投资:</span>
+                                <span style="font-weight: 800; color: #3b82f6;" id="summary-capex-net">1120.00 万元</span>
+                            </div>
+                        </div>
+
+                        <!-- 2. 物理运营与补贴 -->
+                        <div style="background: rgba(255, 255, 255, 0.9); border: 1.2px solid #e2e8f0; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 4px; border-bottom: 1.2px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 2px;">
+                                <i data-lucide="zap" style="color: #eab308; width: 12px; height: 12px;"></i>
+                                物理运营与补贴
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>运行 PUE:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-pue">1.30</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>电费单价:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-elec-rate">0.80 元/度</span>
+                            </div>
+                            <div style="font-size: 10px; color: #64748b; line-height: 1.35; border-top: 1px dashed #e2e8f0; padding-top: 4px;" id="summary-subsidy-details">
+                                建补: 0% | 运直补: 0万<br>电补: 0% | 网折: 0%
+                            </div>
+                        </div>
+
+                        <!-- 3. 大模型及计算效能 -->
+                        <div style="background: rgba(255, 255, 255, 0.9); border: 1.2px solid #e2e8f0; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 4px; border-bottom: 1.2px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 2px;">
+                                <i data-lucide="cpu" style="color: #10b981; width: 12px; height: 12px;"></i>
+                                算力效能与模型
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>服务的PD分离:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-pd">未启用</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>算力折损率:</span>
+                                <span style="font-weight: 700; color: #0f172a;" id="summary-fail-rate">5%</span>
+                            </div>
+                            <div style="font-size: 10px; color: #10b981; font-weight: 700; line-height: 1.3; border-top: 1px dashed #e2e8f0; padding-top: 4px;" id="summary-model-deploy">
+                                模型: DeepSeek-R1 (8台)
+                            </div>
+                        </div>
+
+                        <!-- 4. 运行负载与销售定价 -->
+                        <div style="background: rgba(255, 255, 255, 0.9); border: 1.2px solid #e2e8f0; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 4px; border-bottom: 1.2px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 2px;">
+                                <i data-lucide="coins" style="color: #a855f7; width: 12px; height: 12px;"></i>
+                                负载率与销售定价
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>负载利用率 U:</span>
+                                <span style="font-weight: 800; color: #a855f7;" id="summary-utilization">30%</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 4px;">
+                                <span>自建销售均价:</span>
+                                <span style="font-weight: 700; color: #3b82f6;" id="summary-sales-price">3.22 元/M</span>
+                            </div>
+                            <div style="font-size: 11px; color: #475569; display: flex; justify-content: space-between;">
+                                <span>大厂官方限价:</span>
+                                <span style="font-weight: 700; color: #ef4444;" id="summary-official-price">4.50 元/M</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 10px; color: #6B7280; font-weight: 700; display: block; margin-bottom: 2px;">建议最低销售均价</span>
+                        <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 4px;">
+                            <span class="kpi-bento-value" id="val-suggest-price-highlight" style="font-size: 24px; font-weight: 900; color: #8B5CF6; font-family: var(--font-outfit); text-shadow: 0 2px 4px rgba(168, 85, 247, 0.1);">0.00</span>
+                            <span class="kpi-bento-unit" style="font-size: 11px; color: #8B5CF6; font-weight: 700;">元/百万 Tokens</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图表 Bento Card (重构为单价与红线对比) -->
+            <div class="bento-card chart-bento" style="margin-top: 16px;">
+                <div class="card-inner">
+                    <div class="chart-header-bar">
+                        <div class="chart-head-title">
+                            <i data-lucide="area-chart"></i>
+                            自建平衡单价 vs 大厂官方定价红线对比曲线
+                        </div>
+                        <div class="chart-custom-legend">
+                            <div class="custom-legend-item">
+                                <span class="legend-indicator-line" style="border-bottom: 2px dashed #9CA3AF; height: 0;"></span>
+                                <span>自建盈亏平衡售价 (随负载下降)</span>
+                            </div>
+                            <div class="custom-legend-item">
+                                <span class="legend-indicator-line" style="background: var(--primary);"></span>
+                                <span>自建 Token 对外折合销售均价</span>
+                            </div>
+                            <div class="custom-legend-item">
+                                <span class="legend-indicator-line" style="background: var(--danger); height: 3px;"></span>
+                                <span>大厂官方折合 API 价格红线</span>
+                            </div>
+                            <div class="custom-legend-item">
+                                <span class="legend-indicator-line" style="border-bottom: 2px dashed #A855F7; height: 0;"></span>
+                                <span>负载分摊建议售价 (当前负载)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 图表画布区域 -->
+                    <div class="chart-container-wrapper">
+                        <div id="main-analysis-chart"></div>
+                        <!-- 自建收支平衡交点 (黄色脉冲) -->
+                        <div id="chart-glow-pulse-be" class="glow-pulse-dot pulse-dot-be" title="自建收支保本点 (U_BEP)"></div>
+                        <!-- DeepSeek 获客优势拐点 (紫色脉冲) -->
+                        <div id="chart-glow-pulse-roi" class="glow-pulse-dot pulse-dot-roi" title="自建价格获客优势拐点 (U_ROI)"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== 底部：核心公式与因子字典大 Bento ==================== -->
+        <div class="bento-card formula-card col-span-6">
+            <div class="formula-card-title">
+                <i data-lucide="file-text"></i>
+                华鲲智算集群商业精算逻辑与因子定义字典
+            </div>
+            
+            <!-- 1. 核心数学公式区 -->
+            <div style="margin-top: 10px;">
+                <div class="formula-section-title">
+                    <i data-lucide="calculator" style="width: 14px; height: 14px; color: var(--primary-dark);"></i>
+                    底层链式数学公式组 (LaTeX 排版数学内核)
+                </div>
+                <div class="formula-list">
+                    <div class="formula-item">
+                        <div class="formula-name">1. 资产总值 (CapEx)</div>
+                        <div class="formula-body">$$CapEx = (Price_{server} \times N_{server}) + Price_{network}$$</div>
+                        <div class="formula-desc">整个算力节点与组网资产采购的总资本性支出（未扣除补贴）。</div>
+                        <div class="formula-calc-detail" id="calc-detail-capex">等待计算...</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">2. 年固定资产折旧 (D_CapEx)</div>
+                        <div class="formula-body">$$D_{CapEx} = \frac{CapEx \times (1 - Subsidy_{hardware})}{Years_{depreciation}}$$</div>
+                        <div class="formula-desc">依据折旧年限红线将扣除硬件建设补贴后的净资产进行等额年折旧分摊。</div>
+                        <div class="formula-calc-detail" id="calc-detail-d-capex">等待计算...</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">3. 年运营成本 (OpEx_annual)</div>
+                        <div class="formula-body">$$OpEx_{annual} = PowerCost \times (1 - Subsidy_{elec}) + CabinetCost + BandwidthCost + OpsCost - Subsidy_{annual\_ops}$$</div>
+                        <div class="formula-desc">包含算力电费（扣除电费补贴）、机柜租金、独享宽带和人工运维，再扣减财政运营年补贴。</div>
+                        <div class="formula-calc-detail" id="calc-detail-opex">等待计算...</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">4. 混合吞吐速率 (T_speed)</div>
+                        <div class="formula-body">$$T_{speed} = \frac{1}{\frac{Ratio_{input}}{T_{prefill}} + \frac{1 - Ratio_{input}}{T_{decoding}}}$$</div>
+                        <div class="formula-desc">基于输入（Prefill）与输出（Decoding）极限速率以及流量占比动态求解的混合吞吐速率。</div>
+                        <div class="formula-calc-detail" id="calc-detail-t-speed">等待计算...</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">5. 集群最大 Token 年产能 (M_annual)</div>
+                        <div class="formula-body">$$M_{annual} = \frac{T_{speed} \times 86400 \times 365 \times (1 - Alpha_{fail})}{1,000,000}$$</div>
+                        <div class="formula-desc">结合混合吞吐极限与综合停机率，计算集群在 100% 负载率下的理论极限 Token 年产能。</div>
+                        <div class="formula-calc-detail" id="calc-detail-m-annual">等待计算...</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">6. 对外折合混合销售均价 (P_sales_blended)</div>
+                        <div class="formula-body">$$P_{sales\_blended} = \left[ P_{cache} \times Ratio_{cache} + P_{input\_miss} \times (1 - Ratio_{cache}) \right] \times Ratio_{input} + P_{output} \times (1 - Ratio_{input})$$</div>
+                        <div class="formula-desc">将输入售价（拆分为缓存命中售价与未命中售价）和输出售价按流量占比进行三轨加权折算。</div>
+                        <div class="formula-calc-detail" id="calc-detail-p-sales">等待计算...</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">7. 实际年净利润 (P_net)</div>
+                        <div class="formula-body">$$P_{net} = (M_{annual} \times U_{rate} \times P_{sales\_blended}) - OpEx_{annual} - D_{CapEx}$$</div>
+                        <div class="formula-desc">年总营业额减去年度运营成本 (扣减补贴后) 与年折旧额后的最终经营损益。</div>
+                        <div class="formula-calc-detail" id="calc-detail-p-net">等待计算...</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">8. 盈亏平衡点利用率红线 (U_BEP)</div>
+                        <div class="formula-body">$$U_{BEP} = \frac{OpEx_{annual} + D_{CapEx}}{M_{annual} \times P_{sales\_blended}}$$</div>
+                        <div class="formula-desc">自建算力达致盈亏平衡时的临界利用率。低于该红线集群将处于净亏损状态。</div>
+                        <div class="formula-calc-detail" id="calc-detail-u-bep">等待计算...</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">9. 纯现金流回本周期 (T_cash_back)</div>
+                        <div class="formula-body">$$T_{cash\_back} = \frac{CapEx \times (1 - Subsidy_{hardware})}{R_{gross} - OpEx_{annual}}$$</div>
+                        <div class="formula-desc">使用总营业额扣除年运营开销后的纯现金流，回收扣除补贴后的硬件净投入的预计年限。</div>
+                        <div class="formula-calc-detail" id="calc-detail-t-cashback">等待计算...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 分割线 -->
+            <div style="border-top: 2px dashed var(--border-default); margin: 12px 0;"></div>
+
+            <!-- 3. 因子字典定义区 (4列网格排版，完全解决截断问题) -->
+            <div>
+                <div class="formula-section-title">
+                    <i data-lucide="book-open" style="width: 14px; height: 14px; color: var(--secondary-dark);"></i>
+                    动态输入因子定义库 (变量释义字典)
+                </div>
+                <div class="dict-grid">
+                    <div class="dict-item">
+                        <span class="dict-term">N_server</span>
+                        <span class="dict-definition">集群内配置的 GPU/NPU 物理服务器台数。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Price_server</span>
+                        <span class="dict-definition">单台服务器采购单价，包含内置算力显卡等分摊。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Price_network</span>
+                        <span class="dict-definition">配套交换机、RDMA高速光纤等配套组网资产总额。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Years_depreciation</span>
+                        <span class="dict-definition">固定资产的折旧摊销年限（影响年折旧底座的生存硬开销）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Power_server</span>
+                        <span class="dict-definition">单台服务器的额定满载功耗 (单位：kW)。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">PUE</span>
+                        <span class="dict-definition">数据中心电源使用效率指标。PUE越趋近于1说明空调用电等杂电损耗越小。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Price_electricity</span>
+                        <span class="dict-definition">数据中心托管地的工业用电单价 (元/kWh)。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Price_cabinet</span>
+                        <span class="dict-definition">高电密机柜单月托管费。计算中默认单台服务器占用单个机柜。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Bandwidth_monthly</span>
+                        <span class="dict-definition">集群向外提供公网 API 零售服务时所需的月度宽带费。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Ops_monthly</span>
+                        <span class="dict-definition">集群托管机房的月度人工巡检与基础运维外包等分摊费。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">T_speed</span>
+                        <span class="dict-definition">当前模型在物理集群上满载并发时的最大吞吐速率。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Alpha_fail</span>
+                        <span class="dict-definition">集群因网络丢包、坏卡或系统故障等导致的年均不可用时间占比。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">P_official_input</span>
+                        <span class="dict-definition">DeepSeek 官方 API 输入 Token 的标准单价（元/百万 Tokens）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">P_official_output</span>
+                        <span class="dict-definition">DeepSeek 官方 API 输出 Token 的标准单价（元/百万 Tokens）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">P_official_blended</span>
+                        <span class="dict-definition">DeepSeek 官方 API 按输入占比折合后的混合单价红线（获客门槛）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">P_sales_input</span>
+                        <span class="dict-definition">我们自建对外销售的输入 Token 单价（可通过滑块调节）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">P_sales_output</span>
+                        <span class="dict-definition">我们自建对外销售的输出 Token 单价（可通过滑块调节）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">P_sales_blended</span>
+                        <span class="dict-definition">我们自建对外销售 Token 服务的加权折合实际混合平均售价。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Ratio_input</span>
+                        <span class="dict-definition">输入 Token 占整体消耗 Token 的百分比（通过比例滑块调节）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">U_rate</span>
+                        <span class="dict-definition">集群在全年中实际运行并产生算力营业额的时间占比（算力利用率）。</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 页脚 Footer -->
+    <footer>
+        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • 商业精算沙盘 v2.4.3</div>
         <div class="footer-desc-group">
             <span>硬件折旧按双倍余额/平均分摊计算</span>
             <span>|</span>
