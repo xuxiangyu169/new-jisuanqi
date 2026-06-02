@@ -1047,7 +1047,7 @@
     <header>
         <div class="header-title-wrapper">
             <div class="header-tag">产品与解决方案 / 智能计算PDT / AI开发部</div>
-            <h1>华鲲大模型算力集群盈亏平衡计算器 <span class="version-badge">v2.3.0</span></h1>
+            <h1>华鲲大模型算力集群盈亏平衡计算器 <span class="version-badge">v2.4.0</span></h1>
             <p class="subtitle">基于多维变动成本与大厂 API 价格获客防线的商业化精算决策大屏</p>
         </div>
         <div>
@@ -1292,17 +1292,23 @@
                                     </div>
                                     <div class="select-box">
                                         <select id="select-model-preset" onchange="changeModelPreset(this.value)">
-                                            <option value="deepseek-r1" selected>DeepSeek-R1 (官方旗舰推理)</option>
-                                            <option value="qwen-3.7-max">Qwen-3.7-Max (百炼旗舰闭源)</option>
-                                            <option value="glm-5.1">GLM-5.1 (智谱旗舰开源)</option>
-                                            <option value="kimi-k2.6">Kimi-K2.6 (月暗旗舰开源)</option>
-                                            <option value="deepseek-v4-pro">DeepSeek-V4-Pro (官方旗舰MoE)</option>
+                                            <option value="deepseek-r1" selected>DeepSeek-R1 (旗舰推理/671B)</option>
+                                            <option value="deepseek-v4-pro">DeepSeek-V4-Pro (官方旗舰MoE/1.6T)</option>
+                                            <option value="deepseek-v4-flash">DeepSeek-V4-Flash (轻量代理MoE/284B)</option>
+                                            <option value="qwen-3.7-max">Qwen-3.7-Max (百炼旗舰闭源/约1T)</option>
+                                            <option value="qwen-3.6-plus">Qwen-3.6-Plus (百炼中坚闭源/193B)</option>
+                                            <option value="glm-5.1">GLM-5.1 (智谱旗舰开源/744B)</option>
+                                            <option value="glm-5">GLM-5 (智谱性价比MoE/744B)</option>
+                                            <option value="kimi-k2.6">Kimi-K2.6 (月暗旗舰开源/1T)</option>
                                         </select>
                                     </div>
                                     <div id="model-pricing-static-info" style="font-size: 11px; color: #E11D48; font-weight: 700; margin-top: 6px; display: flex; justify-content: space-between;">
                                         <span>输入未命中: 4.00 元/M</span>
                                         <span>缓存命中: 0.50 元/M</span>
                                         <span>输出: 12.00 元/M</span>
+                                    </div>
+                                    <div id="model-deployment-info" style="font-size: 10.5px; color: var(--foreground-muted); margin-top: 6px; border-top: 1px dashed var(--border-default); padding-top: 6px; line-height: 1.4;">
+                                        部署建议: 昇腾 910B (64GB) 私有部署推荐：FP16需 4台 | FP8需 2台 (使用 PP=4, TP=8 混合并行)
                                     </div>
                                 </div>
                                 <!-- 对外输入售价 -->
@@ -1471,11 +1477,14 @@
                                         </div>
                                         <div class="select-box">
                                             <select id="select-model-preset-b" onchange="changeParam('model-preset-b', this.value)">
-                                                <option value="qwen-3.7-max" selected>Qwen-3.7-Max (百炼旗舰闭源)</option>
-                                                <option value="deepseek-r1">DeepSeek-R1 (官方旗舰推理)</option>
-                                                <option value="glm-5.1">GLM-5.1 (智谱旗舰开源)</option>
-                                                <option value="kimi-k2.6">Kimi-K2.6 (月暗旗舰开源)</option>
-                                                <option value="deepseek-v4-pro">DeepSeek-V4-Pro (官方旗舰MoE)</option>
+                                                <option value="qwen-3.7-max" selected>Qwen-3.7-Max (百炼旗舰闭源/约1T)</option>
+                                                <option value="deepseek-r1">DeepSeek-R1 (旗舰推理/671B)</option>
+                                                <option value="deepseek-v4-pro">DeepSeek-V4-Pro (官方旗舰MoE/1.6T)</option>
+                                                <option value="deepseek-v4-flash">DeepSeek-V4-Flash (轻量代理MoE/284B)</option>
+                                                <option value="qwen-3.6-plus">Qwen-3.6-Plus (百炼中坚闭源/193B)</option>
+                                                <option value="glm-5.1">GLM-5.1 (智谱旗舰开源/744B)</option>
+                                                <option value="glm-5">GLM-5 (智谱性价比MoE/744B)</option>
+                                                <option value="kimi-k2.6">Kimi-K2.6 (月暗旗舰开源/1T)</option>
                                             </select>
                                         </div>
                                         <div style="font-size: 11px; margin-top: 4px; display: flex; justify-content: space-between; color: var(--foreground-muted);">
@@ -1965,40 +1974,8 @@
                 defaultDecoding: 15000,
                 defaultSalesPriceInput: 3.00,
                 defaultSalesPriceOutput: 9.00,
-                defaultSalesPriceCache: 0.40
-            },
-            'qwen-3.7-max': {
-                name: 'Qwen-3.7-Max',
-                input: 12.00,
-                output: 36.00,
-                cache: 1.20,
-                defaultPrefill: 90000,
-                defaultDecoding: 22000,
-                defaultSalesPriceInput: 9.00,
-                defaultSalesPriceOutput: 27.00,
-                defaultSalesPriceCache: 0.90
-            },
-            'glm-5.1': {
-                name: 'GLM-5.1',
-                input: 6.00,
-                output: 24.00,
-                cache: 0.00,
-                defaultPrefill: 75000,
-                defaultDecoding: 18000,
-                defaultSalesPriceInput: 4.50,
-                defaultSalesPriceOutput: 18.00,
-                defaultSalesPriceCache: 0.00
-            },
-            'kimi-k2.6': {
-                name: 'Kimi-K2.6',
-                input: 6.50,
-                output: 27.00,
-                cache: 1.10,
-                defaultPrefill: 50000,
-                defaultDecoding: 12000,
-                defaultSalesPriceInput: 5.00,
-                defaultSalesPriceOutput: 20.00,
-                defaultSalesPriceCache: 0.80
+                defaultSalesPriceCache: 0.40,
+                deployInfo: '昇腾 910B (64GB) 私有部署推荐：FP16需 4台 | FP8需 2台 (使用 PP=4, TP=8 混合并行)'
             },
             'deepseek-v4-pro': {
                 name: 'DeepSeek-V4-Pro',
@@ -2009,7 +1986,80 @@
                 defaultDecoding: 20000,
                 defaultSalesPriceInput: 2.40,
                 defaultSalesPriceOutput: 4.80,
-                defaultSalesPriceCache: 0.02
+                defaultSalesPriceCache: 0.02,
+                deployInfo: '昇腾 910B (64GB) 私有部署推荐：FP16需 8台 | FP8需 4台 (1.6T 超大 MoE 旗舰)'
+            },
+            'deepseek-v4-flash': {
+                name: 'DeepSeek-V4-Flash',
+                input: 0.98,
+                output: 1.96,
+                cache: 0.098,
+                defaultPrefill: 150000,
+                defaultDecoding: 45000,
+                defaultSalesPriceInput: 0.80,
+                defaultSalesPriceOutput: 1.60,
+                defaultSalesPriceCache: 0.08,
+                deployInfo: '昇腾 910B (64GB) 私有部署推荐：1台即可流畅运行 (284B 轻量级 MoE)'
+            },
+            'qwen-3.7-max': {
+                name: 'Qwen-3.7-Max',
+                input: 12.00,
+                output: 36.00,
+                cache: 1.20,
+                defaultPrefill: 90000,
+                defaultDecoding: 22000,
+                defaultSalesPriceInput: 9.00,
+                defaultSalesPriceOutput: 27.00,
+                defaultSalesPriceCache: 0.90,
+                deployInfo: '阿里百炼旗舰模型，商业闭源，不支持本地部署，仅提供 API 调用'
+            },
+            'qwen-3.6-plus': {
+                name: 'Qwen-3.6-Plus',
+                input: 2.00,
+                output: 12.00,
+                cache: 0.20,
+                defaultPrefill: 80000,
+                defaultDecoding: 20000,
+                defaultSalesPriceInput: 1.60,
+                defaultSalesPriceOutput: 9.60,
+                defaultSalesPriceCache: 0.16,
+                deployInfo: '阿里通义中坚闭源模型，不支持本地部署，超过256K长度时计费翻 4倍'
+            },
+            'glm-5.1': {
+                name: 'GLM-5.1',
+                input: 6.00,
+                output: 24.00,
+                cache: 0.00,
+                defaultPrefill: 75000,
+                defaultDecoding: 18000,
+                defaultSalesPriceInput: 4.50,
+                defaultSalesPriceOutput: 18.00,
+                defaultSalesPriceCache: 0.00,
+                deployInfo: '昇腾 910B (64GB) 私有部署推荐：FP16需 4台 | FP8需 2台 (采用稀疏注意力架构)'
+            },
+            'glm-5': {
+                name: 'GLM-5',
+                input: 4.00,
+                output: 18.00,
+                cache: 0.00,
+                defaultPrefill: 70000,
+                defaultDecoding: 16000,
+                defaultSalesPriceInput: 3.20,
+                defaultSalesPriceOutput: 14.40,
+                defaultSalesPriceCache: 0.00,
+                deployInfo: '昇腾 910B (64GB) 私有部署推荐：FP16需 4台 | FP8需 2台 (高性价比 744B MoE)'
+            },
+            'kimi-k2.6': {
+                name: 'Kimi-K2.6',
+                input: 6.50,
+                output: 27.00,
+                cache: 1.10,
+                defaultPrefill: 50000,
+                defaultDecoding: 12000,
+                defaultSalesPriceInput: 5.00,
+                defaultSalesPriceOutput: 20.00,
+                defaultSalesPriceCache: 0.80,
+                deployInfo: '昇腾 910B (64GB) 私有部署推荐：FP16需 5台 | FP8需 3台 | INT4需 2台 (支持原生INT4量化)'
             }
         };
 
@@ -2330,6 +2380,12 @@
                 pricingInfoEl.innerHTML = `<span>输入未命中: ${config.input.toFixed(2)} 元/M</span><span>缓存命中: ${config.cache.toFixed(2)} 元/M</span><span>输出: ${config.output.toFixed(2)} 元/M</span>`;
             }
 
+            // 更新昇腾本地部署建议
+            const deployInfoEl = document.getElementById('model-deployment-info');
+            if (deployInfoEl) {
+                deployInfoEl.textContent = `部署建议: ${config.deployInfo || '暂无测算说明'}`;
+            }
+
             // 2. 同步所有控件值并更新
             syncCoreInputs();
             runFinancialCalculator();
@@ -2445,6 +2501,18 @@
                     break;
                 case 'model-preset-b':
                     currentParams.mixedModelIdB = val; // String
+                    const configB = modelPresets[val];
+                    if (configB) {
+                        currentParams.mixedTokenPriceInputB = configB.defaultSalesPriceInput;
+                        currentParams.mixedTokenPriceOutputB = configB.defaultSalesPriceOutput;
+                        currentParams.mixedTokenPriceCacheB = configB.defaultSalesPriceCache;
+                        
+                        // 联动更新文本框显示
+                        const fldMixedInB = document.getElementById('field-mixed-input-price-b');
+                        if (fldMixedInB) fldMixedInB.value = currentParams.mixedTokenPriceInputB.toFixed(2);
+                        const fldMixedOutB = document.getElementById('field-mixed-output-price-b');
+                        if (fldMixedOutB) fldMixedOutB.value = currentParams.mixedTokenPriceOutputB.toFixed(2);
+                    }
                     break;
                 case 'mixed-input-price-b':
                     currentParams.mixedTokenPriceInputB = floatVal;
@@ -2471,16 +2539,8 @@
         // 重置配置
         function resetAllValues() {
             currentParams = { ...initParams };
-            selectedModelId = 'deepseek-r1';
-
-            // 重置对比文字
-            const pricingInfoEl = document.getElementById('model-pricing-static-info');
-            if (pricingInfoEl) {
-                pricingInfoEl.innerHTML = `<span>输入未命中: 4.00 元/M</span><span>缓存命中: 0.50 元/M</span><span>输出: 12.00 元/M</span>`;
-            }
-
-            syncCoreInputs();
-            runFinancialCalculator();
+            // 调用 changeModelPreset 即可自动重置文字、部署建议并刷新计算
+            changeModelPreset('deepseek-r1');
         }
 
         // 财务核心精算大引擎
