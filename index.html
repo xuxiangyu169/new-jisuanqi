@@ -265,7 +265,6 @@
         }
         .color-group-hardware input[type="range"]::-webkit-slider-thumb {
             background: #3B82F6;
-            border: 2px solid #FFFFFF;
             box-shadow: 0 0 0 2px #3B82F6;
         }
 
@@ -284,7 +283,6 @@
         }
         .color-group-business input[type="range"]::-webkit-slider-thumb {
             background: #D97706;
-            border: 2px solid #FFFFFF;
             box-shadow: 0 0 0 2px #D97706;
         }
 
@@ -303,7 +301,6 @@
         }
         .color-group-energy input[type="range"]::-webkit-slider-thumb {
             background: #059669;
-            border: 2px solid #FFFFFF;
             box-shadow: 0 0 0 2px #059669;
         }
 
@@ -322,7 +319,6 @@
         }
         .color-group-performance input[type="range"]::-webkit-slider-thumb {
             background: #E11D48;
-            border: 2px solid #FFFFFF;
             box-shadow: 0 0 0 2px #E11D48;
         }
 
@@ -702,12 +698,6 @@
             color: var(--primary);
         }
 
-        .formula-grid {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 32px;
-        }
-
         .formula-section-title {
             font-size: 14px;
             font-weight: 800;
@@ -720,9 +710,10 @@
             gap: 6px;
         }
 
+        /* 公式网格：双列响应式排版 */
         .formula-list {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 16px;
         }
 
@@ -751,9 +742,9 @@
             border: none;
             overflow-x: auto;
             display: block;
+            width: 100%;
         }
 
-        /* 修复 KaTeX 公式可能产生的多余纵向滚动条或溢出 */
         .formula-body .katex-display {
             margin: 0.3em 0;
         }
@@ -764,21 +755,22 @@
             font-weight: 500;
         }
 
-        .dict-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 520px;
-            overflow-y: auto;
-            padding-right: 8px;
+        /* 字典网格：4列响应式卡片排版 (完全解决左右挤压截断问题) */
+        .dict-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            width: 100%;
         }
 
         .dict-item {
+            background: var(--bg-page);
+            border: 1px solid var(--border-default);
+            border-radius: 8px;
+            padding: 12px 14px;
             display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            padding: 8px 0;
-            border-bottom: 1px dashed var(--border-default);
+            flex-direction: column;
+            gap: 6px;
             font-size: 12px;
         }
 
@@ -786,13 +778,12 @@
             font-family: var(--font-mono);
             font-weight: 800;
             color: var(--primary-dark);
-            min-width: 140px;
         }
 
         .dict-definition {
             color: var(--foreground-muted);
             font-weight: 500;
-            text-align: right;
+            line-height: 1.4;
         }
 
         /* ==================== 页脚 ==================== */
@@ -827,6 +818,21 @@
         }
 
         /* ==================== 响应式移动端自适应 ==================== */
+        @media (max-width: 1200px) {
+            .dict-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .formula-list {
+                grid-template-columns: 1fr;
+            }
+            .dict-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 1024px) {
             main {
                 grid-template-columns: 1fr;
@@ -834,10 +840,6 @@
             }
             .col-span-2, .col-span-4, .col-span-6 {
                 grid-column: span 1;
-            }
-            .formula-grid {
-                grid-template-columns: 1fr;
-                gap: 24px;
             }
             header {
                 padding: 16px 20px;
@@ -862,6 +864,12 @@
         @media (max-width: 600px) {
             .kpi-grid {
                 grid-template-columns: 1fr;
+            }
+            .dict-grid {
+                grid-template-columns: 1fr;
+            }
+            .formula-card {
+                padding: 20px;
             }
         }
     </style>
@@ -1245,119 +1253,121 @@
                 <i data-lucide="file-text"></i>
                 华鲲智算集群商业精算逻辑与因子定义字典
             </div>
-            <div class="formula-grid">
-                <!-- 左半边：核心数学公式 -->
-                <div>
-                    <div class="formula-section-title">
-                        <i data-lucide="calculator" style="width: 14px; height: 14px; color: var(--primary-dark);"></i>
-                        底层链式数学公式组 (LaTeX 排版数学内核)
+            
+            <!-- 1. 核心数学公式区 -->
+            <div style="margin-top: 10px;">
+                <div class="formula-section-title">
+                    <i data-lucide="calculator" style="width: 14px; height: 14px; color: var(--primary-dark);"></i>
+                    底层链式数学公式组 (LaTeX 排版数学内核)
+                </div>
+                <div class="formula-list">
+                    <div class="formula-item">
+                        <div class="formula-name">1. 资产总值 (CapEx)</div>
+                        <div class="formula-body">$$CapEx = (Price_{server} \times N_{server}) + Price_{network}$$</div>
+                        <div class="formula-desc">整个算力节点与组网资产采购的总资本性支出。</div>
                     </div>
-                    <div class="formula-list">
-                        <div class="formula-item">
-                            <div class="formula-name">1. 资产总值 (CapEx)</div>
-                            <div class="formula-body">$$CapEx = (Price_{server} \times N_{server}) + Price_{network}$$</div>
-                            <div class="formula-desc">整个算力节点与组网资产采购的总资本性支出。</div>
-                        </div>
-                        <div class="formula-item">
-                            <div class="formula-name">2. 年固定资产折旧 (D_CapEx)</div>
-                            <div class="formula-body">$$D_{CapEx} = \frac{CapEx}{Years_{depreciation}}$$</div>
-                            <div class="formula-desc">依据折旧年限红线（3年或5年）将资产进行等额年折旧分摊。</div>
-                        </div>
-                        <div class="formula-item">
-                            <div class="formula-name">3. 年运营成本 (OpEx_annual)</div>
-                            <div class="formula-body">$$OpEx_{annual} = (Power_{server} \times PUE \times 24 \times 365 \times Price_{electricity} \times N_{server}) + (Price_{cabinet} \times N_{server} \times 12) + (Bandwidth_{monthly} \times 12) + (Ops_{monthly} \times 12)$$</div>
-                            <div class="formula-desc">包含算力服务器满载电费(结合PUE)、机柜租金、独享宽带和运维分摊。</div>
-                        </div>
-                        <div class="formula-item">
-                            <div class="formula-name">4. 集群最大 Token 年产能 (M_annual)</div>
-                            <div class="formula-body">$$M_{annual} = \frac{T_{speed} \times 86400 \times 365 \times (1 - Alpha_{fail})}{1,000,000}$$</div>
-                            <div class="formula-desc">在不考虑空闲功耗与利用率的情况下，集群一年能产出的最大 Token 量 (单位：百万 Tokens)。</div>
-                        </div>
-                        <div class="formula-item">
-                            <div class="formula-name">5. 实际年净利润 (P_net)</div>
-                            <div class="formula-body">$$P_{net} = (M_{annual} \times U_{rate} \times P_{sales}) - OpEx_{annual} - D_{CapEx}$$</div>
-                            <div class="formula-desc">年营业额减去年度运营成本(OpEx)与年度折旧费用的最终损益。</div>
-                        </div>
-                        <div class="formula-item">
-                            <div class="formula-name">6. 盈亏平衡点利用率红线 (U_BEP)</div>
-                            <div class="formula-body">$$U_{BEP} = \frac{OpEx_{annual} + D_{CapEx}}{M_{annual} \times P_{sales}}$$</div>
-                            <div class="formula-desc">当净利润为0时反推出来的绝对保本利用率，高于此利用率自建才能保本。</div>
-                        </div>
-                        <div class="formula-item">
-                            <div class="formula-name">7. 纯现金流回本周期 (T_cash_back)</div>
-                            <div class="formula-body">$$T_{cash\_back} = \frac{CapEx}{R_{gross} - OpEx_{annual}}$$</div>
-                            <div class="formula-desc">使用总营业额扣除运营成本后的年现金流净收入来回收 CapEx 投入的周期 (其中 $R_{gross} = M_{annual} \times U_{rate} \times P_{sales}$)。</div>
-                        </div>
+                    <div class="formula-item">
+                        <div class="formula-name">2. 年固定资产折旧 (D_CapEx)</div>
+                        <div class="formula-body">$$D_{CapEx} = \frac{CapEx}{Years_{depreciation}}$$</div>
+                        <div class="formula-desc">依据折旧年限红线（3年或5年）将资产进行等额年折旧分摊。</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">3. 年运营成本 (OpEx_annual)</div>
+                        <div class="formula-body">$$OpEx_{annual} = (Power_{server} \times PUE \times 24 \times 365 \times Price_{electricity} \times N_{server}) + (Price_{cabinet} \times N_{server} \times 12) + (Bandwidth_{monthly} \times 12) + (Ops_{monthly} \times 12)$$</div>
+                        <div class="formula-desc">包含算力服务器满载电费(结合PUE)、机柜租金、独享宽带和运维分摊。</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">4. 集群最大 Token 年产能 (M_annual)</div>
+                        <div class="formula-body">$$M_{annual} = \frac{T_{speed} \times 86400 \times 365 \times (1 - Alpha_{fail})}{1,000,000}$$</div>
+                        <div class="formula-desc">在不考虑空闲功耗与利用率的情况下，集群一年能产出的最大 Token 量 (单位：百万 Tokens)。</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">5. 实际年净利润 (P_net)</div>
+                        <div class="formula-body">$$P_{net} = (M_{annual} \times U_{rate} \times P_{sales}) - OpEx_{annual} - D_{CapEx}$$</div>
+                        <div class="formula-desc">年营业额减去年度运营成本(OpEx)与年度折旧费用的最终损益。</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">6. 盈亏平衡点利用率红线 (U_BEP)</div>
+                        <div class="formula-body">$$U_{BEP} = \frac{OpEx_{annual} + D_{CapEx}}{M_{annual} \times P_{sales}}$$</div>
+                        <div class="formula-desc">当净利润为0时反推出来的绝对保本利用率，高于此利用率自建才能保本。</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">7. 纯现金流回本周期 (T_cash_back)</div>
+                        <div class="formula-body">$$T_{cash\_back} = \frac{CapEx}{R_{gross} - OpEx_{annual}}$$</div>
+                        <div class="formula-desc">使用总营业额扣除运营成本后的年现金流净收入来回收 CapEx 投入的周期 (其中 $R_{gross} = M_{annual} \times U_{rate} \times P_{sales}$)。</div>
                     </div>
                 </div>
+            </div>
 
-                <!-- 右半边：因子字典定义 -->
-                <div>
-                    <div class="formula-section-title">
-                        <i data-lucide="book-open" style="width: 14px; height: 14px; color: var(--secondary-dark);"></i>
-                        动态输入因子定义库 (变量释义)
+            <!-- 2. 分割线 -->
+            <div style="border-top: 2px dashed var(--border-default); margin: 12px 0;"></div>
+
+            <!-- 3. 因子字典定义区 (4列网格排版，完全解决截断问题) -->
+            <div>
+                <div class="formula-section-title">
+                    <i data-lucide="book-open" style="width: 14px; height: 14px; color: var(--secondary-dark);"></i>
+                    动态输入因子定义库 (变量释义字典)
+                </div>
+                <div class="dict-grid">
+                    <div class="dict-item">
+                        <span class="dict-term">N_server</span>
+                        <span class="dict-definition">集群内配置的 GPU/NPU 物理服务器台数。</span>
                     </div>
-                    <div class="dict-list">
-                        <div class="dict-item">
-                            <span class="dict-term">N_server</span>
-                            <span class="dict-definition">集群内配置的 GPU/NPU 物理服务器台数。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">Price_server</span>
-                            <span class="dict-definition">单台服务器采购单价，包含内置算力显卡等分摊。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">Price_network</span>
-                            <span class="dict-definition">配套交换机、RDMA高速光纤等配套组网资产总额。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">Years_depreciation</span>
-                            <span class="dict-definition">固定资产的折旧摊销年限（影响年折旧底座的生存硬开销）。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">Power_server</span>
-                            <span class="dict-definition">单台服务器的额定满载功耗 (单位：kW)。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">PUE</span>
-                            <span class="dict-definition">数据中心能源效率指标。PUE越趋近于1说明空调用电等杂电损耗越小。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">Price_electricity</span>
-                            <span class="dict-definition">数据中心托管地的工业用电单价 (元/kWh)。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">Price_cabinet</span>
-                            <span class="dict-definition">高电密机柜单月托管费。计算中默认单台服务器占用单个机柜。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">Bandwidth_monthly</span>
-                            <span class="dict-definition">集群向外提供公网 API 零售服务时所需的月度宽带独享费。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">Ops_monthly</span>
-                            <span class="dict-definition">集群托管机房的月度人工巡检与基础运维外包等分摊费。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">T_speed</span>
-                            <span class="dict-definition">当前模型在物理集群上满载并发时的最大吞吐速率。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">Alpha_fail</span>
-                            <span class="dict-definition">集群因网络丢包、坏卡或系统故障等导致的年均不可用时间占比。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">P_official</span>
-                            <span class="dict-definition">DeepSeek 官方公网 API 的折合混合单价（不可能逾越的价格红线）。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">P_sales</span>
-                            <span class="dict-definition">我们对外销售自建算力 Token 服务的实际混合单价定价。</span>
-                        </div>
-                        <div class="dict-item">
-                            <span class="dict-term">U_rate</span>
-                            <span class="dict-definition">集群在全年中实际运行并产生算力营业额的时间占比（算力利用率）。</span>
-                        </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Price_server</span>
+                        <span class="dict-definition">单台服务器采购单价，包含内置算力显卡等分摊。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Price_network</span>
+                        <span class="dict-definition">配套交换机、RDMA高速光纤等配套组网资产总额。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Years_depreciation</span>
+                        <span class="dict-definition">固定资产的折旧摊销年限（影响年折旧底座的生存硬开销）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Power_server</span>
+                        <span class="dict-definition">单台服务器的额定满载功耗 (单位：kW)。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">PUE</span>
+                        <span class="dict-definition">数据中心电源使用效率指标。PUE越趋近于1说明空调用电等杂电损耗越小。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Price_electricity</span>
+                        <span class="dict-definition">数据中心托管地的工业用电单价 (元/kWh)。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Price_cabinet</span>
+                        <span class="dict-definition">高电密机柜单月托管费。计算中默认单台服务器占用单个机柜。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Bandwidth_monthly</span>
+                        <span class="dict-definition">集群向外提供公网 API 零售服务时所需的月度宽带费。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Ops_monthly</span>
+                        <span class="dict-definition">集群托管机房的月度人工巡检与基础运维外包等分摊费。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">T_speed</span>
+                        <span class="dict-definition">当前模型在物理集群上满载并发时的最大吞吐速率。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Alpha_fail</span>
+                        <span class="dict-definition">集群因网络丢包、坏卡或系统故障等导致的年均不可用时间占比。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">P_official</span>
+                        <span class="dict-definition">DeepSeek 官方公网 API 的折合混合单价（不可能逾越的价格红线）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">P_sales</span>
+                        <span class="dict-definition">我们对外销售自建算力 Token 服务的实际混合单价定价。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">U_rate</span>
+                        <span class="dict-definition">集群在全年中实际运行并产生算力营业额的时间占比（算力利用率）。</span>
                     </div>
                 </div>
             </div>
@@ -1367,7 +1377,7 @@
 
     <!-- 页脚 Footer -->
     <footer>
-        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • Flat Poster System v5.1</div>
+        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • Flat Poster System v5.2</div>
         <div class="footer-desc-group">
             <span>硬件折旧按双倍余额/平均分摊计算</span>
             <span>|</span>
@@ -1449,6 +1459,7 @@
         let analysisChart = null;
         let lastCrossPointBe = null;
         let lastCrossPointRoi = null;
+        let currentYMax = 5.0; // 全局变量，用于呼吸灯防溢出判断，默认5.0
 
         // 数值平滑变化组件
         class SmoothNumberTicker {
@@ -1916,12 +1927,148 @@
                 // 防线安全 (绿色)
                 banner.className = 'roi-redline-banner success';
                 bannerIcon.setAttribute('data-lucide', 'shield-check');
-                bannerText.innerHTML = `✅ <b>算力防御成功！</b>当前自建保本单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(2)} 元/M</span>) <b>低于</b> DeepSeek 官方红线 (<span class="roi-banner-badge" style="background:#047857;">${P_official.toFixed(2)} 元/M</span>)。自建方案具备可观的 ROI 获客优势。`;
+                bannerText.innerHTML = `✅ <b>算力防御成功！</b>当前自建保本单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(2)} 元/M</span>) <b>低于</b> DeepSeek 官方红线 (<span class="roi-banner-badge" style="background:#047857;">${P_official.toFixed(2)} 元/M</span>)。自建方案具备可观 the ROI 获客优势。`;
             }
             lucide.createIcons();
 
             // 11. 重新绘制 ECharts 单价对比曲线
             drawPriceChart(OpEx_annual, D_CapEx, M_annual, P_sales, P_official, beUDec, roiUDec);
+        }
+
+        // 初始化 ECharts (单价对比坐标轴)
+        function initAnalysisChart() {
+            const dom = document.getElementById('main-analysis-chart');
+            analysisChart = echarts.init(dom, null, {
+                renderer: 'canvas',
+                useDirtyRect: false
+            });
+
+            const option = {
+                backgroundColor: 'transparent',
+                tooltip: {
+                    trigger: 'axis',
+                    className: 'tooltip-flat',
+                    borderColor: '#111827',
+                    borderWidth: 2,
+                    textStyle: {
+                        color: '#111827',
+                        fontFamily: 'Inter',
+                        fontSize: 12,
+                        fontWeight: 600
+                    },
+                    formatter: function (items) {
+                        let text = `<div style="font-weight: 800; font-family: Outfit; margin-bottom: 8px; font-size:14px; color:#111827; border-bottom: 2px solid #E5E7EB; padding-bottom: 4px;">算力利用率: ${items[0].name}%</div>`;
+                        items.forEach(el => {
+                            const val = parseFloat(el.value);
+                            const displayVal = (isNaN(val) || val === null) ? 'N/A' : val.toFixed(2) + ' 元/百万';
+                            text += `<div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; font-family:Inter; margin-bottom: 4px;">
+                                        <span style="color:#4B5563;">${el.seriesName}:</span>
+                                        <span style="font-weight:800; color:${el.color};">${displayVal}</span>
+                                    </div>`;
+                        });
+                        return text;
+                    }
+                },
+                grid: {
+                    left: '2%',
+                    right: '2%',
+                    bottom: '8%',
+                    top: '8%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: Array.from({length: 101}, (_, i) => i),
+                    axisLabel: {
+                        formatter: '{value}%',
+                        color: '#4B5563',
+                        fontFamily: 'Outfit',
+                        fontSize: 11,
+                        fontWeight: 700
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#111827',
+                            width: 2
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(17, 24, 39, 0.05)'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '单价 (元 / 百万 Tokens)',
+                    nameTextStyle: {
+                        color: '#4B5563',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        align: 'right',
+                        fontFamily: 'Inter'
+                    },
+                    axisLabel: {
+                        color: '#4B5563',
+                        fontFamily: 'Outfit',
+                        fontSize: 11,
+                        fontWeight: 700
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#111827',
+                            width: 2
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(17, 24, 39, 0.08)'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: '自建盈亏平衡售价',
+                        type: 'line',
+                        smooth: true,
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#9CA3AF', // 灰色虚线自建成本单价
+                            width: 2.5,
+                            type: 'dashed'
+                        },
+                        data: []
+                    },
+                    {
+                        name: '自建对外销售定价',
+                        type: 'line',
+                        smooth: false,
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#3B82F6', // 蓝色实线对外售价
+                            width: 3.5
+                        },
+                        data: []
+                    },
+                    {
+                        name: 'DeepSeek 官方定价红线',
+                        type: 'line',
+                        smooth: false,
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#EF4444', // 红色加粗实线官价红线
+                            width: 4
+                        },
+                        data: []
+                    }
+                ]
+            };
+
+            analysisChart.setOption(option);
+            analysisChart.on('finished', relocatePulseDots);
         }
 
         // 重新渲染 ECharts 数据点
@@ -1934,6 +2081,7 @@
 
             // 动态控制 Y 轴最大值，防止低负载单价过高导致曲线无法阅读
             const yMax = Math.max(P_official * 2.5, P_sales * 2.5);
+            currentYMax = yMax; // 记录为全局变量，供呼吸灯使用
 
             for (let i = 0; i <= 100; i++) {
                 const U = i / 100;
@@ -2041,8 +2189,8 @@
             const glowDotRoi = document.getElementById('chart-glow-pulse-roi');
             
             if (!analysisChart) {
-                glowDotBe.style.display = 'none';
-                glowDotRoi.style.display = 'none';
+                if (glowDotBe) glowDotBe.style.display = 'none';
+                if (glowDotRoi) glowDotRoi.style.display = 'none';
                 return;
             }
 
@@ -2050,8 +2198,8 @@
             if (lastCrossPointBe) {
                 try {
                     const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPointBe.x, lastCrossPointBe.y]);
-                    const yMax = analysisChart.getOption().yAxis[0].max;
-                    if (xy && !isNaN(xy[0]) && !isNaN(xy[1]) && lastCrossPointBe.y <= yMax) {
+                    // 使用安全全局变量进行防护判断，防止报错
+                    if (xy && !isNaN(xy[0]) && !isNaN(xy[1]) && lastCrossPointBe.y <= currentYMax) {
                         glowDotBe.style.left = xy[0] + 'px';
                         glowDotBe.style.top = xy[1] + 'px';
                         glowDotBe.style.display = 'block';
@@ -2059,18 +2207,18 @@
                         glowDotBe.style.display = 'none';
                     }
                 } catch (err) {
+                    console.error("Positioning BE pulse dot error: ", err);
                     glowDotBe.style.display = 'none';
                 }
             } else {
-                glowDotBe.style.display = 'none';
+                if (glowDotBe) glowDotBe.style.display = 'none';
             }
 
             // 2. 定位 DeepSeek 获客临界交点 (Roi)
             if (lastCrossPointRoi) {
                 try {
                     const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPointRoi.x, lastCrossPointRoi.y]);
-                    const yMax = analysisChart.getOption().yAxis[0].max;
-                    if (xy && !isNaN(xy[0]) && !isNaN(xy[1]) && lastCrossPointRoi.y <= yMax) {
+                    if (xy && !isNaN(xy[0]) && !isNaN(xy[1]) && lastCrossPointRoi.y <= currentYMax) {
                         glowDotRoi.style.left = xy[0] + 'px';
                         glowDotRoi.style.top = xy[1] + 'px';
                         glowDotRoi.style.display = 'block';
@@ -2078,10 +2226,11 @@
                         glowDotRoi.style.display = 'none';
                     }
                 } catch (err) {
+                    console.error("Positioning ROI pulse dot error: ", err);
                     glowDotRoi.style.display = 'none';
                 }
             } else {
-                glowDotRoi.style.display = 'none';
+                if (glowDotRoi) glowDotRoi.style.display = 'none';
             }
         }
     </script>
