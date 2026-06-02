@@ -970,21 +970,60 @@
                             </div>
                         </div>
 
-                        <!-- Token 销售定价 -->
-                        <div class="input-group color-group-business">
-                            <div class="label-row">
-                                <span class="label-text">
-                                    <i data-lucide="tag"></i>
-                                    对外销售定价 (P_sales)
-                                </span>
-                                <span class="value-badge" id="badge-token-price">1.20</span>
+                        <!-- 对外销售定价 - 输入与输出拆分 -->
+                        <div class="input-group color-group-business" style="gap: 12px;">
+                            <!-- 输入 Token 定价 -->
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                <div class="label-row">
+                                    <span class="label-text">
+                                        <i data-lucide="tag"></i>
+                                        对外输入销售定价 (P_sales_input)
+                                    </span>
+                                    <span class="value-badge" id="badge-token-price-input">1.00</span>
+                                </div>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="slider-token-price-input" min="0.1" max="5.0" step="0.05" value="1.0" oninput="changeParam('token-price-input', this.value)">
+                                </div>
+                                <div class="limits-row">
+                                    <span id="label-sales-input-min">0.10 元/M</span>
+                                    <span id="label-sales-input-max">5.00 元/M</span>
+                                </div>
                             </div>
-                            <div class="slider-wrapper">
-                                <input type="range" id="slider-token-price" min="0.1" max="5.0" step="0.05" value="1.2" oninput="changeParam('token-price', this.value)">
+                            
+                            <!-- 输出 Token 定价 -->
+                            <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed rgba(120, 53, 15, 0.15); padding-top: 8px;">
+                                <div class="label-row">
+                                    <span class="label-text">
+                                        <i data-lucide="tag"></i>
+                                        对外输出销售定价 (P_sales_output)
+                                    </span>
+                                    <span class="value-badge" id="badge-token-price-output">2.00</span>
+                                </div>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="slider-token-price-output" min="0.2" max="10.0" step="0.1" value="2.0" oninput="changeParam('token-price-output', this.value)">
+                                </div>
+                                <div class="limits-row">
+                                    <span id="label-sales-output-min">0.20 元/M</span>
+                                    <span id="label-sales-output-max">10.00 元/M</span>
+                                </div>
                             </div>
-                            <div class="limits-row">
-                                <span id="label-sales-min">0.1 元/M</span>
-                                <span id="label-sales-max">5.0 元/M</span>
+
+                            <!-- 输入 Token 比例占比 -->
+                            <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed rgba(120, 53, 15, 0.15); padding-top: 8px;">
+                                <div class="label-row">
+                                    <span class="label-text">
+                                        <i data-lucide="sliders"></i>
+                                        输入 Token 占比 (Ratio_input)
+                                    </span>
+                                    <span class="value-badge" id="badge-ratio-input">80%</span>
+                                </div>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="slider-ratio-input" min="50" max="95" step="5" value="80" oninput="changeParam('ratio-input', this.value)">
+                                </div>
+                                <div class="limits-row">
+                                    <span>50% (1:1)</span>
+                                    <span>95% (19:1)</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1225,11 +1264,11 @@
                             </div>
                             <div class="custom-legend-item">
                                 <span class="legend-indicator-line" style="background: var(--primary);"></span>
-                                <span>自建 Token 对外销售定价</span>
+                                <span>自建 Token 对外折合销售均价</span>
                             </div>
                             <div class="custom-legend-item">
                                 <span class="legend-indicator-line" style="background: var(--danger); height: 3px;"></span>
-                                <span>DeepSeek 官方 API 价格红线</span>
+                                <span>DeepSeek 官方折合 API 价格红线</span>
                             </div>
                         </div>
                     </div>
@@ -1282,19 +1321,24 @@
                         <div class="formula-desc">在不考虑空闲功耗与利用率的情况下，集群一年能产出的最大 Token 量 (单位：百万 Tokens)。</div>
                     </div>
                     <div class="formula-item">
-                        <div class="formula-name">5. 实际年净利润 (P_net)</div>
-                        <div class="formula-body">$$P_{net} = (M_{annual} \times U_{rate} \times P_{sales}) - OpEx_{annual} - D_{CapEx}$$</div>
+                        <div class="formula-name">5. 折合自建混合销售均价 (P_sales_blended)</div>
+                        <div class="formula-body">$$P_{sales\_blended} = P_{sales\_input} \times Ratio_{input} + P_{sales\_output} \times (1 - Ratio_{input})$$</div>
+                        <div class="formula-desc">根据自建输入与输出的销售单价，按照输入 Token 流量占比加权折合后的混合平均销售单价。</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">6. 实际年净利润 (P_net)</div>
+                        <div class="formula-body">$$P_{net} = (M_{annual} \times U_{rate} \times P_{sales\_blended}) - OpEx_{annual} - D_{CapEx}$$</div>
                         <div class="formula-desc">年营业额减去年度运营成本(OpEx)与年度折旧费用的最终损益。</div>
                     </div>
                     <div class="formula-item">
-                        <div class="formula-name">6. 盈亏平衡点利用率红线 (U_BEP)</div>
-                        <div class="formula-body">$$U_{BEP} = \frac{OpEx_{annual} + D_{CapEx}}{M_{annual} \times P_{sales}}$$</div>
+                        <div class="formula-name">7. 盈亏平衡点利用率红线 (U_BEP)</div>
+                        <div class="formula-body">$$U_{BEP} = \frac{OpEx_{annual} + D_{CapEx}}{M_{annual} \times P_{sales\_blended}}$$</div>
                         <div class="formula-desc">当净利润为0时反推出来的绝对保本利用率，高于此利用率自建才能保本。</div>
                     </div>
                     <div class="formula-item">
-                        <div class="formula-name">7. 纯现金流回本周期 (T_cash_back)</div>
+                        <div class="formula-name">8. 纯现金流回本周期 (T_cash_back)</div>
                         <div class="formula-body">$$T_{cash\_back} = \frac{CapEx}{R_{gross} - OpEx_{annual}}$$</div>
-                        <div class="formula-desc">使用总营业额扣除运营成本后的年现金流净收入来回收 CapEx 投入的周期 (其中 $R_{gross} = M_{annual} \times U_{rate} \times P_{sales}$)。</div>
+                        <div class="formula-desc">使用总营业额扣除运营成本后的年现金流净收入来回收 CapEx 投入的周期 (其中 $R_{gross} = M_{annual} \times U_{rate} \times P_{sales\_blended}$)。</div>
                     </div>
                 </div>
             </div>
@@ -1358,12 +1402,32 @@
                         <span class="dict-definition">集群因网络丢包、坏卡或系统故障等导致的年均不可用时间占比。</span>
                     </div>
                     <div class="dict-item">
-                        <span class="dict-term">P_official</span>
-                        <span class="dict-definition">DeepSeek 官方公网 API 的折合混合单价（不可能逾越的价格红线）。</span>
+                        <span class="dict-term">P_official_input</span>
+                        <span class="dict-definition">DeepSeek 官方 API 输入 Token 的标准单价（元/百万 Tokens）。</span>
                     </div>
                     <div class="dict-item">
-                        <span class="dict-term">P_sales</span>
-                        <span class="dict-definition">我们对外销售自建算力 Token 服务的实际混合单价定价。</span>
+                        <span class="dict-term">P_official_output</span>
+                        <span class="dict-definition">DeepSeek 官方 API 输出 Token 的标准单价（元/百万 Tokens）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">P_official_blended</span>
+                        <span class="dict-definition">DeepSeek 官方 API 按输入占比折合后的混合单价红线（获客门槛）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">P_sales_input</span>
+                        <span class="dict-definition">我们自建对外销售的输入 Token 单价（可通过滑块调节）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">P_sales_output</span>
+                        <span class="dict-definition">我们自建对外销售的输出 Token 单价（可通过滑块调节）。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">P_sales_blended</span>
+                        <span class="dict-definition">我们自建对外销售 Token 服务的加权折合实际混合平均售价。</span>
+                    </div>
+                    <div class="dict-item">
+                        <span class="dict-term">Ratio_input</span>
+                        <span class="dict-definition">输入 Token 占整体消耗 Token 的百分比（通过比例滑块调节）。</span>
                     </div>
                     <div class="dict-item">
                         <span class="dict-term">U_rate</span>
@@ -1462,32 +1526,38 @@
             tSpeed: 200000, // 吞吐量：20万 Tokens/s
             alphaFail: 5, // 故障停机率：5%
             
-            // 销售定价
-            tokenPrice: 1.20, // 销售价：1.20 元/百万
-            utilizationRate: 30 // 利用率：30%
+            // 销售定价与流量占比
+            tokenPriceInput: 1.00,  // 自建输入售价 (元/百万 Tokens)
+            tokenPriceOutput: 2.00, // 自建输出售价 (元/百万 Tokens)
+            ratioInput: 80,         // 输入 Token 占比 (50% - 95%)
+            utilizationRate: 30     // 利用率：30%
         };
 
-        // DeepSeek 官方定价映射数据 (输入/输出比例以 4:1 计算)
+        // DeepSeek 官方定价映射数据
         const deepseekOfficialPricing = {
             'flash': {
                 name: 'DeepSeek-V4-Flash',
-                input: 0.218, // 约 $0.03/M Token
-                output: 0.435, // 约 $0.06/M Token
-                blended: 0.26,  // 4:1 混合均价
+                input: 0.218,
+                output: 0.435,
                 defaultTps: 200000,
-                defaultSalesPrice: 1.20,
-                salesMin: 0.1,
-                salesMax: 5.0
+                defaultSalesPriceInput: 1.00,
+                defaultSalesPriceOutput: 2.00,
+                salesMinInput: 0.1,
+                salesMaxInput: 5.0,
+                salesMinOutput: 0.2,
+                salesMaxOutput: 10.0
             },
             'pro': {
                 name: 'DeepSeek-V4-Pro',
-                input: 7.25,  // 约 $1.00/M Token
-                output: 14.50, // 约 $2.00/M Token
-                blended: 8.70,  // 4:1 混合均价
+                input: 7.25,
+                output: 14.50,
                 defaultTps: 40000,
-                defaultSalesPrice: 8.70,
-                salesMin: 1.0,
-                salesMax: 30.0
+                defaultSalesPriceInput: 7.00,
+                defaultSalesPriceOutput: 14.00,
+                salesMinInput: 1.0,
+                salesMaxInput: 30.0,
+                salesMinOutput: 2.0,
+                salesMaxOutput: 60.0
             }
         };
 
@@ -1630,21 +1700,60 @@
                     </div>
                 </div>
 
-                <!-- Token 销售价 (同步) -->
-                <div class="input-group color-group-business">
-                    <div class="label-row">
-                        <span class="label-text">
-                            <i data-lucide="tag"></i>
-                            对外销售定价 (P_sales)
-                        </span>
-                        <span class="value-badge" id="badge-token-price-adv">1.20</span>
+                <!-- 对外销售定价 - 输入与输出拆分 (同步) -->
+                <div class="input-group color-group-business" style="gap: 12px;">
+                    <!-- 输入 Token 定价 -->
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <div class="label-row">
+                            <span class="label-text">
+                                <i data-lucide="tag"></i>
+                                对外输入销售定价 (P_sales_input)
+                            </span>
+                            <span class="value-badge" id="badge-token-price-input-adv">1.00</span>
+                        </div>
+                        <div class="slider-wrapper">
+                            <input type="range" id="slider-token-price-input-adv" min="0.1" max="5.0" step="0.05" value="1.0" oninput="changeParam('token-price-input', this.value)">
+                        </div>
+                        <div class="limits-row">
+                            <span id="label-sales-input-min-adv">0.10 元/M</span>
+                            <span id="label-sales-input-max-adv">5.00 元/M</span>
+                        </div>
                     </div>
-                    <div class="slider-wrapper">
-                        <input type="range" id="slider-token-price-adv" min="0.1" max="5.0" step="0.05" value="1.2" oninput="changeParam('token-price', this.value)">
+                    
+                    <!-- 输出 Token 定价 -->
+                    <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed rgba(120, 53, 15, 0.15); padding-top: 8px;">
+                        <div class="label-row">
+                            <span class="label-text">
+                                <i data-lucide="tag"></i>
+                                对外输出销售定价 (P_sales_output)
+                            </span>
+                            <span class="value-badge" id="badge-token-price-output-adv">2.00</span>
+                        </div>
+                        <div class="slider-wrapper">
+                            <input type="range" id="slider-token-price-output-adv" min="0.2" max="10.0" step="0.1" value="2.0" oninput="changeParam('token-price-output', this.value)">
+                        </div>
+                        <div class="limits-row">
+                            <span id="label-sales-output-min-adv">0.20 元/M</span>
+                            <span id="label-sales-output-max-adv">10.00 元/M</span>
+                        </div>
                     </div>
-                    <div class="limits-row">
-                        <span id="label-sales-min-adv">0.1 元/M</span>
-                        <span id="label-sales-max-adv">5.0 元/M</span>
+
+                    <!-- 输入 Token 比例占比 -->
+                    <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed rgba(120, 53, 15, 0.15); padding-top: 8px;">
+                        <div class="label-row">
+                            <span class="label-text">
+                                <i data-lucide="sliders"></i>
+                                输入 Token 占比 (Ratio_input)
+                            </span>
+                            <span class="value-badge" id="badge-ratio-input-adv">80%</span>
+                        </div>
+                        <div class="slider-wrapper">
+                            <input type="range" id="slider-ratio-input-adv" min="50" max="95" step="5" value="80" oninput="changeParam('ratio-input', this.value)">
+                        </div>
+                        <div class="limits-row">
+                            <span>50% (1:1)</span>
+                            <span>95% (19:1)</span>
+                        </div>
                     </div>
                 </div>
             `;
@@ -1683,9 +1792,10 @@
             const config = deepseekOfficialPricing[val];
             currentParams.modelName = config.name;
             
-            // 联动更新吞吐量和官方混合均价
+            // 联动更新吞吐量和默认自建售价
             currentParams.tSpeed = config.defaultTps;
-            currentParams.tokenPrice = config.defaultSalesPrice;
+            currentParams.tokenPriceInput = config.defaultSalesPriceInput;
+            currentParams.tokenPriceOutput = config.defaultSalesPriceOutput;
 
             // 1. 同步下拉框
             document.getElementById('select-model-spec').value = val;
@@ -1696,25 +1806,41 @@
             const pricingInfoEl = document.getElementById('model-pricing-static-info');
             pricingInfoEl.innerHTML = `<span>输入: ${config.input.toFixed(3)} 元/M</span><span>输出: ${config.output.toFixed(3)} 元/M</span>`;
 
-            // 3. 更新销售定价滑块范围与默认值
-            const updateSliders = (suffix = '') => {
-                const slider = document.getElementById('slider-token-price' + suffix);
-                const badge = document.getElementById('badge-token-price' + suffix);
-                const minLabel = document.getElementById('label-sales-min' + suffix);
-                const maxLabel = document.getElementById('label-sales-max' + suffix);
+            // 3. 更新输入与输出销售定价滑块范围与默认值
+            const updatePricingSliders = (suffix = '') => {
+                const sliderIn = document.getElementById('slider-token-price-input' + suffix);
+                const badgeIn = document.getElementById('badge-token-price-input' + suffix);
+                const minLabelIn = document.getElementById('label-sales-input-min' + suffix);
+                const maxLabelIn = document.getElementById('label-sales-input-max' + suffix);
 
-                if (slider) {
-                    slider.min = config.salesMin;
-                    slider.max = config.salesMax;
-                    slider.step = val === 'flash' ? 0.05 : 0.2;
-                    slider.value = config.defaultSalesPrice;
+                const sliderOut = document.getElementById('slider-token-price-output' + suffix);
+                const badgeOut = document.getElementById('badge-token-price-output' + suffix);
+                const minLabelOut = document.getElementById('label-sales-output-min' + suffix);
+                const maxLabelOut = document.getElementById('label-sales-output-max' + suffix);
+
+                if (sliderIn) {
+                    sliderIn.min = config.salesMinInput;
+                    sliderIn.max = config.salesMaxInput;
+                    sliderIn.step = val === 'flash' ? 0.05 : 0.5;
+                    sliderIn.value = config.defaultSalesPriceInput;
                 }
-                if (badge) badge.textContent = config.defaultSalesPrice.toFixed(2);
-                if (minLabel) minLabel.textContent = config.salesMin.toFixed(1) + ' 元/M';
-                if (maxLabel) maxLabel.textContent = config.salesMax.toFixed(1) + ' 元/M';
+                if (badgeIn) badgeIn.textContent = config.defaultSalesPriceInput.toFixed(2);
+                if (minLabelIn) minLabelIn.textContent = config.salesMinInput.toFixed(2) + ' 元/M';
+                if (maxLabelIn) maxLabelIn.textContent = config.salesMaxInput.toFixed(2) + ' 元/M';
+
+                if (sliderOut) {
+                    sliderOut.min = config.salesMinOutput;
+                    sliderOut.max = config.salesMaxOutput;
+                    sliderOut.step = val === 'flash' ? 0.1 : 1.0;
+                    sliderOut.value = config.defaultSalesPriceOutput;
+                }
+                if (badgeOut) badgeOut.textContent = config.defaultSalesPriceOutput.toFixed(2);
+                if (minLabelOut) minLabelOut.textContent = config.salesMinOutput.toFixed(2) + ' 元/M';
+                if (maxLabelOut) maxLabelOut.textContent = config.salesMaxOutput.toFixed(2) + ' 元/M';
             };
-            updateSliders('');
-            updateSliders('-adv');
+            
+            updatePricingSliders('');
+            updatePricingSliders('-adv');
 
             // 4. 同步更新吞吐速率输入框 (如果高级面板处于渲染状态)
             const tSpeedInput = document.getElementById('field-t-speed');
@@ -1753,14 +1879,32 @@
                 case 'power-server':
                     currentParams.powerServer = floatVal;
                     break;
-                case 'token-price':
-                    currentParams.tokenPrice = floatVal;
-                    document.getElementById('slider-token-price').value = floatVal;
-                    const advToken = document.getElementById('slider-token-price-adv');
-                    if (advToken) advToken.value = floatVal;
-                    document.getElementById('badge-token-price').textContent = floatVal.toFixed(2);
-                    const advTokenBadge = document.getElementById('badge-token-price-adv');
-                    if (advTokenBadge) advTokenBadge.textContent = floatVal.toFixed(2);
+                case 'token-price-input':
+                    currentParams.tokenPriceInput = floatVal;
+                    document.getElementById('slider-token-price-input').value = floatVal;
+                    const advTokenIn = document.getElementById('slider-token-price-input-adv');
+                    if (advTokenIn) advTokenIn.value = floatVal;
+                    document.getElementById('badge-token-price-input').textContent = floatVal.toFixed(2);
+                    const advTokenInBadge = document.getElementById('badge-token-price-input-adv');
+                    if (advTokenInBadge) advTokenInBadge.textContent = floatVal.toFixed(2);
+                    break;
+                case 'token-price-output':
+                    currentParams.tokenPriceOutput = floatVal;
+                    document.getElementById('slider-token-price-output').value = floatVal;
+                    const advTokenOut = document.getElementById('slider-token-price-output-adv');
+                    if (advTokenOut) advTokenOut.value = floatVal;
+                    document.getElementById('badge-token-price-output').textContent = floatVal.toFixed(2);
+                    const advTokenOutBadge = document.getElementById('badge-token-price-output-adv');
+                    if (advTokenOutBadge) advTokenOutBadge.textContent = floatVal.toFixed(2);
+                    break;
+                case 'ratio-input':
+                    currentParams.ratioInput = Math.round(floatVal);
+                    document.getElementById('slider-ratio-input').value = currentParams.ratioInput;
+                    const advRatio = document.getElementById('slider-ratio-input-adv');
+                    if (advRatio) advRatio.value = currentParams.ratioInput;
+                    document.getElementById('badge-ratio-input').textContent = currentParams.ratioInput + '%';
+                    const advRatioBadge = document.getElementById('badge-ratio-input-adv');
+                    if (advRatioBadge) advRatioBadge.textContent = currentParams.ratioInput + '%';
                     break;
                 case 'pue':
                     currentParams.pue = floatVal;
@@ -1809,8 +1953,13 @@
 
             document.getElementById('field-node-price').value = currentParams.nodePrice;
 
-            document.getElementById('slider-token-price').value = currentParams.tokenPrice;
-            document.getElementById('badge-token-price').textContent = currentParams.tokenPrice.toFixed(2);
+            // 重置售价与比例
+            document.getElementById('slider-token-price-input').value = currentParams.tokenPriceInput;
+            document.getElementById('badge-token-price-input').textContent = currentParams.tokenPriceInput.toFixed(2);
+            document.getElementById('slider-token-price-output').value = currentParams.tokenPriceOutput;
+            document.getElementById('badge-token-price-output').textContent = currentParams.tokenPriceOutput.toFixed(2);
+            document.getElementById('slider-ratio-input').value = currentParams.ratioInput;
+            document.getElementById('badge-ratio-input').textContent = currentParams.ratioInput + '%';
 
             // 重置高级和专业参数
             document.getElementById('field-network-price').value = currentParams.priceNetwork;
@@ -1850,10 +1999,17 @@
             const T_speed = currentParams.tSpeed;
             const Alpha_fail = currentParams.alphaFail / 100;
             const U_rate = currentParams.utilizationRate / 100;
-            const P_sales = currentParams.tokenPrice;
+            
+            // 流量占比折算
+            const R_input = currentParams.ratioInput / 100;
+            const R_output = 1 - R_input;
+
+            // 自建折合销售均价 (根据输入输出占比进行加权折算)
+            const P_sales = (currentParams.tokenPriceInput * R_input) + (currentParams.tokenPriceOutput * R_output);
 
             const config = deepseekOfficialPricing[selectedModelId];
-            const P_official = config.blended;
+            // 官方折合混合均价 (根据输入输出占比进行加权折算)
+            const P_official = (config.input * R_input) + (config.output * R_output);
 
             // 1. 资产总值 (CapEx) 与年折旧 D_CapEx (元)
             const CapEx = (Price_server * N_server) + Price_network;
@@ -1952,20 +2108,20 @@
             const bannerText = document.getElementById('roi-banner-text');
 
             if (P_sales > P_official) {
-                // 销售定价高于官价
+                // 销售折合价高于官价折合价
                 banner.className = 'roi-redline-banner warning';
                 bannerIcon.setAttribute('data-lucide', 'shield-alert');
-                bannerText.innerHTML = `⚠️ <b>获客定价风险！</b>对外实际销售价 (<span style="text-decoration: underline;">${P_sales.toFixed(2)} 元/M</span>) <b>高于</b> DeepSeek 官方红线 (<span class="roi-banner-badge" style="background:#B91C1C;">${P_official.toFixed(2)} 元/M</span>)。算力零售获客困难，建议转为私有包机模式。`;
+                bannerText.innerHTML = `⚠️ <b>获客定价风险！</b>自建对外折合销售均价 (<span style="text-decoration: underline;">${P_sales.toFixed(3)} 元/M</span>) <b>高于</b> DeepSeek 官方折合红线 (<span class="roi-banner-badge" style="background:#B91C1C;">${P_official.toFixed(3)} 元/M</span>)。算力零售获客困难，建议转为私有包机模式。`;
             } else if (bePriceVal > P_official) {
-                // 自建成本单价高于官价 (防线失守)
+                // 自建成本折合价高于官价折合价 (防线失守)
                 banner.className = 'roi-redline-banner warning';
                 bannerIcon.setAttribute('data-lucide', 'shield-alert');
-                bannerText.innerHTML = `🚨 <b>算力防线失守！</b>当前算力利用率下自建保本单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(2)} 元/M</span>) <b>高于</b> DeepSeek 官方红线 (<span class="roi-banner-badge" style="background:#B91C1C;">${P_official.toFixed(2)} 元/M</span>)。在此负载率下自建不如买API划算！`;
+                bannerText.innerHTML = `🚨 <b>算力防线失守！</b>当前算力利用率下自建保本单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(3)} 元/M</span>) <b>高于</b> DeepSeek 官方折合红线 (<span class="roi-banner-badge" style="background:#B91C1C;">${P_official.toFixed(3)} 元/M</span>)。在此负载率下自建不如买API划算！`;
             } else {
                 // 防线安全 (绿色)
                 banner.className = 'roi-redline-banner success';
                 bannerIcon.setAttribute('data-lucide', 'shield-check');
-                bannerText.innerHTML = `✅ <b>算力防御成功！</b>当前自建保本单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(2)} 元/M</span>) <b>低于</b> DeepSeek 官方红线 (<span class="roi-banner-badge" style="background:#047857;">${P_official.toFixed(2)} 元/M</span>)。自建方案具备可观 the ROI 获客优势。`;
+                bannerText.innerHTML = `✅ <b>算力防御成功！</b>当前自建保本单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(3)} 元/M</span>) <b>低于</b> DeepSeek 官方折合红线 (<span class="roi-banner-badge" style="background:#047857;">${P_official.toFixed(3)} 元/M</span>)。自建方案具备可观的 ROI 获客优势。`;
             }
             lucide.createIcons();
 
@@ -2081,23 +2237,23 @@
                         data: []
                     },
                     {
-                        name: '自建对外销售定价',
+                        name: '自建折合销售均价',
                         type: 'line',
                         smooth: false,
                         symbol: 'none',
                         lineStyle: {
-                            color: '#3B82F6', // 蓝色实线对外售价
+                            color: '#3B82F6', // 蓝色实线对外折合销售均价
                             width: 3.5
                         },
                         data: []
                     },
                     {
-                        name: 'DeepSeek 官方定价红线',
+                        name: 'DeepSeek 官方折合混合价',
                         type: 'line',
                         smooth: false,
                         symbol: 'none',
                         lineStyle: {
-                            color: '#EF4444', // 红色加粗实线官价红线
+                            color: '#EF4444', // 红色加粗实线官价折合混合红线
                             width: 4
                         },
                         data: []
@@ -2208,12 +2364,12 @@
                         }
                     },
                     {
-                        name: '自建对外销售定价',
+                        name: '自建折合销售均价',
                         type: 'line',
                         data: salesPriceData
                     },
                     {
-                        name: 'DeepSeek 官方定价红线',
+                        name: 'DeepSeek 官方折合混合价',
                         type: 'line',
                         data: officialPriceData
                     }
