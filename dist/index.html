@@ -322,6 +322,79 @@
             box-shadow: 0 0 0 2px #E11D48;
         }
 
+        /* 5. 政策与资金补贴 (浅紫) */
+        .color-group-subsidy {
+            background-color: #F5F3FF;
+            border: 2px solid #DDD6FE;
+            padding: 16px;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .color-group-subsidy .label-text {
+            color: #5B21B6;
+        }
+        .color-group-subsidy .value-badge {
+            background-color: #7C3AED;
+            color: #FFFFFF;
+        }
+        .color-group-subsidy input[type="range"]::-webkit-slider-thumb {
+            background: #7C3AED;
+            box-shadow: 0 0 0 2px #7C3AED;
+        }
+
+        /* 折叠标题小计标签 */
+        .acc-trigger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .acc-subtotal {
+            font-size: 11px;
+            font-weight: 700;
+            background: #FFFFFF;
+            border: 1px solid rgba(156, 163, 175, 0.3);
+            color: var(--primary-dark);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: auto;
+            margin-right: 8px;
+            font-family: var(--font-mono);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 底部公式代入明细容器 */
+        .formula-calc-detail {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #F8FAFC;
+            border-left: 3px solid var(--primary-dark);
+            border-radius: 0 6px 6px 0;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #334155;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+            border: 1px solid #E2E8F0;
+            border-left-width: 3px;
+        }
+
+        /* 标题版本号徽章 */
+        .version-badge {
+            font-size: 11px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #FFFFFF;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            vertical-align: middle;
+            margin-left: 10px;
+            font-weight: 800;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
         /* 公共标签与徽章样式 */
         .label-row {
             display: flex;
@@ -883,7 +956,7 @@
     <header>
         <div class="header-title-wrapper">
             <div class="header-tag">HuaKun Infrastructure</div>
-            <h1>华鲲大模型算力集群盈亏平衡计算器</h1>
+            <h1>华鲲大模型算力集群盈亏平衡计算器 <span class="version-badge">v2.0.0</span></h1>
             <p class="subtitle">基于多维变动成本与 DeepSeek 官方 API 价格获客防线的商业化精算决策大屏</p>
         </div>
         <div>
@@ -928,11 +1001,11 @@
                                 <span class="value-badge" id="badge-server-count">8</span>
                             </div>
                             <div class="slider-wrapper">
-                                <input type="range" id="slider-server-count" min="1" max="64" step="1" value="8" oninput="changeParam('server-count', this.value)">
+                                <input type="range" id="slider-server-count" min="1" max="256" step="1" value="8" oninput="changeParam('server-count', this.value)">
                             </div>
                             <div class="limits-row">
                                 <span>1 台</span>
-                                <span>64 台</span>
+                                <span>256 台</span>
                             </div>
                         </div>
 
@@ -1025,22 +1098,77 @@
                                     <span>95% (19:1)</span>
                                 </div>
                             </div>
+
+                            <!-- 缓存命中 Token 定价 -->
+                            <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed rgba(120, 53, 15, 0.15); padding-top: 8px;">
+                                <div class="label-row">
+                                    <span class="label-text">
+                                        <i data-lucide="tag"></i>
+                                        对外缓存销售定价 (P_sales_cache)
+                                    </span>
+                                    <span class="value-badge" id="badge-token-price-cache">0.25</span>
+                                </div>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="slider-token-price-cache" min="0.02" max="2.50" step="0.02" value="0.25" oninput="changeParam('token-price-cache', this.value)">
+                                </div>
+                                <div class="limits-row">
+                                    <span>0.02 元/M</span>
+                                    <span>2.50 元/M</span>
+                                </div>
+                            </div>
+
+                            <!-- 缓存命中率 -->
+                            <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed rgba(120, 53, 15, 0.15); padding-top: 8px;">
+                                <div class="label-row">
+                                    <span class="label-text">
+                                        <i data-lucide="sliders"></i>
+                                        缓存命中率 (Ratio_cache)
+                                    </span>
+                                    <span class="value-badge" id="badge-ratio-cache">30%</span>
+                                </div>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="slider-ratio-cache" min="0" max="90" step="5" value="30" oninput="changeParam('ratio-cache', this.value)">
+                                </div>
+                                <div class="limits-row">
+                                    <span>0% (未命中)</span>
+                                    <span>90% (高频命中)</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- 专业真实模式 Pane -->
                     <div id="advanced-pane" class="tab-pane">
-                        <!-- 同步展示的核心输入 -->
-                        <div id="advanced-sync-inputs" style="display: flex; flex-direction: column; gap: 20px;"></div>
 
-                        <!-- 折叠面板：高级基础设施与物理环境 -->
+                        <!-- 1. 硬件设施成本区 (Hardware & CapEx Specs) -->
                         <div class="acc-panel">
                             <div class="acc-trigger expanded" onclick="toggleAccordionPane(this)">
-                                <span>物理基础设施与环境配置 (OpEx)</span>
+                                <span>1. 硬件与 CapEx 区</span>
+                                <span class="acc-subtotal" id="subtotal-hardware">总资产: 0.00 万元 | 年折旧: 0.00 万元</span>
                                 <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
                             </div>
                             <div class="acc-body">
-                                <!-- 配套组网资产 -->
+                                <!-- 服务器台数 -->
+                                <div class="input-group color-group-hardware" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">集群服务器台数 (N_server)</span>
+                                        <span class="value-badge" id="badge-adv-server-count">8</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-adv-server-count" min="1" max="256" step="1" value="8" oninput="changeParam('server-count', this.value)">
+                                    </div>
+                                </div>
+                                <!-- 单台采购价 -->
+                                <div class="input-group color-group-hardware" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">单台服务器采购价 (Price_server)</span>
+                                    </div>
+                                    <input type="number" id="field-adv-node-price" class="flat-input" value="140" min="10" max="1000" oninput="changeParam('node-price', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：万元 / 台</span>
+                                    </div>
+                                </div>
+                                <!-- 配套网络组网资产 -->
                                 <div class="input-group color-group-hardware" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
                                         <span class="label-text">配套网络与组网资产 (Price_network)</span>
@@ -1062,6 +1190,17 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. 物理运营成本区 (OpEx Specs) -->
+                        <div class="acc-panel">
+                            <div class="acc-trigger" onclick="toggleAccordionPane(this)">
+                                <span>2. 物理运营成本区</span>
+                                <span class="acc-subtotal" id="subtotal-opex">月OPEX: 0.00 万元 | 年电费: 0.00 万元</span>
+                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="acc-body">
                                 <!-- 单台满载功耗 -->
                                 <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
@@ -1125,24 +1264,145 @@
                             </div>
                         </div>
 
-                        <!-- 折叠面板：模型规格与吞吐极限 -->
+                        <!-- 3. 政策与资金补贴区 (Subsidy Specs) -->
                         <div class="acc-panel">
-                            <div class="acc-trigger expanded" onclick="toggleAccordionPane(this)">
-                                <span>模型规格与吞吐极限 (Model Specs)</span>
+                            <div class="acc-trigger" onclick="toggleAccordionPane(this)">
+                                <span>3. 政策与资金补贴区</span>
+                                <span class="acc-subtotal" id="subtotal-subsidy">年总补贴: 0.00 万元</span>
                                 <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
                             </div>
                             <div class="acc-body">
-                                <!-- 集群总吞吐量 -->
+                                <!-- 硬件建设补贴比例 -->
+                                <div class="input-group color-group-subsidy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">硬件建设补贴比例</span>
+                                        <span class="value-badge" id="badge-adv-subsidy-hardware">0%</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-adv-subsidy-hardware" min="0" max="50" step="5" value="0" oninput="changeParam('subsidy-hardware', this.value)">
+                                    </div>
+                                    <div class="limits-row">
+                                        <span>0% (无补贴)</span>
+                                        <span>50% (补一半)</span>
+                                    </div>
+                                </div>
+                                <!-- 运营电费补贴比例 -->
+                                <div class="input-group color-group-subsidy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">运营电费补贴比例</span>
+                                        <span class="value-badge" id="badge-adv-subsidy-elec">0%</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-adv-subsidy-elec" min="0" max="50" step="5" value="0" oninput="changeParam('subsidy-elec', this.value)">
+                                    </div>
+                                    <div class="limits-row">
+                                        <span>0% (无补贴)</span>
+                                        <span>50% (电费减半)</span>
+                                    </div>
+                                </div>
+                                <!-- 年固定财政运营补贴 -->
+                                <div class="input-group color-group-subsidy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">年固定运营补贴 (Subsidy_annual_ops)</span>
+                                    </div>
+                                    <input type="number" id="field-subsidy-annual-ops" class="flat-input" value="0" min="0" max="1000" oninput="changeParam('subsidy-annual-ops', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：万元 / 年 (直接抵扣物理开销)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. 营收与销售定价区 (Revenue & Sales Specs) -->
+                        <div class="acc-panel">
+                            <div class="acc-trigger" onclick="toggleAccordionPane(this)">
+                                <span>4. 营收与销售定价区</span>
+                                <span class="acc-subtotal" id="subtotal-revenue">混合均价: 0.000 元/M | 年营收: 0.00 万元</span>
+                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="acc-body">
+                                <!-- 对外输入售价 -->
+                                <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">对外输入售价 (P_sales_input)</span>
+                                        <span class="value-badge" id="badge-adv-token-price-input">1.00</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-adv-token-price-input" min="0.1" max="5.0" step="0.05" value="1.0" oninput="changeParam('token-price-input', this.value)">
+                                    </div>
+                                </div>
+                                <!-- 对外输出售价 -->
+                                <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">对外输出售价 (P_sales_output)</span>
+                                        <span class="value-badge" id="badge-adv-token-price-output">2.00</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-adv-token-price-output" min="0.2" max="10.0" step="0.1" value="2.0" oninput="changeParam('token-price-output', this.value)">
+                                    </div>
+                                </div>
+                                <!-- 对外缓存售价 -->
+                                <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">对外缓存售价 (P_sales_cache)</span>
+                                        <span class="value-badge" id="badge-adv-token-price-cache">0.25</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-adv-token-price-cache" min="0.02" max="2.50" step="0.02" value="0.25" oninput="changeParam('token-price-cache', this.value)">
+                                    </div>
+                                </div>
+                                <!-- 输入 Token 占比 -->
+                                <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">输入 Token 占比 (Ratio_input)</span>
+                                        <span class="value-badge" id="badge-adv-ratio-input">80%</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-adv-ratio-input" min="50" max="95" step="5" value="80" oninput="changeParam('ratio-input', this.value)">
+                                    </div>
+                                </div>
+                                <!-- 缓存命中率 -->
+                                <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">缓存命中率 (Ratio_cache)</span>
+                                        <span class="value-badge" id="badge-adv-ratio-cache">30%</span>
+                                    </div>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-adv-ratio-cache" min="0" max="90" step="5" value="30" oninput="changeParam('ratio-cache', this.value)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. 模型吞吐性能极限 (Model Specs) -->
+                        <div class="acc-panel">
+                            <div class="acc-trigger" onclick="toggleAccordionPane(this)">
+                                <span>5. 模型吞吐性能极限</span>
+                                <span class="acc-subtotal" id="subtotal-performance">混合吞吐: 0 Tok/s</span>
+                                <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div class="acc-body">
+                                <!-- 输入 Prefill 吞吐 -->
                                 <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
-                                        <span class="label-text">集群总吞吐速率 (T_speed)</span>
+                                        <span class="label-text">输入 Prefill 吞吐速率 (T_prefill)</span>
                                     </div>
-                                    <input type="number" id="field-t-speed" class="flat-input" value="200000" min="1000" max="1000000" oninput="changeParam('t-speed', this.value)">
+                                    <input type="number" id="field-t-prefill" class="flat-input" value="300000" min="1000" max="1000000" oninput="changeParam('t-prefill', this.value)">
                                     <div class="limits-row" style="margin-top: 4px;">
                                         <span>单位：Tokens / s</span>
                                     </div>
                                 </div>
-                                <!-- 故障停机率 -->
+                                <!-- 输出 Decoding 吞吐 -->
+                                <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">输出 Decoding 吞吐速率 (T_decoding)</span>
+                                    </div>
+                                    <input type="number" id="field-t-decoding" class="flat-input" value="75000" min="1000" max="500000" oninput="changeParam('t-decoding', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：Tokens / s</span>
+                                    </div>
+                                </div>
+                                <!-- 综合故障停机率 -->
                                 <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
                                         <span class="label-text">综合故障停机率 (Alpha_fail)</span>
@@ -1154,6 +1414,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
                     <!-- 全局共享：系统算力负载率 (控制核心枢纽) -->
@@ -1303,42 +1564,56 @@
                     <div class="formula-item">
                         <div class="formula-name">1. 资产总值 (CapEx)</div>
                         <div class="formula-body">$$CapEx = (Price_{server} \times N_{server}) + Price_{network}$$</div>
-                        <div class="formula-desc">整个算力节点与组网资产采购的总资本性支出。</div>
+                        <div class="formula-desc">整个算力节点与组网资产采购的总资本性支出（未扣除补贴）。</div>
+                        <div class="formula-calc-detail" id="calc-detail-capex">等待计算...</div>
                     </div>
                     <div class="formula-item">
                         <div class="formula-name">2. 年固定资产折旧 (D_CapEx)</div>
-                        <div class="formula-body">$$D_{CapEx} = \frac{CapEx}{Years_{depreciation}}$$</div>
-                        <div class="formula-desc">依据折旧年限红线（3年或5年）将资产进行等额年折旧分摊。</div>
+                        <div class="formula-body">$$D_{CapEx} = \frac{CapEx \times (1 - Subsidy_{hardware})}{Years_{depreciation}}$$</div>
+                        <div class="formula-desc">依据折旧年限红线将扣除硬件建设补贴后的净资产进行等额年折旧分摊。</div>
+                        <div class="formula-calc-detail" id="calc-detail-d-capex">等待计算...</div>
                     </div>
                     <div class="formula-item">
                         <div class="formula-name">3. 年运营成本 (OpEx_annual)</div>
-                        <div class="formula-body">$$OpEx_{annual} = (Power_{server} \times PUE \times 24 \times 365 \times Price_{electricity} \times N_{server}) + (Price_{cabinet} \times N_{server} \times 12) + (Bandwidth_{monthly} \times 12) + (Ops_{monthly} \times 12)$$</div>
-                        <div class="formula-desc">包含算力服务器满载电费(结合PUE)、机柜租金、独享宽带和运维分摊。</div>
+                        <div class="formula-body">$$OpEx_{annual} = PowerCost \times (1 - Subsidy_{elec}) + CabinetCost + BandwidthCost + OpsCost - Subsidy_{annual\_ops}$$</div>
+                        <div class="formula-desc">包含算力电费（扣除电费补贴）、机柜租金、独享宽带和人工运维，再扣减财政运营年补贴。</div>
+                        <div class="formula-calc-detail" id="calc-detail-opex">等待计算...</div>
                     </div>
                     <div class="formula-item">
-                        <div class="formula-name">4. 集群最大 Token 年产能 (M_annual)</div>
+                        <div class="formula-name">4. 混合吞吐速率 (T_speed)</div>
+                        <div class="formula-body">$$T_{speed} = \frac{1}{\frac{Ratio_{input}}{T_{prefill}} + \frac{1 - Ratio_{input}}{T_{decoding}}}$$</div>
+                        <div class="formula-desc">基于输入（Prefill）与输出（Decoding）极限速率以及流量占比动态求解的混合吞吐速率。</div>
+                        <div class="formula-calc-detail" id="calc-detail-t-speed">等待计算...</div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-name">5. 集群最大 Token 年产能 (M_annual)</div>
                         <div class="formula-body">$$M_{annual} = \frac{T_{speed} \times 86400 \times 365 \times (1 - Alpha_{fail})}{1,000,000}$$</div>
-                        <div class="formula-desc">在不考虑空闲功耗与利用率的情况下，集群一年能产出的最大 Token 量 (单位：百万 Tokens)。</div>
+                        <div class="formula-desc">结合混合吞吐极限与综合停机率，计算集群在 100% 负载率下的理论极限 Token 年产能。</div>
+                        <div class="formula-calc-detail" id="calc-detail-m-annual">等待计算...</div>
                     </div>
                     <div class="formula-item">
-                        <div class="formula-name">5. 折合自建混合销售均价 (P_sales_blended)</div>
-                        <div class="formula-body">$$P_{sales\_blended} = P_{sales\_input} \times Ratio_{input} + P_{sales\_output} \times (1 - Ratio_{input})$$</div>
-                        <div class="formula-desc">根据自建输入与输出的销售单价，按照输入 Token 流量占比加权折合后的混合平均销售单价。</div>
+                        <div class="formula-name">6. 对外折合混合销售均价 (P_sales_blended)</div>
+                        <div class="formula-body">$$P_{sales\_blended} = \left[ P_{cache} \times Ratio_{cache} + P_{input\_miss} \times (1 - Ratio_{cache}) \right] \times Ratio_{input} + P_{output} \times (1 - Ratio_{input})$$</div>
+                        <div class="formula-desc">将输入售价（拆分为缓存命中售价与未命中售价）和输出售价按流量占比进行三轨加权折算。</div>
+                        <div class="formula-calc-detail" id="calc-detail-p-sales">等待计算...</div>
                     </div>
                     <div class="formula-item">
-                        <div class="formula-name">6. 实际年净利润 (P_net)</div>
+                        <div class="formula-name">7. 实际年净利润 (P_net)</div>
                         <div class="formula-body">$$P_{net} = (M_{annual} \times U_{rate} \times P_{sales\_blended}) - OpEx_{annual} - D_{CapEx}$$</div>
-                        <div class="formula-desc">年营业额减去年度运营成本(OpEx)与年度折旧费用的最终损益。</div>
+                        <div class="formula-desc">年总营业额减去年度运营成本 (扣减补贴后) 与年折旧额后的最终经营损益。</div>
+                        <div class="formula-calc-detail" id="calc-detail-p-net">等待计算...</div>
                     </div>
                     <div class="formula-item">
-                        <div class="formula-name">7. 盈亏平衡点利用率红线 (U_BEP)</div>
+                        <div class="formula-name">8. 盈亏平衡点利用率红线 (U_BEP)</div>
                         <div class="formula-body">$$U_{BEP} = \frac{OpEx_{annual} + D_{CapEx}}{M_{annual} \times P_{sales\_blended}}$$</div>
-                        <div class="formula-desc">当净利润为0时反推出来的绝对保本利用率，高于此利用率自建才能保本。</div>
+                        <div class="formula-desc">自建算力达致盈亏平衡时的临界利用率。低于该红线集群将处于净亏损状态。</div>
+                        <div class="formula-calc-detail" id="calc-detail-u-bep">等待计算...</div>
                     </div>
                     <div class="formula-item">
-                        <div class="formula-name">8. 纯现金流回本周期 (T_cash_back)</div>
-                        <div class="formula-body">$$T_{cash\_back} = \frac{CapEx}{R_{gross} - OpEx_{annual}}$$</div>
-                        <div class="formula-desc">使用总营业额扣除运营成本后的年现金流净收入来回收 CapEx 投入的周期 (其中 $R_{gross} = M_{annual} \times U_{rate} \times P_{sales\_blended}$)。</div>
+                        <div class="formula-name">9. 纯现金流回本周期 (T_cash_back)</div>
+                        <div class="formula-body">$$T_{cash\_back} = \frac{CapEx \times (1 - Subsidy_{hardware})}{R_{gross} - OpEx_{annual}}$$</div>
+                        <div class="formula-desc">使用总营业额扣除年运营开销后的纯现金流，回收扣除补贴后的硬件净投入的预计年限。</div>
+                        <div class="formula-calc-detail" id="calc-detail-t-cashback">等待计算...</div>
                     </div>
                 </div>
             </div>
@@ -1441,7 +1716,7 @@
 
     <!-- 页脚 Footer -->
     <footer>
-        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • Flat Poster System v5.2</div>
+        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • 商业精算沙盘 v2.0.0</div>
         <div class="footer-desc-group">
             <span>硬件折旧按双倍余额/平均分摊计算</span>
             <span>|</span>
@@ -1523,14 +1798,22 @@
             
             // 模型规格：默认 DeepSeek-V4-Flash
             modelName: 'DeepSeek-V4-Flash',
-            tSpeed: 200000, // 吞吐量：20万 Tokens/s
+            nodeTpsPrefill: 300000, // Prefill 吞吐 (30万 Tokens/s)
+            nodeTpsDecoding: 75000,  // Decoding 吞吐 (7.5万 Tokens/s)
             alphaFail: 5, // 故障停机率：5%
             
             // 销售定价与流量占比
             tokenPriceInput: 1.00,  // 自建输入售价 (元/百万 Tokens)
             tokenPriceOutput: 2.00, // 自建输出售价 (元/百万 Tokens)
+            tokenPriceCache: 0.25,  // 自建缓存命中售价 (元/百万 Tokens)
             ratioInput: 80,         // 输入 Token 占比 (50% - 95%)
-            utilizationRate: 30     // 利用率：30%
+            ratioCache: 30,         // 缓存命中率 (0% - 90%)
+            utilizationRate: 30,    // 利用率：30%
+
+            // 政策/资金补贴
+            subsidyHardware: 0,     // 硬件建设补贴比例 (0% - 50%)
+            subsidyElec: 0,         // 运营电费补贴比例 (0% - 50%)
+            subsidyAnnualOps: 0     // 财政固定运营补贴 (万元/年)
         };
 
         // DeepSeek 官方定价映射数据
@@ -1539,9 +1822,12 @@
                 name: 'DeepSeek-V4-Flash',
                 input: 0.218,
                 output: 0.435,
-                defaultTps: 200000,
+                cache: 0.0545, // 缓存输入定价
+                defaultPrefill: 300000,
+                defaultDecoding: 75000,
                 defaultSalesPriceInput: 1.00,
                 defaultSalesPriceOutput: 2.00,
+                defaultSalesPriceCache: 0.25,
                 salesMinInput: 0.1,
                 salesMaxInput: 5.0,
                 salesMinOutput: 0.2,
@@ -1551,9 +1837,12 @@
                 name: 'DeepSeek-V4-Pro',
                 input: 7.25,
                 output: 14.50,
-                defaultTps: 40000,
+                cache: 1.8125, // 缓存输入定价
+                defaultPrefill: 60000,
+                defaultDecoding: 15000,
                 defaultSalesPriceInput: 7.00,
                 defaultSalesPriceOutput: 14.00,
+                defaultSalesPriceCache: 1.75,
                 salesMinInput: 1.0,
                 salesMaxInput: 30.0,
                 salesMinOutput: 2.0,
@@ -1652,112 +1941,129 @@
         });
 
         // 克隆极简模式的 4 个主输入放置到高级模式面板顶部
+        // 极简与高级多滑块状态双向同步
         function syncCoreInputs() {
-            const container = document.getElementById('advanced-sync-inputs');
-            container.innerHTML = `
-                <!-- 服务器节点数量 -->
-                <div class="input-group color-group-hardware">
-                    <div class="label-row">
-                        <span class="label-text">
-                            <i data-lucide="server"></i>
-                            集群节点数量 (N_server)
-                        </span>
-                        <span class="value-badge" id="badge-server-count-adv">8</span>
-                    </div>
-                    <div class="slider-wrapper">
-                        <input type="range" id="slider-server-count-adv" min="1" max="64" step="1" value="8" oninput="changeParam('server-count', this.value)">
-                    </div>
-                    <div class="limits-row">
-                        <span>1 台</span>
-                        <span>64 台</span>
-                    </div>
-                </div>
+            // 同步下拉预设框
+            const selQuick = document.getElementById('select-model-spec');
+            if (selQuick) selQuick.value = selectedModelId;
 
-                <!-- 节点硬件价格 -->
-                <div class="input-group color-group-hardware">
-                    <div class="label-row">
-                        <span class="label-text">
-                            <i data-lucide="wallet"></i>
-                            单台服务器采购价 (Price_server)
-                        </span>
-                    </div>
-                    <input type="number" id="field-node-price-adv" class="flat-input" value="140" min="10" max="1000" oninput="changeParam('node-price', this.value)">
-                </div>
+            // 1. 同步服务器台数
+            const sliderCount = document.getElementById('slider-server-count');
+            const sliderCountAdv = document.getElementById('slider-adv-server-count');
+            if (sliderCount) sliderCount.value = currentParams.serverCount;
+            if (sliderCountAdv) sliderCountAdv.value = currentParams.serverCount;
+            const badgeCount = document.getElementById('badge-server-count');
+            const badgeCountAdv = document.getElementById('badge-adv-server-count');
+            if (badgeCount) badgeCount.textContent = currentParams.serverCount;
+            if (badgeCountAdv) badgeCountAdv.textContent = currentParams.serverCount;
 
-                <!-- 运行模型选择 (同步) -->
-                <div class="input-group color-group-performance">
-                    <div class="label-row">
-                        <span class="label-text">
-                            <i data-lucide="cpu"></i>
-                            运行模型选择 (Model_Name)
-                        </span>
-                    </div>
-                    <div class="select-box">
-                        <select id="select-model-spec-adv" onchange="changeModelPreset(this.value)">
-                            <option value="flash" selected>DeepSeek-V4-Flash (官方定价)</option>
-                            <option value="pro">DeepSeek-V4-Pro (官方定价)</option>
-                        </select>
-                    </div>
-                </div>
+            // 2. 同步单台采购价
+            const fldPrice = document.getElementById('field-node-price');
+            const fldPriceAdv = document.getElementById('field-adv-node-price');
+            if (fldPrice) fldPrice.value = currentParams.nodePrice;
+            if (fldPriceAdv) fldPriceAdv.value = currentParams.nodePrice;
 
-                <!-- 对外销售定价 - 输入与输出拆分 (同步) -->
-                <div class="input-group color-group-business" style="gap: 12px;">
-                    <!-- 输入 Token 定价 -->
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <div class="label-row">
-                            <span class="label-text">
-                                <i data-lucide="tag"></i>
-                                对外输入销售定价 (P_sales_input)
-                            </span>
-                            <span class="value-badge" id="badge-token-price-input-adv">1.00</span>
-                        </div>
-                        <div class="slider-wrapper">
-                            <input type="range" id="slider-token-price-input-adv" min="0.1" max="5.0" step="0.05" value="1.0" oninput="changeParam('token-price-input', this.value)">
-                        </div>
-                        <div class="limits-row">
-                            <span id="label-sales-input-min-adv">0.10 元/M</span>
-                            <span id="label-sales-input-max-adv">5.00 元/M</span>
-                        </div>
-                    </div>
-                    
-                    <!-- 输出 Token 定价 -->
-                    <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed rgba(120, 53, 15, 0.15); padding-top: 8px;">
-                        <div class="label-row">
-                            <span class="label-text">
-                                <i data-lucide="tag"></i>
-                                对外输出销售定价 (P_sales_output)
-                            </span>
-                            <span class="value-badge" id="badge-token-price-output-adv">2.00</span>
-                        </div>
-                        <div class="slider-wrapper">
-                            <input type="range" id="slider-token-price-output-adv" min="0.2" max="10.0" step="0.1" value="2.0" oninput="changeParam('token-price-output', this.value)">
-                        </div>
-                        <div class="limits-row">
-                            <span id="label-sales-output-min-adv">0.20 元/M</span>
-                            <span id="label-sales-output-max-adv">10.00 元/M</span>
-                        </div>
-                    </div>
+            // 3. 同步输入售价
+            const sliderPriceIn = document.getElementById('slider-token-price-input');
+            const sliderPriceInAdv = document.getElementById('slider-adv-token-price-input');
+            if (sliderPriceIn) sliderPriceIn.value = currentParams.tokenPriceInput;
+            if (sliderPriceInAdv) sliderPriceInAdv.value = currentParams.tokenPriceInput;
+            const badgePriceIn = document.getElementById('badge-token-price-input');
+            const badgePriceInAdv = document.getElementById('badge-adv-token-price-input');
+            if (badgePriceIn) badgePriceIn.textContent = currentParams.tokenPriceInput.toFixed(2);
+            if (badgePriceInAdv) badgePriceInAdv.textContent = currentParams.tokenPriceInput.toFixed(2);
 
-                    <!-- 输入 Token 比例占比 -->
-                    <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed rgba(120, 53, 15, 0.15); padding-top: 8px;">
-                        <div class="label-row">
-                            <span class="label-text">
-                                <i data-lucide="sliders"></i>
-                                输入 Token 占比 (Ratio_input)
-                            </span>
-                            <span class="value-badge" id="badge-ratio-input-adv">80%</span>
-                        </div>
-                        <div class="slider-wrapper">
-                            <input type="range" id="slider-ratio-input-adv" min="50" max="95" step="5" value="80" oninput="changeParam('ratio-input', this.value)">
-                        </div>
-                        <div class="limits-row">
-                            <span>50% (1:1)</span>
-                            <span>95% (19:1)</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            lucide.createIcons();
+            // 4. 同步输出售价
+            const sliderPriceOut = document.getElementById('slider-token-price-output');
+            const sliderPriceOutAdv = document.getElementById('slider-adv-token-price-output');
+            if (sliderPriceOut) sliderPriceOut.value = currentParams.tokenPriceOutput;
+            if (sliderPriceOutAdv) sliderPriceOutAdv.value = currentParams.tokenPriceOutput;
+            const badgePriceOut = document.getElementById('badge-token-price-output');
+            const badgePriceOutAdv = document.getElementById('badge-adv-token-price-output');
+            if (badgePriceOut) badgePriceOut.textContent = currentParams.tokenPriceOutput.toFixed(2);
+            if (badgePriceOutAdv) badgePriceOutAdv.textContent = currentParams.tokenPriceOutput.toFixed(2);
+
+            // 5. 同步缓存售价
+            const sliderPriceCache = document.getElementById('slider-token-price-cache');
+            const sliderPriceCacheAdv = document.getElementById('slider-adv-token-price-cache');
+            if (sliderPriceCache) sliderPriceCache.value = currentParams.tokenPriceCache;
+            if (sliderPriceCacheAdv) sliderPriceCacheAdv.value = currentParams.tokenPriceCache;
+            const badgePriceCache = document.getElementById('badge-token-price-cache');
+            const badgePriceCacheAdv = document.getElementById('badge-adv-token-price-cache');
+            if (badgePriceCache) badgePriceCache.textContent = currentParams.tokenPriceCache.toFixed(2);
+            if (badgePriceCacheAdv) badgePriceCacheAdv.textContent = currentParams.tokenPriceCache.toFixed(2);
+
+            // 6. 同步输入占比
+            const sliderRatioIn = document.getElementById('slider-ratio-input');
+            const sliderRatioInAdv = document.getElementById('slider-adv-ratio-input');
+            if (sliderRatioIn) sliderRatioIn.value = currentParams.ratioInput;
+            if (sliderRatioInAdv) sliderRatioInAdv.value = currentParams.ratioInput;
+            const badgeRatioIn = document.getElementById('badge-ratio-input');
+            const badgeRatioInAdv = document.getElementById('badge-adv-ratio-input');
+            if (badgeRatioIn) badgeRatioIn.textContent = currentParams.ratioInput + '%';
+            if (badgeRatioInAdv) badgeRatioInAdv.textContent = currentParams.ratioInput + '%';
+
+            // 7. 同步缓存命中率
+            const sliderRatioCache = document.getElementById('slider-ratio-cache');
+            const sliderRatioCacheAdv = document.getElementById('slider-adv-ratio-cache');
+            if (sliderRatioCache) sliderRatioCache.value = currentParams.ratioCache;
+            if (sliderRatioCacheAdv) sliderRatioCacheAdv.value = currentParams.ratioCache;
+            const badgeRatioCache = document.getElementById('badge-ratio-cache');
+            const badgeRatioCacheAdv = document.getElementById('badge-adv-ratio-cache');
+            if (badgeRatioCache) badgeRatioCache.textContent = currentParams.ratioCache + '%';
+            if (badgeRatioCacheAdv) badgeRatioCacheAdv.textContent = currentParams.ratioCache + '%';
+
+            // 8. 写入专业模式特有参数的当前值 (用于 onload 初始状态与高级滑块映射)
+            const fldNet = document.getElementById('field-network-price');
+            if (fldNet) fldNet.value = currentParams.priceNetwork;
+            
+            const selDep = document.getElementById('select-dep-years');
+            if (selDep) selDep.value = currentParams.depYears;
+
+            const fldPwr = document.getElementById('field-power-server');
+            if (fldPwr) fldPwr.value = currentParams.powerServer;
+
+            const sliderPue = document.getElementById('slider-pue');
+            if (sliderPue) sliderPue.value = currentParams.pue;
+            const badgePue = document.getElementById('badge-pue');
+            if (badgePue) badgePue.textContent = currentParams.pue.toFixed(2);
+
+            const fldElec = document.getElementById('field-elec-rate');
+            if (fldElec) fldElec.value = currentParams.elecRate;
+
+            const fldRack = document.getElementById('field-rack-cost');
+            if (fldRack) fldRack.value = currentParams.rackCost;
+
+            const fldBand = document.getElementById('field-bandwidth');
+            if (fldBand) fldBand.value = currentParams.bandwidth;
+
+            const fldOps = document.getElementById('field-ops-cost');
+            if (fldOps) fldOps.value = currentParams.opsCost;
+
+            const fldPrefill = document.getElementById('field-t-prefill');
+            if (fldPrefill) fldPrefill.value = currentParams.nodeTpsPrefill;
+
+            const fldDec = document.getElementById('field-t-decoding');
+            if (fldDec) fldDec.value = currentParams.nodeTpsDecoding;
+
+            const sliderFail = document.getElementById('slider-alpha-fail');
+            if (sliderFail) sliderFail.value = currentParams.alphaFail;
+            const badgeFail = document.getElementById('badge-alpha-fail');
+            if (badgeFail) badgeFail.textContent = currentParams.alphaFail + '%';
+
+            // 补贴写入
+            const sliderSubH = document.getElementById('slider-adv-subsidy-hardware');
+            if (sliderSubH) sliderSubH.value = currentParams.subsidyHardware;
+            const badgeSubH = document.getElementById('badge-adv-subsidy-hardware');
+            if (badgeSubH) badgeSubH.textContent = currentParams.subsidyHardware + '%';
+
+            const sliderSubE = document.getElementById('slider-adv-subsidy-elec');
+            if (sliderSubE) sliderSubE.value = currentParams.subsidyElec;
+            const badgeSubE = document.getElementById('badge-adv-subsidy-elec');
+            if (badgeSubE) badgeSubE.textContent = currentParams.subsidyElec + '%';
+
+            const opsSubFld = document.getElementById('field-subsidy-annual-ops');
+            if (opsSubFld) opsSubFld.value = currentParams.subsidyAnnualOps;
         }
 
         // 切换左侧表单 Pane
@@ -1793,28 +2099,28 @@
             currentParams.modelName = config.name;
             
             // 联动更新吞吐量和默认自建售价
-            currentParams.tSpeed = config.defaultTps;
+            currentParams.nodeTpsPrefill = config.defaultPrefill;
+            currentParams.nodeTpsDecoding = config.defaultDecoding;
             currentParams.tokenPriceInput = config.defaultSalesPriceInput;
             currentParams.tokenPriceOutput = config.defaultSalesPriceOutput;
+            currentParams.tokenPriceCache = config.defaultSalesPriceCache;
 
             // 1. 同步下拉框
             document.getElementById('select-model-spec').value = val;
-            const advSelect = document.getElementById('select-model-spec-adv');
-            if (advSelect) advSelect.value = val;
 
             // 2. 更新定价静态显示文字
             const pricingInfoEl = document.getElementById('model-pricing-static-info');
-            pricingInfoEl.innerHTML = `<span>输入: ${config.input.toFixed(3)} 元/M</span><span>输出: ${config.output.toFixed(3)} 元/M</span>`;
+            pricingInfoEl.innerHTML = `<span>输入: ${config.input.toFixed(3)} 元/M</span><span>缓存: ${config.cache.toFixed(4)} 元/M</span><span>输出: ${config.output.toFixed(3)} 元/M</span>`;
 
-            // 3. 更新输入与输出销售定价滑块范围与默认值
+            // 3. 更新输入与输出及缓存销售定价滑块范围与默认值
             const updatePricingSliders = (suffix = '') => {
-                const sliderIn = document.getElementById('slider-token-price-input' + suffix);
-                const badgeIn = document.getElementById('badge-token-price-input' + suffix);
+                const sliderIn = document.getElementById('slider' + suffix + '-token-price-input');
+                const badgeIn = document.getElementById('badge' + suffix + '-token-price-input');
                 const minLabelIn = document.getElementById('label-sales-input-min' + suffix);
                 const maxLabelIn = document.getElementById('label-sales-input-max' + suffix);
 
-                const sliderOut = document.getElementById('slider-token-price-output' + suffix);
-                const badgeOut = document.getElementById('badge-token-price-output' + suffix);
+                const sliderOut = document.getElementById('slider' + suffix + '-token-price-output');
+                const badgeOut = document.getElementById('badge' + suffix + '-token-price-output');
                 const minLabelOut = document.getElementById('label-sales-output-min' + suffix);
                 const maxLabelOut = document.getElementById('label-sales-output-max' + suffix);
 
@@ -1839,17 +2145,19 @@
                 if (maxLabelOut) maxLabelOut.textContent = config.salesMaxOutput.toFixed(2) + ' 元/M';
             };
             
-            updatePricingSliders('');
-            updatePricingSliders('-adv');
+            updatePricingSliders(''); // 极简模式
+            updatePricingSliders('-adv'); // 专业模式
 
-            // 4. 同步更新吞吐速率输入框 (如果高级面板处于渲染状态)
-            const tSpeedInput = document.getElementById('field-t-speed');
-            if (tSpeedInput) tSpeedInput.value = config.defaultTps;
+            // 4. 同步更新吞吐速率输入框
+            const prefillInput = document.getElementById('field-t-prefill');
+            if (prefillInput) prefillInput.value = config.defaultPrefill;
+            const decodingInput = document.getElementById('field-t-decoding');
+            if (decodingInput) decodingInput.value = config.defaultDecoding;
 
             runFinancialCalculator();
         }
 
-        // 更新参数
+        // 更新参数 (实现极简模式与专业折叠面板的多滑块双向实时对齐)
         function changeParam(key, val) {
             const floatVal = parseFloat(val);
             if (isNaN(floatVal)) return;
@@ -1858,81 +2166,141 @@
                 case 'server-count':
                     currentParams.serverCount = Math.round(floatVal);
                     document.getElementById('slider-server-count').value = currentParams.serverCount;
-                    const advServer = document.getElementById('slider-server-count-adv');
-                    if (advServer) advServer.value = currentParams.serverCount;
                     document.getElementById('badge-server-count').textContent = currentParams.serverCount;
-                    const advServerBadge = document.getElementById('badge-server-count-adv');
+                    const advServer = document.getElementById('slider-adv-server-count');
+                    if (advServer) advServer.value = currentParams.serverCount;
+                    const advServerBadge = document.getElementById('badge-adv-server-count');
                     if (advServerBadge) advServerBadge.textContent = currentParams.serverCount;
                     break;
                 case 'node-price':
                     currentParams.nodePrice = floatVal;
                     document.getElementById('field-node-price').value = floatVal;
-                    const advNode = document.getElementById('field-node-price-adv');
+                    const advNode = document.getElementById('field-adv-node-price');
                     if (advNode) advNode.value = floatVal;
                     break;
                 case 'network-price':
                     currentParams.priceNetwork = floatVal;
+                    const netFld = document.getElementById('field-network-price');
+                    if (netFld) netFld.value = floatVal;
                     break;
                 case 'dep-years':
                     currentParams.depYears = Math.round(floatVal);
+                    const depSel = document.getElementById('select-dep-years');
+                    if (depSel) depSel.value = currentParams.depYears;
                     break;
                 case 'power-server':
                     currentParams.powerServer = floatVal;
+                    const pwrFld = document.getElementById('field-power-server');
+                    if (pwrFld) pwrFld.value = floatVal;
                     break;
                 case 'token-price-input':
                     currentParams.tokenPriceInput = floatVal;
                     document.getElementById('slider-token-price-input').value = floatVal;
-                    const advTokenIn = document.getElementById('slider-token-price-input-adv');
-                    if (advTokenIn) advTokenIn.value = floatVal;
                     document.getElementById('badge-token-price-input').textContent = floatVal.toFixed(2);
-                    const advTokenInBadge = document.getElementById('badge-token-price-input-adv');
+                    const advTokenIn = document.getElementById('slider-adv-token-price-input');
+                    if (advTokenIn) advTokenIn.value = floatVal;
+                    const advTokenInBadge = document.getElementById('badge-adv-token-price-input');
                     if (advTokenInBadge) advTokenInBadge.textContent = floatVal.toFixed(2);
                     break;
                 case 'token-price-output':
                     currentParams.tokenPriceOutput = floatVal;
                     document.getElementById('slider-token-price-output').value = floatVal;
-                    const advTokenOut = document.getElementById('slider-token-price-output-adv');
-                    if (advTokenOut) advTokenOut.value = floatVal;
                     document.getElementById('badge-token-price-output').textContent = floatVal.toFixed(2);
-                    const advTokenOutBadge = document.getElementById('badge-token-price-output-adv');
+                    const advTokenOut = document.getElementById('slider-adv-token-price-output');
+                    if (advTokenOut) advTokenOut.value = floatVal;
+                    const advTokenOutBadge = document.getElementById('badge-adv-token-price-output');
                     if (advTokenOutBadge) advTokenOutBadge.textContent = floatVal.toFixed(2);
+                    break;
+                case 'token-price-cache':
+                    currentParams.tokenPriceCache = floatVal;
+                    document.getElementById('slider-token-price-cache').value = floatVal;
+                    document.getElementById('badge-token-price-cache').textContent = floatVal.toFixed(2);
+                    const advTokenCache = document.getElementById('slider-adv-token-price-cache');
+                    if (advTokenCache) advTokenCache.value = floatVal;
+                    const advTokenCacheBadge = document.getElementById('badge-adv-token-price-cache');
+                    if (advTokenCacheBadge) advTokenCacheBadge.textContent = floatVal.toFixed(2);
                     break;
                 case 'ratio-input':
                     currentParams.ratioInput = Math.round(floatVal);
                     document.getElementById('slider-ratio-input').value = currentParams.ratioInput;
-                    const advRatio = document.getElementById('slider-ratio-input-adv');
-                    if (advRatio) advRatio.value = currentParams.ratioInput;
                     document.getElementById('badge-ratio-input').textContent = currentParams.ratioInput + '%';
-                    const advRatioBadge = document.getElementById('badge-ratio-input-adv');
+                    const advRatio = document.getElementById('slider-adv-ratio-input');
+                    if (advRatio) advRatio.value = currentParams.ratioInput;
+                    const advRatioBadge = document.getElementById('badge-adv-ratio-input');
                     if (advRatioBadge) advRatioBadge.textContent = currentParams.ratioInput + '%';
+                    break;
+                case 'ratio-cache':
+                    currentParams.ratioCache = Math.round(floatVal);
+                    document.getElementById('slider-ratio-cache').value = currentParams.ratioCache;
+                    document.getElementById('badge-ratio-cache').textContent = currentParams.ratioCache + '%';
+                    const advRatioC = document.getElementById('slider-adv-ratio-cache');
+                    if (advRatioC) advRatioC.value = currentParams.ratioCache;
+                    const advRatioCBadge = document.getElementById('badge-adv-ratio-cache');
+                    if (advRatioCBadge) advRatioCBadge.textContent = currentParams.ratioCache + '%';
                     break;
                 case 'pue':
                     currentParams.pue = floatVal;
+                    document.getElementById('slider-pue').value = floatVal;
                     document.getElementById('badge-pue').textContent = floatVal.toFixed(2);
                     break;
                 case 'elec-rate':
                     currentParams.elecRate = floatVal;
+                    const elecRateFld = document.getElementById('field-elec-rate');
+                    if (elecRateFld) elecRateFld.value = floatVal;
                     break;
                 case 'rack-cost':
                     currentParams.rackCost = floatVal;
+                    const rackFld = document.getElementById('field-rack-cost');
+                    if (rackFld) rackFld.value = floatVal;
                     break;
                 case 'bandwidth':
                     currentParams.bandwidth = floatVal;
+                    const bdFld = document.getElementById('field-bandwidth');
+                    if (bdFld) bdFld.value = floatVal;
                     break;
                 case 'ops-cost':
                     currentParams.opsCost = floatVal;
+                    const opsFld = document.getElementById('field-ops-cost');
+                    if (opsFld) opsFld.value = floatVal;
                     break;
-                case 't-speed':
-                    currentParams.tSpeed = floatVal;
+                case 't-prefill':
+                    currentParams.nodeTpsPrefill = floatVal;
+                    const prefInput = document.getElementById('field-t-prefill');
+                    if (prefInput) prefInput.value = floatVal;
+                    break;
+                case 't-decoding':
+                    currentParams.nodeTpsDecoding = floatVal;
+                    const decInput = document.getElementById('field-t-decoding');
+                    if (decInput) decInput.value = floatVal;
                     break;
                 case 'alpha-fail':
                     currentParams.alphaFail = floatVal;
+                    document.getElementById('slider-alpha-fail').value = floatVal;
                     document.getElementById('badge-alpha-fail').textContent = floatVal + '%';
                     break;
                 case 'utilization-rate':
                     currentParams.utilizationRate = Math.round(floatVal);
                     document.getElementById('slider-utilization').value = currentParams.utilizationRate;
                     document.getElementById('badge-utilization').textContent = currentParams.utilizationRate + '%';
+                    break;
+                case 'subsidy-hardware':
+                    currentParams.subsidyHardware = Math.round(floatVal);
+                    const sliderSubH = document.getElementById('slider-adv-subsidy-hardware');
+                    if (sliderSubH) sliderSubH.value = currentParams.subsidyHardware;
+                    const badgeSubH = document.getElementById('badge-adv-subsidy-hardware');
+                    if (badgeSubH) badgeSubH.textContent = currentParams.subsidyHardware + '%';
+                    break;
+                case 'subsidy-elec':
+                    currentParams.subsidyElec = Math.round(floatVal);
+                    const sliderSubE = document.getElementById('slider-adv-subsidy-elec');
+                    if (sliderSubE) sliderSubE.value = currentParams.subsidyElec;
+                    const badgeSubE = document.getElementById('badge-adv-subsidy-elec');
+                    if (badgeSubE) badgeSubE.textContent = currentParams.subsidyElec + '%';
+                    break;
+                case 'subsidy-annual-ops':
+                    currentParams.subsidyAnnualOps = floatVal;
+                    const opsSubFld = document.getElementById('field-subsidy-annual-ops');
+                    if (opsSubFld) opsSubFld.value = floatVal;
                     break;
             }
 
@@ -1946,20 +2314,24 @@
             
             document.getElementById('select-model-spec').value = selectedModelId;
             const pricingInfoEl = document.getElementById('model-pricing-static-info');
-            pricingInfoEl.innerHTML = `<span>输入: 0.218 元/M</span><span>输出: 0.435 元/M</span>`;
+            pricingInfoEl.innerHTML = `<span>输入: 0.218 元/M</span><span>缓存: 0.0545 元/M</span><span>输出: 0.435 元/M</span>`;
 
+            // 重置滑块与输入值
             document.getElementById('slider-server-count').value = currentParams.serverCount;
             document.getElementById('badge-server-count').textContent = currentParams.serverCount;
-
             document.getElementById('field-node-price').value = currentParams.nodePrice;
 
-            // 重置售价与比例
             document.getElementById('slider-token-price-input').value = currentParams.tokenPriceInput;
             document.getElementById('badge-token-price-input').textContent = currentParams.tokenPriceInput.toFixed(2);
             document.getElementById('slider-token-price-output').value = currentParams.tokenPriceOutput;
             document.getElementById('badge-token-price-output').textContent = currentParams.tokenPriceOutput.toFixed(2);
+            document.getElementById('slider-token-price-cache').value = currentParams.tokenPriceCache;
+            document.getElementById('badge-token-price-cache').textContent = currentParams.tokenPriceCache.toFixed(2);
+            
             document.getElementById('slider-ratio-input').value = currentParams.ratioInput;
             document.getElementById('badge-ratio-input').textContent = currentParams.ratioInput + '%';
+            document.getElementById('slider-ratio-cache').value = currentParams.ratioCache;
+            document.getElementById('badge-ratio-cache').textContent = currentParams.ratioCache + '%';
 
             // 重置高级和专业参数
             document.getElementById('field-network-price').value = currentParams.priceNetwork;
@@ -1971,9 +2343,26 @@
             document.getElementById('field-rack-cost').value = currentParams.rackCost;
             document.getElementById('field-bandwidth').value = currentParams.bandwidth;
             document.getElementById('field-ops-cost').value = currentParams.opsCost;
-            document.getElementById('field-t-speed').value = currentParams.tSpeed;
+            
+            document.getElementById('field-t-prefill').value = currentParams.nodeTpsPrefill;
+            document.getElementById('field-t-decoding').value = currentParams.nodeTpsDecoding;
+            
             document.getElementById('slider-alpha-fail').value = currentParams.alphaFail;
             document.getElementById('badge-alpha-fail').textContent = currentParams.alphaFail + '%';
+
+            // 补贴重置
+            const sliderSubH = document.getElementById('slider-adv-subsidy-hardware');
+            if (sliderSubH) sliderSubH.value = currentParams.subsidyHardware;
+            const badgeSubH = document.getElementById('badge-adv-subsidy-hardware');
+            if (badgeSubH) badgeSubH.textContent = currentParams.subsidyHardware + '%';
+
+            const sliderSubE = document.getElementById('slider-adv-subsidy-elec');
+            if (sliderSubE) sliderSubE.value = currentParams.subsidyElec;
+            const badgeSubE = document.getElementById('badge-adv-subsidy-elec');
+            if (badgeSubE) badgeSubE.textContent = currentParams.subsidyElec + '%';
+
+            const opsSubFld = document.getElementById('field-subsidy-annual-ops');
+            if (opsSubFld) opsSubFld.value = currentParams.subsidyAnnualOps;
 
             document.getElementById('slider-utilization').value = currentParams.utilizationRate;
             document.getElementById('badge-utilization').textContent = currentParams.utilizationRate + '%';
@@ -1996,66 +2385,148 @@
             const Bandwidth_monthly = currentParams.bandwidth;
             const Ops_monthly = currentParams.opsCost;
             
-            const T_speed = currentParams.tSpeed;
+            const T_prefill = currentParams.nodeTpsPrefill;
+            const T_decoding = currentParams.nodeTpsDecoding;
             const Alpha_fail = currentParams.alphaFail / 100;
             const U_rate = currentParams.utilizationRate / 100;
             
-            // 流量占比折算
+            // 流量占比折算与缓存命中折价
             const R_input = currentParams.ratioInput / 100;
             const R_output = 1 - R_input;
+            const R_cache = currentParams.ratioCache / 100;
 
-            // 自建折合销售均价 (根据输入输出占比进行加权折算)
-            const P_sales = (currentParams.tokenPriceInput * R_input) + (currentParams.tokenPriceOutput * R_output);
+            const R_cache_total = R_input * R_cache;         // 缓存命中输入 Token 在全量中的比例
+            const R_input_miss = R_input * (1 - R_cache);    // 未命中（普通输入）Token 在全量中的比例
+
+            // 1. 混合吞吐速率折算模型 (阿姆达尔变形)
+            const T_speed = 1 / ((R_input / T_prefill) + (R_output / T_decoding));
+
+            // 2. 自建折合销售均价 (三轨加权折算：缓存命中输入、普通输入、解码输出)
+            const P_sales = (currentParams.tokenPriceCache * R_cache_total) + 
+                            (currentParams.tokenPriceInput * R_input_miss) + 
+                            (currentParams.tokenPriceOutput * R_output);
 
             const config = deepseekOfficialPricing[selectedModelId];
-            // 官方折合混合均价 (根据输入输出占比进行加权折算)
-            const P_official = (config.input * R_input) + (config.output * R_output);
+            // 官方折合混合均价 (相同三轨占比下的官方价格)
+            const P_official = (config.cache * R_cache_total) + 
+                               (config.input * R_input_miss) + 
+                               (config.output * R_output);
 
-            // 1. 资产总值 (CapEx) 与年折旧 D_CapEx (元)
+            // 3. 资产总值 (CapEx) 与年折旧 D_CapEx (计入硬件补贴)
             const CapEx = (Price_server * N_server) + Price_network;
-            const D_CapEx = CapEx / Years_depreciation;
+            const subsidyHardwareRatio = currentParams.subsidyHardware / 100;
+            const CapEx_net = CapEx * (1 - subsidyHardwareRatio);
+            const D_CapEx = CapEx_net / Years_depreciation;
 
-            // 2. 年运营成本 (OpEx_annual) (元)
+            // 4. 年运营成本 (OpEx_annual) (计入电费补贴与财政年固定补贴)
             const powerCostAnnual = Power_server * PUE * 24 * 365 * Price_electricity * N_server;
+            const subsidyElecRatio = currentParams.subsidyElec / 100;
+            const powerCostAnnualSubsidized = powerCostAnnual * (1 - subsidyElecRatio);
+
             const cabinetCostAnnual = Price_cabinet * N_server * 12;
             const bandwidthCostAnnual = Bandwidth_monthly * 12;
             const opsCostAnnual = Ops_monthly * 12;
+            const subsidyAnnualOpsVal = currentParams.subsidyAnnualOps * 10000;
 
-            const OpEx_annual = powerCostAnnual + cabinetCostAnnual + bandwidthCostAnnual + opsCostAnnual;
+            const OpEx_annual = powerCostAnnualSubsidized + cabinetCostAnnual + bandwidthCostAnnual + opsCostAnnual - subsidyAnnualOpsVal;
 
-            // 3. 最大可用 Token 年产能 (M_annual) (百万 Tokens)
+            // 5. 最大可用 Token 年产能 (M_annual) (百万 Tokens)
             const M_annual = (T_speed * 86400 * 365 * (1 - Alpha_fail)) / 1000000;
 
-            // 4. 年总营业额 (R_gross) 与年净利润 (P_net) (元)
+            // 6. 年总营业额 (R_gross) 与年净利润 (P_net) (元)
             const R_gross = M_annual * U_rate * P_sales;
             const P_net = R_gross - OpEx_annual - D_CapEx;
 
-            // 5. 纯现金流回本周期 (T_cash_back)
+            // 7. 纯现金流回本周期 (T_cash_back)
             const netCashFlowAnnual = R_gross - OpEx_annual;
             let T_cash_back = Infinity;
             if (netCashFlowAnnual > 0) {
-                T_cash_back = CapEx / netCashFlowAnnual;
+                T_cash_back = CapEx_net / netCashFlowAnnual;
             }
 
-            // 6. 盈亏平衡售价 (在当前 U_rate 下自建的成本单价) (元/百万 Tokens)
+            // 8. 盈亏平衡售价 (在当前 U_rate 下自建的实际成本单价，混合折合价)
             let bePriceVal = Infinity;
             if (M_annual > 0 && U_rate > 0) {
                 bePriceVal = (OpEx_annual + D_CapEx) / (M_annual * U_rate);
             }
 
-            // 7. 盈亏平衡利用率 (U_BEP)
+            // 9. 盈亏平衡利用率 (U_BEP)
             let beUDec = null;
             if (M_annual > 0 && P_sales > 0) {
                 beUDec = (OpEx_annual + D_CapEx) / (M_annual * P_sales);
             }
 
-            // 8. 获客优势拐点利用率 (U_ROI) —— 自建成本 = DeepSeek 官价时的利用率
+            // 10. 获客优势拐点利用率 (U_ROI)
             let roiUDec = null;
             if (M_annual > 0 && P_official > 0) {
                 roiUDec = (OpEx_annual + D_CapEx) / (M_annual * P_official);
             }
 
-            // 9. 更新 KPI 大数面板 (转换为“万元”单位)
+            // ==================== 渲染高级面板折叠小计标签 ====================
+            const hardwareSubEl = document.getElementById('subtotal-hardware');
+            if (hardwareSubEl) {
+                hardwareSubEl.textContent = `总资产: ${(CapEx / 10000).toFixed(2)} 万元 | 年折旧: ${(D_CapEx / 10000).toFixed(2)} 万元`;
+            }
+            const opexSubEl = document.getElementById('subtotal-opex');
+            if (opexSubEl) {
+                opexSubEl.textContent = `月OPEX: ${(OpEx_annual / 12 / 10000).toFixed(2)} 万元 | 年电费: ${(powerCostAnnualSubsidized / 10000).toFixed(2)} 万元`;
+            }
+            const subsidySubEl = document.getElementById('subtotal-subsidy');
+            if (subsidySubEl) {
+                const subsidyAnnualOpsTotal = (CapEx * subsidyHardwareRatio / Years_depreciation) + (powerCostAnnual * subsidyElecRatio) + subsidyAnnualOpsVal;
+                subsidySubEl.textContent = `年总补贴: ${(subsidyAnnualOpsTotal / 10000).toFixed(2)} 万元`;
+            }
+            const revenueSubEl = document.getElementById('subtotal-revenue');
+            if (revenueSubEl) {
+                revenueSubEl.textContent = `混合均价: ${P_sales.toFixed(3)} 元/M | 年营收: ${(R_gross / 10000).toFixed(2)} 万元`;
+            }
+            const performanceSubEl = document.getElementById('subtotal-performance');
+            if (performanceSubEl) {
+                performanceSubEl.textContent = `混合吞吐: ${Math.round(T_speed).toLocaleString()} Tok/s`;
+            }
+
+            // ==================== 渲染 LaTeX 公式卡片底部代入推导明细 ====================
+            const setHtml = (id, html) => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = html;
+            };
+
+            setHtml('calc-detail-capex', 
+                `📌 <b>数据推导</b>：CapEx = (${(Price_server/10000).toFixed(1)}万元 × ${N_server}台) + ${(Price_network/10000).toFixed(1)}万元 = <b>${(CapEx/10000).toFixed(2)} 万元</b>`);
+            
+            setHtml('calc-detail-d-capex', 
+                `📌 <b>数据推导</b>：D_CapEx = [ ${(CapEx/10000).toFixed(2)}万元(总资产) × (1 - 建设补贴 ${currentParams.subsidyHardware}%)] / ${Years_depreciation}年折旧 = <b>${(D_CapEx/10000).toFixed(2)} 万元/年</b>`);
+            
+            setHtml('calc-detail-opex', 
+                `📌 <b>数据推导</b>：OpEx_annual = 年电费 ${(powerCostAnnualSubsidized/10000).toFixed(2)}万元(已扣除电费补贴 ${currentParams.subsidyElec}%) <br>` +
+                `+ 机柜费 ${(cabinetCostAnnual/10000).toFixed(2)}万元 + 带宽费 ${(bandwidthCostAnnual/10000).toFixed(2)}万元 + 运维分摊 ${(opsCostAnnual/10000).toFixed(2)}万元 <br>` +
+                `- 固定运营补贴 ${currentParams.subsidyAnnualOps.toFixed(1)}万元/年 = <b>${(OpEx_annual/10000).toFixed(2)} 万元/年 (折合 ${(OpEx_annual/12/10000).toFixed(2)} 万元/月)</b>`);
+            
+            setHtml('calc-detail-t-speed', 
+                `📌 <b>数据推导</b>：T_speed = 1 / [ (${(R_input*100).toFixed(0)}%输入占比 / ${T_prefill.toLocaleString()} Prefill) + (${(R_output*100).toFixed(0)}%输出占比 / ${T_decoding.toLocaleString()} Decoding) ] = <b>${Math.round(T_speed).toLocaleString()} Tokens/s</b>`);
+            
+            setHtml('calc-detail-m-annual', 
+                `📌 <b>数据推导</b>：M_annual = [ ${Math.round(T_speed).toLocaleString()} Tok/s × 86400秒 × 365天 × (1 - 故障率 ${currentParams.alphaFail}%) ] / 1,000,000 = <b>${M_annual.toFixed(2)} 百万 Tokens/年</b>`);
+            
+            setHtml('calc-detail-p-sales', 
+                `📌 <b>数据推导</b>：P_sales_blended = 缓存命中定价 ${currentParams.tokenPriceCache.toFixed(2)}元 × [${(R_input*100).toFixed(0)}% × ${currentParams.ratioCache}%] + 输入未命中定价 ${currentParams.tokenPriceInput.toFixed(2)}元 × [${(R_input*100).toFixed(0)}% × ${(100 - currentParams.ratioCache)}%] <br>` +
+                `+ 输出定价 ${currentParams.tokenPriceOutput.toFixed(2)}元 × ${(R_output*100).toFixed(0)}% = <b>${P_sales.toFixed(3)} 元/百万 Tokens</b>`);
+            
+            setHtml('calc-detail-p-net', 
+                `📌 <b>数据推导</b>：P_net = [ ${M_annual.toFixed(2)}M(年产能) × 实际负载 ${currentParams.utilizationRate}% × 销售均价 ${P_sales.toFixed(3)}元/M ] - 年运营费 ${(OpEx_annual/10000).toFixed(2)}万元 - 年折旧 ${(D_CapEx/10000).toFixed(2)}万元 = <b>${(P_net/10000).toFixed(2)} 万元/年</b>`);
+            
+            setHtml('calc-detail-u-bep', 
+                `📌 <b>数据推导</b>：U_BEP = [ 年运营费 ${(OpEx_annual/10000).toFixed(2)}万元 + 年折旧 ${(D_CapEx/10000).toFixed(2)}万元 ] / (年产能 ${M_annual.toFixed(2)}M × 均价 ${P_sales.toFixed(3)}元/M) = <b>${beUDec !== null ? (beUDec * 100).toFixed(2) + '%' : '无法保本'}</b>`);
+            
+            if (P_net > 0 && netCashFlowAnnual > 0) {
+                setHtml('calc-detail-t-cashback', 
+                    `📌 <b>数据推导</b>：T_cashback = 净总资产 ${(CapEx_net/10000).toFixed(2)}万元 / [ 年营收 ${(R_gross/10000).toFixed(2)}万元 - 年运营 ${(OpEx_annual/10000).toFixed(2)}万元 ] = <b>${T_cash_back.toFixed(1)} 年</b>`);
+            } else {
+                setHtml('calc-detail-t-cashback', 
+                    `📌 <b>数据推导</b>：纯现金流回收期 = 净总资产 ${(CapEx_net/10000).toFixed(2)}万元 / [ 营收减去运营费的年现金流净收入 <b>${(netCashFlowAnnual/10000).toFixed(2)}万元</b> ] = <b>无法回收成本 (经营净亏损)</b>`);
+            }
+
+            // ==================== 更新 KPI 大数面板 (转换为“万元”单位) ====================
             tickerInstances['total-cost'].update(OpEx_annual / 12 / 10000); // 月运营费 (万元)
             tickerInstances['net-profit'].update(P_net / 10000); // 年净利润 (万元/年)
 
@@ -2108,17 +2579,14 @@
             const bannerText = document.getElementById('roi-banner-text');
 
             if (P_sales > P_official) {
-                // 销售折合价高于官价折合价
                 banner.className = 'roi-redline-banner warning';
                 bannerIcon.setAttribute('data-lucide', 'shield-alert');
                 bannerText.innerHTML = `⚠️ <b>获客定价风险！</b>自建对外折合销售均价 (<span style="text-decoration: underline;">${P_sales.toFixed(3)} 元/M</span>) <b>高于</b> DeepSeek 官方折合红线 (<span class="roi-banner-badge" style="background:#B91C1C;">${P_official.toFixed(3)} 元/M</span>)。算力零售获客困难，建议转为私有包机模式。`;
             } else if (bePriceVal > P_official) {
-                // 自建成本折合价高于官价折合价 (防线失守)
                 banner.className = 'roi-redline-banner warning';
                 bannerIcon.setAttribute('data-lucide', 'shield-alert');
                 bannerText.innerHTML = `🚨 <b>算力防线失守！</b>当前算力利用率下自建保本单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(3)} 元/M</span>) <b>高于</b> DeepSeek 官方折合红线 (<span class="roi-banner-badge" style="background:#B91C1C;">${P_official.toFixed(3)} 元/M</span>)。在此负载率下自建不如买API划算！`;
             } else {
-                // 防线安全 (绿色)
                 banner.className = 'roi-redline-banner success';
                 bannerIcon.setAttribute('data-lucide', 'shield-check');
                 bannerText.innerHTML = `✅ <b>算力防御成功！</b>当前自建保本单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(3)} 元/M</span>) <b>低于</b> DeepSeek 官方折合红线 (<span class="roi-banner-badge" style="background:#047857;">${P_official.toFixed(3)} 元/M</span>)。自建方案具备可观的 ROI 获客优势。`;
