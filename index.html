@@ -1427,6 +1427,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
                     <!-- 全局共享：系统算力负载率 (控制核心枢纽) -->
                     <div class="input-group" style="margin-top: 10px; border-top: 2px dashed var(--border-default); padding-top: 20px;">
@@ -2742,6 +2743,142 @@
 
             // 重新定位交点脉冲
             setTimeout(relocatePulseDots, 50);
+        }
+
+        // 10. 初始化 ECharts 实例图表
+        function initAnalysisChart() {
+            const chartDom = document.getElementById('main-analysis-chart');
+            if (!chartDom) return;
+            
+            analysisChart = echarts.init(chartDom);
+            const option = {
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                    borderColor: '#111827',
+                    borderWidth: 2,
+                    textStyle: {
+                        color: '#111827',
+                        fontFamily: 'Inter',
+                        fontSize: 12
+                    },
+                    formatter: function (params) {
+                        let text = `<div style="font-family:var(--font-mono); font-size:11px; font-weight:700; border-bottom:1px solid #E5E7EB; padding-bottom:4px; margin-bottom:4px;">实际运行负载利用率: ${params[0].name}%</div>`;
+                        params.forEach(el => {
+                            let displayVal = '计算中...';
+                            if (typeof el.value === 'number') {
+                                displayVal = el.value.toFixed(2) + ' 元/M';
+                            } else if (el.value === null || el.value === undefined) {
+                                displayVal = '超出阈值';
+                            }
+                            text += `<div style="display:flex; justify-content:space-between; gap:16px; margin:2px 0; font-size:11px;">
+                                        <span style="color:#4B5563;">${el.seriesName}:</span>
+                                        <span style="font-weight:800; color:${el.color};">${displayVal}</span>
+                                    </div>`;
+                        });
+                        return text;
+                    }
+                },
+                grid: {
+                    left: '2%',
+                    right: '2%',
+                    bottom: '8%',
+                    top: '8%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: Array.from({length: 101}, (_, i) => i),
+                    axisLabel: {
+                        formatter: '{value}%',
+                        color: '#4B5563',
+                        fontFamily: 'Outfit',
+                        fontSize: 11,
+                        fontWeight: 700
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#111827',
+                            width: 2
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(17, 24, 39, 0.05)'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '单价 (元 / 百万 Tokens)',
+                    nameTextStyle: {
+                        color: '#4B5563',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        align: 'right',
+                        fontFamily: 'Inter'
+                    },
+                    axisLabel: {
+                        color: '#4B5563',
+                        fontFamily: 'Outfit',
+                        fontSize: 11,
+                        fontWeight: 700
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#111827',
+                            width: 2
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(17, 24, 39, 0.08)'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: '自建盈亏平衡售价',
+                        type: 'line',
+                        smooth: true,
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#9CA3AF',
+                            width: 2.5,
+                            type: 'dashed'
+                        },
+                        data: []
+                    },
+                    {
+                        name: '自建折合销售均价',
+                        type: 'line',
+                        smooth: false,
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#3B82F6',
+                            width: 3.5
+                        },
+                        data: []
+                    },
+                    {
+                        name: 'DeepSeek 官方折合混合价',
+                        type: 'line',
+                        smooth: false,
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#EF4444',
+                            width: 4
+                        },
+                        data: []
+                    }
+                ]
+            };
+
+            analysisChart.setOption(option);
+            analysisChart.on('finished', relocatePulseDots);
         }
 
         // 重新计算转换物理像素点，安置保本拐点与获客优势拐点脉冲
