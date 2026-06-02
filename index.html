@@ -1072,7 +1072,7 @@
     <header>
         <div class="header-title-wrapper">
             <div class="header-tag">产品与解决方案 / 智能计算PDT / AI开发部</div>
-            <h1>华鲲大模型算力集群盈亏平衡计算器 <span class="version-badge">v2.4.3</span></h1>
+            <h1>华鲲大模型算力集群盈亏平衡计算器 <span class="version-badge">v2.4.4</span></h1>
             <p class="subtitle">基于多维变动成本与大厂 API 价格获客防线的商业化精算决策大屏</p>
         </div>
         <div>
@@ -1756,15 +1756,6 @@
                     </div>
                 </div>
             </div>
-                    <div style="text-align: right;">
-                        <span style="font-size: 10px; color: #6B7280; font-weight: 700; display: block; margin-bottom: 2px;">建议最低销售均价</span>
-                        <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 4px;">
-                            <span class="kpi-bento-value" id="val-suggest-price-highlight" style="font-size: 24px; font-weight: 900; color: #8B5CF6; font-family: var(--font-outfit); text-shadow: 0 2px 4px rgba(168, 85, 247, 0.1);">0.00</span>
-                            <span class="kpi-bento-unit" style="font-size: 11px; color: #8B5CF6; font-weight: 700;">元/百万 Tokens</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- 图表 Bento Card (重构为单价与红线对比) -->
             <div class="bento-card chart-bento" style="margin-top: 16px;">
@@ -1976,7 +1967,7 @@
 
     <!-- 页脚 Footer -->
     <footer>
-        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • 商业精算沙盘 v2.4.3</div>
+        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • 商业精算沙盘 v2.4.4</div>
         <div class="footer-desc-group">
             <span>硬件折旧按双倍余额/平均分摊计算</span>
             <span>|</span>
@@ -2847,6 +2838,26 @@
             const suggestUBadge = document.getElementById('val-suggest-u-badge');
             if (suggestUBadge) {
                 suggestUBadge.textContent = `U = ${(U_rate * 100).toFixed(0)}%`;
+            }
+
+            // 动态代入并渲染 LaTeX 盈亏平衡公式
+            const suggestFormulaEl = document.getElementById('val-suggest-price-formula');
+            if (suggestFormulaEl && typeof katex !== 'undefined') {
+                const depAnnualWan = D_CapEx / 10000;
+                const opexAnnualWan = OpEx_annual / 10000;
+                const uPercent = (U_rate * 100).toFixed(0);
+                const bePriceStr = (isFinite(bePriceVal) && bePriceVal > 0) ? bePriceVal.toFixed(3) : '无法计算';
+                
+                const latexStr = `\\text{保本售价} = \\frac{C_{\\text{dep}} \\text{ (${depAnnualWan.toFixed(1)}万)} + O_{\\text{ops}} \\text{ (${opexAnnualWan.toFixed(1)}万)}}{E_{\\text{capacity}} \\text{ (${M_annual.toFixed(1)}M)} \\times U \\text{ (${uPercent}\\%)} } = ${bePriceStr} \\text{ 元/百万 Tokens}`;
+                
+                try {
+                    katex.render(latexStr, suggestFormulaEl, {
+                        throwOnError: false,
+                        displayMode: true
+                    });
+                } catch (err) {
+                    console.error("Local KaTeX rendering failed: ", err);
+                }
             }
 
             // ==================== 7. 渲染折叠小计标签 ====================
