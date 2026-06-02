@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大模型算力集群盈亏平衡分析计算器 - Flat Poster Style</title>
+    <title>华鲲大模型算力集群盈亏平衡计算器 - Flat Poster Style</title>
     <!-- 引入 Outfit 现代展示字体与 Inter 常用字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <!-- 引入 ECharts -->
@@ -163,7 +163,7 @@
             padding: 24px;
             position: relative;
             overflow: hidden;
-            box-shadow: none; /* 彻底移除所有阴影 */
+            box-shadow: none;
             transition: border-color 0.2s ease, transform 0.2s var(--easing-flat);
         }
 
@@ -183,6 +183,7 @@
         /* ==================== 6列网格跨度分配 ==================== */
         .col-span-2 { grid-column: span 2; }
         .col-span-4 { grid-column: span 4; }
+        .col-span-6 { grid-column: span 6; }
 
         /* ==================== 左侧：控制台面板 ==================== */
         .console-card {
@@ -236,7 +237,7 @@
             gap: 20px;
         }
 
-        /* ==================== 输入分类彩色卡片包装 (重点区分标题与数字) ==================== */
+        /* ==================== 输入分类彩色卡片包装 ==================== */
         .input-group {
             display: flex;
             flex-direction: column;
@@ -319,20 +320,6 @@
             background: #E11D48;
             border: 2px solid #FFFFFF;
             box-shadow: 0 0 0 2px #E11D48;
-        }
-
-        /* 5. API 竞品基准选择 (浅紫) */
-        .color-group-benchmark {
-            background-color: #F5F3FF;
-            border: 2px solid #DDD6FE;
-            padding: 16px;
-        }
-        .color-group-benchmark .label-text {
-            color: #5B21B6;
-        }
-        .color-group-benchmark .value-badge {
-            background-color: #7C3AED;
-            color: #FFFFFF;
         }
 
         /* 公共标签与徽章样式 */
@@ -571,16 +558,10 @@
             letter-spacing: -0.02em;
         }
 
-        /* KPI 独特色彩隔离，重点突出 */
-        #val-total-cost {
-            color: #4F46E5; /* Indigo */
-        }
-        #val-be-price {
-            color: #D97706; /* Amber */
-        }
-        #val-be-utilization {
-            color: #059669; /* Emerald */
-        }
+        /* KPI 颜色 */
+        #val-total-cost { color: #4F46E5; } /* OPEX: Indigo */
+        #val-be-price { color: #D97706; } /* 平衡售价: Amber */
+        #val-be-utilization { color: #059669; } /* 最低负载率: Emerald */
 
         .kpi-bento-unit {
             font-size: 11px;
@@ -652,7 +633,7 @@
             min-height: 420px;
         }
 
-        /* 盈亏与防线双拐点物理坐标呼吸灯 (纯平无渐变缩放圈) */
+        /* 盈亏平衡与防线双拐点物理坐标呼吸灯 (纯平无渐变缩放圈) */
         .glow-pulse-dot {
             position: absolute;
             width: 12px;
@@ -688,7 +669,122 @@
             100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
         }
 
-        /* ==================== 底部信息栏 ==================== */
+        /* ==================== 底部：核心公式与因子字典看板 (大 Bento) ==================== */
+        .formula-card {
+            background: #FFFFFF;
+            border: 2px solid var(--border-default);
+            border-radius: 12px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .formula-card-title {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid var(--border-default);
+            padding-bottom: 12px;
+        }
+
+        .formula-card-title i {
+            color: var(--primary);
+        }
+
+        .formula-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 32px;
+        }
+
+        .formula-section-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--foreground);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .formula-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .formula-item {
+            background: var(--bg-page);
+            border: 1px solid var(--border-default);
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .formula-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--foreground-muted);
+        }
+
+        .formula-body {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--foreground);
+            background: #FFFFFF;
+            padding: 6px 10px;
+            border: 1px solid var(--border-default);
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .formula-desc {
+            font-size: 11px;
+            color: var(--foreground-muted);
+            font-weight: 500;
+        }
+
+        .dict-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 480px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .dict-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border-default);
+            font-size: 12px;
+        }
+
+        .dict-term {
+            font-family: var(--font-mono);
+            font-weight: 800;
+            color: var(--primary-dark);
+            min-width: 140px;
+        }
+
+        .dict-definition {
+            color: var(--foreground-muted);
+            font-weight: 500;
+            text-align: right;
+        }
+
+        /* ==================== 页脚 ==================== */
         footer {
             margin-top: auto;
             padding: 24px 40px;
@@ -725,8 +821,12 @@
                 grid-template-columns: 1fr;
                 padding: 16px;
             }
-            .col-span-2, .col-span-4 {
+            .col-span-2, .col-span-4, .col-span-6 {
                 grid-column: span 1;
+            }
+            .formula-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
             }
             header {
                 padding: 16px 20px;
@@ -763,9 +863,9 @@
     <!-- 页眉 Header -->
     <header>
         <div class="header-title-wrapper">
-            <div class="header-tag">LLM Infrastructure</div>
-            <h1>大模型算力集群盈亏平衡分析计算器</h1>
-            <p class="subtitle">基于多维变动成本与官方 DeepSeek-V4 API 竞品生命红线决策演练大屏</p>
+            <div class="header-tag">HuaKun Infrastructure</div>
+            <h1>华鲲大模型算力集群盈亏平衡计算器</h1>
+            <p class="subtitle">基于多维变动成本与 DeepSeek 官方 API 价格获客防线的商业化精算决策大屏</p>
         </div>
         <div>
             <button class="btn-reset" onclick="resetAllValues()">
@@ -781,24 +881,6 @@
         <!-- 左侧输入面板 (col-span-2) -->
         <div class="bento-card console-card col-span-2">
             <div class="card-inner">
-                <!-- 竞品 API 定价防守基准选择 (最上方) -->
-                <div class="color-group-benchmark" style="border-bottom: 2px solid var(--border-default); border-radius: 10px 10px 0 0; border-top: none; border-left: none; border-right: none;">
-                    <div class="label-row" style="margin-bottom: 8px;">
-                        <span class="label-text">
-                            <i data-lucide="shield-alert" style="color: var(--purple);"></i>
-                            API 对比基准 (盈亏生命红线)
-                        </span>
-                        <span class="value-badge" id="badge-api-price">8.70 元/M</span>
-                    </div>
-                    <div class="select-box">
-                        <select id="select-api-benchmark" onchange="changeApiBenchmark(this.value)">
-                            <option value="pro-official" selected>DeepSeek-V4-Pro 官方原厂价 (混合 8.70 元/百万)</option>
-                            <option value="pro-channel">DeepSeek-V4-Pro 云渠道目录价 (混合 14.40 元/百万)</option>
-                            <option value="flash-official">DeepSeek-V4-Flash 官方原厂价 (混合 0.26 元/百万)</option>
-                            <option value="flash-channel">DeepSeek-V4-Flash 云渠道目录价 (混合 1.20 元/百万)</option>
-                        </select>
-                    </div>
-                </div>
 
                 <!-- Tabs 导航 -->
                 <div class="tabs-header">
@@ -822,7 +904,7 @@
                             <div class="label-row">
                                 <span class="label-text">
                                     <i data-lucide="server"></i>
-                                    集群节点数量 (台)
+                                    集群节点数量 (N_server)
                                 </span>
                                 <span class="value-badge" id="badge-server-count">8</span>
                             </div>
@@ -840,30 +922,50 @@
                             <div class="label-row">
                                 <span class="label-text">
                                     <i data-lucide="wallet"></i>
-                                    单节点硬件价格 (万元)
+                                    单台服务器采购价 (Price_server)
                                 </span>
                             </div>
-                            <input type="number" id="field-node-price" class="flat-input" value="150" min="10" max="1000" oninput="changeParam('node-price', this.value)">
+                            <input type="number" id="field-node-price" class="flat-input" value="140" min="10" max="1000" oninput="changeParam('node-price', this.value)">
                             <div class="limits-row" style="margin-top: 4px;">
-                                <span>含算力机、交换网、存储分摊折旧</span>
+                                <span>单位：万元 / 台</span>
                             </div>
                         </div>
 
-                        <!-- Token 混合定价 -->
+                        <!-- 运行模型选择 (绑定 DeepSeek 官方定价与吞吐量) -->
+                        <div class="input-group color-group-performance">
+                            <div class="label-row">
+                                <span class="label-text">
+                                    <i data-lucide="cpu"></i>
+                                    运行模型选择 (Model_Name)
+                                </span>
+                            </div>
+                            <div class="select-box">
+                                <select id="select-model-spec" onchange="changeModelPreset(this.value)">
+                                    <option value="flash" selected>DeepSeek-V4-Flash (官方定价)</option>
+                                    <option value="pro">DeepSeek-V4-Pro (官方定价)</option>
+                                </select>
+                            </div>
+                            <div id="model-pricing-static-info" style="font-size: 11px; color: #9F1239; font-weight: 700; margin-top: 4px; display: flex; justify-content: space-between;">
+                                <span>输入: 0.218 元/M</span>
+                                <span>输出: 0.435 元/M</span>
+                            </div>
+                        </div>
+
+                        <!-- Token 销售定价 -->
                         <div class="input-group color-group-business">
                             <div class="label-row">
                                 <span class="label-text">
                                     <i data-lucide="tag"></i>
-                                    自建 Token 销售单价 (元/百万)
+                                    对外销售定价 (P_sales)
                                 </span>
-                                <span class="value-badge" id="badge-token-price">12</span>
+                                <span class="value-badge" id="badge-token-price">1.20</span>
                             </div>
                             <div class="slider-wrapper">
-                                <input type="range" id="slider-token-price" min="1" max="50" step="0.5" value="12" oninput="changeParam('token-price', this.value)">
+                                <input type="range" id="slider-token-price" min="0.1" max="5.0" step="0.05" value="1.2" oninput="changeParam('token-price', this.value)">
                             </div>
                             <div class="limits-row">
-                                <span>1 元/百万</span>
-                                <span>50 元/百万</span>
+                                <span id="label-sales-min">0.1 元/M</span>
+                                <span id="label-sales-max">5.0 元/M</span>
                             </div>
                         </div>
                     </div>
@@ -876,35 +978,46 @@
                         <!-- 折叠面板：高级基础设施与物理环境 -->
                         <div class="acc-panel">
                             <div class="acc-trigger expanded" onclick="toggleAccordionPane(this)">
-                                <span>物理基础设施与环境配置</span>
+                                <span>物理基础设施与环境配置 (OpEx)</span>
                                 <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
                             </div>
                             <div class="acc-body">
-                                <!-- 折旧周期 -->
+                                <!-- 配套组网资产 -->
                                 <div class="input-group color-group-hardware" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
-                                        <span class="label-text">服务器折旧周期 (月)</span>
+                                        <span class="label-text">配套网络与组网资产 (Price_network)</span>
                                     </div>
-                                    <input type="number" id="field-dep-period" class="flat-input" value="36" min="12" max="120" oninput="changeParam('dep-period', this.value)">
+                                    <input type="number" id="field-network-price" class="flat-input" value="0" min="0" max="1000" oninput="changeParam('network-price', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：万元 (用于计算 CapEx 总额)</span>
+                                    </div>
                                 </div>
-                                <!-- 机柜功率上限 -->
+                                <!-- 折旧年限 -->
+                                <div class="input-group color-group-hardware" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">折旧年限红线 (Years_depreciation)</span>
+                                    </div>
+                                    <div class="select-box">
+                                        <select id="select-dep-years" onchange="changeParam('dep-years', this.value)">
+                                            <option value="3" selected>3 年折旧期</option>
+                                            <option value="5">5 年折旧期</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- 单台满载功耗 -->
                                 <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
-                                        <span class="label-text">单个机柜最大额定功率 (kW)</span>
+                                        <span class="label-text">单台满载功耗 (Power_server)</span>
                                     </div>
-                                    <input type="number" id="field-rack-limit" class="flat-input" value="8" min="4" max="32" oninput="changeParam('rack-limit', this.value)">
-                                </div>
-                                <!-- 机柜月度租金 -->
-                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
-                                    <div class="label-row">
-                                        <span class="label-text">单个机柜租赁租金 (元/月)</span>
+                                    <input type="number" id="field-power-server" class="flat-input" value="5.6" step="0.1" min="1.0" max="20.0" oninput="changeParam('power-server', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：kW</span>
                                     </div>
-                                    <input type="number" id="field-rack-cost" class="flat-input" value="6000" min="1000" max="30000" oninput="changeParam('rack-cost', this.value)">
                                 </div>
                                 <!-- PUE 系数 -->
                                 <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
-                                        <span class="label-text">机房 PUE 指标系数</span>
+                                        <span class="label-text">机房 PUE 指标系数 (PUE)</span>
                                         <span class="value-badge" id="badge-pue" style="background-color: var(--secondary);">1.30</span>
                                     </div>
                                     <div class="slider-wrapper">
@@ -914,62 +1027,71 @@
                                 <!-- 电费 -->
                                 <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
-                                        <span class="label-text">电力单价电费 (元/kWh)</span>
+                                        <span class="label-text">工业电费单价 (Price_electricity)</span>
                                     </div>
-                                    <input type="number" id="field-elec-rate" class="flat-input" value="0.7" step="0.1" min="0.1" max="3.0" oninput="changeParam('elec-rate', this.value)">
+                                    <input type="number" id="field-elec-rate" class="flat-input" value="0.8" step="0.1" min="0.1" max="3.0" oninput="changeParam('elec-rate', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：元 / kWh</span>
+                                    </div>
                                 </div>
-                                <!-- 通信衰减 -->
-                                <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
+                                <!-- 机柜租金 -->
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
-                                        <span class="label-text">集群多节点通信衰减 (%)</span>
-                                        <span class="value-badge" id="badge-comm-loss" style="background-color: var(--danger);">3.0%</span>
+                                        <span class="label-text">单个机柜月租金 (Price_cabinet)</span>
                                     </div>
-                                    <div class="slider-wrapper">
-                                        <input type="range" id="slider-comm-loss" min="0" max="10" step="0.5" value="3.0" oninput="changeParam('comm-loss', this.value)">
+                                    <input type="number" id="field-rack-cost" class="flat-input" value="6500" min="1000" max="30000" oninput="changeParam('rack-cost', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：元 / 月 / 台</span>
+                                    </div>
+                                </div>
+                                <!-- 公网带宽 -->
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">公网带宽月费 (Bandwidth_monthly)</span>
+                                    </div>
+                                    <input type="number" id="field-bandwidth" class="flat-input" value="3000" min="0" max="50000" oninput="changeParam('bandwidth', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：元 / 月</span>
+                                    </div>
+                                </div>
+                                <!-- 月运维费 -->
+                                <div class="input-group color-group-energy" style="background: transparent; border: none; padding: 0;">
+                                    <div class="label-row">
+                                        <span class="label-text">人工技术运维分摊 (Ops_monthly)</span>
+                                    </div>
+                                    <input type="number" id="field-ops-cost" class="flat-input" value="15000" min="0" max="100000" oninput="changeParam('ops-cost', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：元 / 月</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 折叠面板：模型规格与工作负载 -->
+                        <!-- 折叠面板：模型规格与吞吐极限 -->
                         <div class="acc-panel">
                             <div class="acc-trigger expanded" onclick="toggleAccordionPane(this)">
-                                <span>模型规格参数配置</span>
+                                <span>模型规格与吞吐极限 (Model Specs)</span>
                                 <i data-lucide="chevron-down" class="acc-arrow" style="width: 14px; height: 14px;"></i>
                             </div>
                             <div class="acc-body">
-                                <!-- 模型选择 -->
+                                <!-- 集群总吞吐量 -->
                                 <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
-                                        <span class="label-text">模型级别预设</span>
+                                        <span class="label-text">集群总吞吐速率 (T_speed)</span>
                                     </div>
-                                    <div class="select-box">
-                                        <select id="select-model-spec-preset" onchange="toggleModelSpecPreset(this.value)">
-                                            <option value="preset-70b">Llama-3-70B 级别 (单节点 TPS = 240)</option>
-                                            <option value="preset-8b">Llama-3-8B 级别 (单节点 TPS = 960)</option>
-                                            <option value="preset-custom">自定义性能参数...</option>
-                                        </select>
+                                    <input type="number" id="field-t-speed" class="flat-input" value="200000" min="1000" max="1000000" oninput="changeParam('t-speed', this.value)">
+                                    <div class="limits-row" style="margin-top: 4px;">
+                                        <span>单位：Tokens / s</span>
                                     </div>
                                 </div>
-                                <!-- 自定义 TPS -->
-                                <div class="input-group color-group-performance" id="custom-tps-field-wrapper" style="display: none; background: transparent; border: none; padding: 0;">
-                                    <div class="label-row">
-                                        <span class="label-text">单节点基准性能 (Tokens/s)</span>
-                                    </div>
-                                    <input type="number" id="field-base-tps" class="flat-input" value="240" min="10" max="10000" oninput="changeParam('base-tps', this.value)">
-                                </div>
-                                <!-- 上下文长度 -->
+                                <!-- 故障停机率 -->
                                 <div class="input-group color-group-performance" style="background: transparent; border: none; padding: 0;">
                                     <div class="label-row">
-                                        <span class="label-text">平均上下文请求窗口</span>
+                                        <span class="label-text">综合故障停机率 (Alpha_fail)</span>
+                                        <span class="value-badge" id="badge-alpha-fail" style="background-color: var(--danger);">5%</span>
                                     </div>
-                                    <div class="select-box">
-                                        <select id="select-context-factor" onchange="changeParam('context-length', this.value)">
-                                            <option value="1.0">4K 上下文 (100% 吞吐效率)</option>
-                                            <option value="0.85" selected>8K 上下文 (85% 吞吐效率)</option>
-                                            <option value="0.7">16K 上下文 (70% 吞吐效率)</option>
-                                            <option value="0.5">32K 上下文 (50% 吞吐效率)</option>
-                                        </select>
+                                    <div class="slider-wrapper">
+                                        <input type="range" id="slider-alpha-fail" min="0" max="30" step="1" value="5" oninput="changeParam('alpha-fail', this.value)">
                                     </div>
                                 </div>
                             </div>
@@ -981,15 +1103,15 @@
                         <div class="label-row">
                             <span class="label-text" style="color: var(--primary-dark); font-weight: 800;">
                                 <i data-lucide="gauge"></i>
-                                系统当前实际算力利用率 (U)
+                                系统当前实际算力利用率 (U_rate)
                             </span>
-                            <span class="value-badge" id="badge-utilization" style="background-color: var(--primary-dark); color: #FFFFFF;">50%</span>
+                            <span class="value-badge" id="badge-utilization" style="background-color: var(--primary-dark); color: #FFFFFF;">30%</span>
                         </div>
                         <div class="slider-wrapper">
-                            <input type="range" id="slider-utilization" min="0" max="100" step="1" value="50" oninput="changeParam('utilization-rate', this.value)">
+                            <input type="range" id="slider-utilization" min="0" max="100" step="1" value="30" oninput="changeParam('utilization-rate', this.value)">
                         </div>
                         <div class="limits-row">
-                            <span>0% (无载)</span>
+                            <span>0% (空载)</span>
                             <span>100% (满载)</span>
                         </div>
                     </div>
@@ -1014,7 +1136,7 @@
                     <div class="card-inner">
                         <div class="kpi-bento-label">
                             <i data-lucide="calculator"></i>
-                            月度运营成本 (OPEX)
+                            月度运营成本 (OpEx)
                         </div>
                         <div class="kpi-bento-value-row">
                             <span class="kpi-bento-value" id="val-total-cost">0.00</span>
@@ -1023,12 +1145,12 @@
                     </div>
                 </div>
 
-                <!-- 最低平衡售价 -->
+                <!-- 自建保本单价 -->
                 <div class="bento-card kpi-bento">
                     <div class="card-inner">
                         <div class="kpi-bento-label">
                             <i data-lucide="trending-up"></i>
-                            自建盈亏平衡单价
+                            自建盈亏平衡售价
                         </div>
                         <div class="kpi-bento-value-row">
                             <span class="kpi-bento-value" id="val-be-price">0.00</span>
@@ -1037,55 +1159,58 @@
                     </div>
                 </div>
 
-                <!-- 最低平衡负载 -->
+                <!-- 自建最低保本负载率 -->
                 <div class="bento-card kpi-bento">
                     <div class="card-inner">
                         <div class="kpi-bento-label">
                             <i data-lucide="bar-chart-2"></i>
-                            自建最低盈亏负载率
+                            保本利用率 (U_BEP)
                         </div>
                         <div class="kpi-bento-value-row">
                             <span class="kpi-bento-value" id="val-be-utilization">0.0%</span>
-                            <span class="kpi-bento-unit">利用率临界</span>
+                            <span class="kpi-bento-unit">保本临界</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- 月预计净利润 -->
+                <!-- 年净利润 (带回本周期) -->
                 <div class="bento-card kpi-bento" id="kpi-profit-bento" style="border-top-width: 4px;">
                     <div class="card-inner">
                         <div class="kpi-bento-label">
                             <i data-lucide="activity" id="kpi-profit-arrow"></i>
-                            预计月度净利润
+                            预计年净利润 (P_net)
                         </div>
-                        <div class="kpi-bento-value-row">
+                        <div class="kpi-bento-value-row" style="margin-bottom: 2px;">
                             <span class="kpi-bento-value" id="val-net-profit">0.00</span>
-                            <span class="kpi-bento-unit">万元/月</span>
+                            <span class="kpi-bento-unit">万元/年</span>
+                        </div>
+                        <div style="font-size: 11px; font-weight: 700; color: var(--foreground-muted);" id="val-cashback-period">
+                            回本周期: 计算中...
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 图表 Bento Card -->
+            <!-- 图表 Bento Card (重构为单价与红线对比) -->
             <div class="bento-card chart-bento">
                 <div class="card-inner">
                     <div class="chart-header-bar">
                         <div class="chart-head-title">
                             <i data-lucide="area-chart"></i>
-                            自建集群 vs API 采购盈亏平衡多线解析曲线
+                            自建平衡单价 vs DeepSeek 官方定价红线对比曲线
                         </div>
                         <div class="chart-custom-legend">
                             <div class="custom-legend-item">
-                                <span class="legend-indicator-line" style="background: var(--primary);"></span>
-                                <span>自建Token总收入</span>
-                            </div>
-                            <div class="custom-legend-item">
                                 <span class="legend-indicator-line" style="border-bottom: 2px dashed #9CA3AF; height: 0;"></span>
-                                <span>自建运营总成本</span>
+                                <span>自建盈亏平衡售价 (随负载下降)</span>
                             </div>
                             <div class="custom-legend-item">
-                                <span class="legend-indicator-line" style="background: var(--purple);"></span>
-                                <span>API 采购替代成本</span>
+                                <span class="legend-indicator-line" style="background: var(--primary);"></span>
+                                <span>自建 Token 对外销售定价</span>
+                            </div>
+                            <div class="custom-legend-item">
+                                <span class="legend-indicator-line" style="background: var(--danger); height: 3px;"></span>
+                                <span>DeepSeek 官方 API 价格红线</span>
                             </div>
                         </div>
                     </div>
@@ -1093,25 +1218,149 @@
                     <!-- 图表画布区域 -->
                     <div class="chart-container-wrapper">
                         <div id="main-analysis-chart"></div>
-                        <!-- 盈亏平衡收支交点 (黄色脉冲) -->
-                        <div id="chart-glow-pulse-be" class="glow-pulse-dot pulse-dot-be" title="自建收支平衡点"></div>
-                        <!-- API 划算临界点 (紫色脉冲) -->
-                        <div id="chart-glow-pulse-roi" class="glow-pulse-dot pulse-dot-roi" title="自建划算临界点 (API防线)"></div>
+                        <!-- 自建收支平衡交点 (黄色脉冲) -->
+                        <div id="chart-glow-pulse-be" class="glow-pulse-dot pulse-dot-be" title="自建收支保本点 (U_BEP)"></div>
+                        <!-- DeepSeek 获客优势拐点 (紫色脉冲) -->
+                        <div id="chart-glow-pulse-roi" class="glow-pulse-dot pulse-dot-roi" title="自建价格获客优势拐点 (U_ROI)"></div>
                     </div>
                 </div>
             </div>
 
         </div>
 
+        <!-- ==================== 底部：核心公式与因子字典大 Bento ==================== -->
+        <div class="bento-card formula-card col-span-6">
+            <div class="formula-card-title">
+                <i data-lucide="file-text"></i>
+                华鲲智算集群商业精算逻辑与因子定义字典
+            </div>
+            <div class="formula-grid">
+                <!-- 左半边：核心数学公式 -->
+                <div>
+                    <div class="formula-section-title">
+                        <i data-lucide="calculator" style="width: 14px; height: 14px; color: var(--primary-dark);"></i>
+                        底层链式数学公式组 (核心计算逻辑)
+                    </div>
+                    <div class="formula-list">
+                        <div class="formula-item">
+                            <div class="formula-name">1. 资产总值 (CapEx)</div>
+                            <div class="formula-body">CapEx = (Price_server × N_server) + Price_network</div>
+                            <div class="formula-desc">整个算力节点与组网资产采购的总资本性支出。</div>
+                        </div>
+                        <div class="formula-item">
+                            <div class="formula-name">2. 年固定资产折旧 (D_CapEx)</div>
+                            <div class="formula-body">D_CapEx = CapEx ÷ Years_depreciation</div>
+                            <div class="formula-desc">依据折旧年限红线（3年或5年）将资产进行等额年折旧分摊。</div>
+                        </div>
+                        <div class="formula-item">
+                            <div class="formula-name">3. 年运营成本 (OpEx_annual)</div>
+                            <div class="formula-body">OpEx_annual = [ 电力开销 + 机柜租赁 + 宽带年费 + 运维人工费 ]</div>
+                            <div class="formula-desc">包含算力服务器满载电费(结合PUE)、机柜租金、独享宽带和运维分摊。</div>
+                        </div>
+                        <div class="formula-item">
+                            <div class="formula-name">4. 集群最大 Token 年产能 (M_annual)</div>
+                            <div class="formula-body">M_annual = T_speed × 86400 × 365 × (1 - Alpha_fail) ÷ 1,000,000</div>
+                            <div class="formula-desc">在不考虑空闲功耗与利用率的情况下，集群一年能产出的最大 Token 量。</div>
+                        </div>
+                        <div class="formula-item">
+                            <div class="formula-name">5. 实际年净利润 (P_net)</div>
+                            <div class="formula-body">P_net = (M_annual × U_rate × P_sales) - OpEx_annual - D_CapEx</div>
+                            <div class="formula-desc">年营业额减去年度运营成本(OpEx)与年度折旧费用的最终损益。</div>
+                        </div>
+                        <div class="formula-item">
+                            <div class="formula-name">6. 盈亏平衡点利用率红线 (U_BEP)</div>
+                            <div class="formula-body">U_BEP = (OpEx_annual + D_CapEx) ÷ (M_annual × P_sales)</div>
+                            <div class="formula-desc">当净利润为0时反推出来的绝对保本利用率，高于此利用率自建才能保本。</div>
+                        </div>
+                        <div class="formula-item">
+                            <div class="formula-name">7. 纯现金流回本周期 (T_cash_back)</div>
+                            <div class="formula-body">T_cash_back = CapEx ÷ (R_gross - OpEx_annual)</div>
+                            <div class="formula-desc">使用总营业额扣除运营成本后的年现金流净收入来回收 CapEx 投入的周期。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右半边：因子字典定义 -->
+                <div>
+                    <div class="formula-section-title">
+                        <i data-lucide="book-open" style="width: 14px; height: 14px; color: var(--secondary-dark);"></i>
+                        动态输入因子定义库 (变量释义)
+                    </div>
+                    <div class="dict-list">
+                        <div class="dict-item">
+                            <span class="dict-term">N_server</span>
+                            <span class="dict-definition">集群内配置的 GPU/NPU 物理服务器台数。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">Price_server</span>
+                            <span class="dict-definition">单台服务器采购单价，包含内置算力显卡等分摊。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">Price_network</span>
+                            <span class="dict-definition">配套交换机、RDMA高速光纤等配套组网资产总额。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">Years_depreciation</span>
+                            <span class="dict-definition">固定资产的折旧摊销年限（影响年折旧底座的生存硬开销）。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">Power_server</span>
+                            <span class="dict-definition">单台服务器的额定满载功耗 (单位：kW)。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">PUE</span>
+                            <span class="dict-definition">数据中心能源效率指标。PUE越趋近于1说明空调用电等杂电损耗越小。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">Price_electricity</span>
+                            <span class="dict-definition">数据中心托管地的工业用电单价 (元/kWh)。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">Price_cabinet</span>
+                            <span class="dict-definition">高电密机柜单月托管费。计算中默认单台服务器占用单个机柜。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">Bandwidth_monthly</span>
+                            <span class="dict-definition">集群向外提供公网 API 零售服务时所需的月度宽带独享费。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">Ops_monthly</span>
+                            <span class="dict-definition">集群托管机房的月度人工巡检与基础运维外包等分摊费。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">T_speed</span>
+                            <span class="dict-definition">当前模型在物理集群上满载并发时的最大吞吐速率。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">Alpha_fail</span>
+                            <span class="dict-definition">集群因网络丢包、坏卡或系统故障等导致的年均不可用时间占比。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">P_official</span>
+                            <span class="dict-definition">DeepSeek 官方公网 API 的折合混合单价（不可能逾越的价格红线）。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">P_sales</span>
+                            <span class="dict-definition">我们对外销售自建算力 Token 服务的实际混合单价定价。</span>
+                        </div>
+                        <div class="dict-item">
+                            <span class="dict-term">U_rate</span>
+                            <span class="dict-definition">集群在全年中实际运行并产生算力营业额的时间占比（算力利用率）。</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- 页脚 Footer -->
     <footer>
-        <div>大模型算力集群 ROI 辅助决策沙盘 • Flat Poster System v4.0</div>
+        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • Flat Poster System v5.0</div>
         <div class="footer-desc-group">
             <span>硬件折旧按双倍余额/平均分摊计算</span>
             <span>|</span>
-            <span>集群通信损耗公式: (1-loss)<sup>N-1</sup></span>
+            <span>算力年最大 Tokens 年产能公式包含 Alpha_fail 故障率</span>
             <span>|</span>
             <span>电费基于动态算力功耗曲线</span>
         </div>
@@ -1121,41 +1370,61 @@
         // 初始化图标
         lucide.createIcons();
 
-        // 默认参数定义
+        // 默认参数定义 (完全对齐 8台昇腾910B集群运行DeepSeek-V4)
         const initParams = {
             serverCount: 8,
-            nodePrice: 150,
-            tokenPrice: 12,
-            depPeriod: 36,
-            rackLimit: 8,
-            rackCost: 6000,
+            nodePrice: 140, // 140 万元/台
+            priceNetwork: 0, // 配套网络采购为0
+            depYears: 3, // 3年折旧
+            powerServer: 5.6, // 单服务器满载 5.6kW
             pue: 1.3,
-            elecRate: 0.7,
-            commLoss: 3.0,
-            baseTps: 240,
-            contextFactor: 0.85,
-            utilizationRate: 50,
-            nodeMaxPower: 3.2,
-            idlePowerRatio: 0.5,
-            opsOverheadRatio: 0.1
+            elecRate: 0.8, // 0.8 元/kWh
+            rackCost: 6500, // 6500 元/月/柜
+            bandwidth: 3000,
+            opsCost: 15000,
+            
+            // 模型规格：默认 DeepSeek-V4-Flash
+            modelName: 'DeepSeek-V4-Flash',
+            tSpeed: 200000, // 吞吐量：20万 Tokens/s
+            alphaFail: 5, // 故障停机率：5%
+            
+            // 销售定价
+            tokenPrice: 1.20, // 销售价：1.20 元/百万 (与官方 1.2 对齐获客？等一下，Flash 的 API 混合均价是 0.26)
+            utilizationRate: 30 // 利用率：30%
         };
 
-        // API 价格基准映射数据 (输入/输出比例以 4:1 计算)
-        const apiBenchmarks = {
-            'pro-official': { name: 'DeepSeek-V4-Pro (官方原厂折合)', blended: 8.70, text: '8.70 元/M' },
-            'pro-channel': { name: 'DeepSeek-V4-Pro (云渠道目录价)', blended: 14.40, text: '14.40 元/M' },
-            'flash-official': { name: 'DeepSeek-V4-Flash (官方原厂折合)', blended: 0.26, text: '0.26 元/M' },
-            'flash-channel': { name: 'DeepSeek-V4-Flash (云渠道目录价)', blended: 1.20, text: '1.20 元/M' }
+        // DeepSeek 官方定价映射数据 (输入/输出比例以 4:1 计算)
+        const deepseekOfficialPricing = {
+            'flash': {
+                name: 'DeepSeek-V4-Flash',
+                input: 0.218, // 约 $0.03/M Token
+                output: 0.435, // 约 $0.06/M Token
+                blended: 0.26,  // 4:1 混合均价
+                defaultTps: 200000,
+                defaultSalesPrice: 1.20,
+                salesMin: 0.1,
+                salesMax: 5.0
+            },
+            'pro': {
+                name: 'DeepSeek-V4-Pro',
+                input: 7.25,  // 约 $1.00/M Token
+                output: 14.50, // 约 $2.00/M Token
+                blended: 8.70,  // 4:1 混合均价
+                defaultTps: 40000,
+                defaultSalesPrice: 8.70,
+                salesMin: 1.0,
+                salesMax: 30.0
+            }
         };
 
         let currentParams = { ...initParams };
-        let selectedApiId = 'pro-official';
+        let selectedModelId = 'flash';
         let tickerInstances = {};
         let analysisChart = null;
         let lastCrossPointBe = null;
         let lastCrossPointRoi = null;
 
-        // 数值平滑变化组件 (Flat 印刷大数滚动)
+        // 数值平滑变化组件
         class SmoothNumberTicker {
             constructor(elementId, renderFn, startVal = 0) {
                 this.element = document.getElementById(elementId);
@@ -1164,7 +1433,7 @@
                 this.targetVal = startVal;
                 this.animFrame = null;
                 this.animStart = null;
-                this.duration = 200; // 缓动时间 200ms
+                this.duration = 200;
             }
 
             update(newVal) {
@@ -1195,7 +1464,6 @@
                     const elapsed = timestamp - this.animStart;
                     const progress = Math.min(elapsed / this.duration, 1);
                     
-                    // 使用 expo-out 缓动算法
                     const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
                     this.currentVal = this.startVal + (this.targetVal - this.startVal) * ease;
                     this.element.textContent = this.renderFn(this.currentVal);
@@ -1236,7 +1504,7 @@
             });
         });
 
-        // 克隆极简模式的 3 个主输入放置到高级模式面板顶部
+        // 克隆极简模式的 4 个主输入放置到高级模式面板顶部
         function syncCoreInputs() {
             const container = document.getElementById('advanced-sync-inputs');
             container.innerHTML = `
@@ -1245,7 +1513,7 @@
                     <div class="label-row">
                         <span class="label-text">
                             <i data-lucide="server"></i>
-                            集群节点数量 (台)
+                            集群节点数量 (N_server)
                         </span>
                         <span class="value-badge" id="badge-server-count-adv">8</span>
                     </div>
@@ -1258,32 +1526,48 @@
                     </div>
                 </div>
 
-                <!-- 节点硬件包单价 -->
+                <!-- 节点硬件价格 -->
                 <div class="input-group color-group-hardware">
                     <div class="label-row">
                         <span class="label-text">
                             <i data-lucide="wallet"></i>
-                            单节点硬件价格 (万元)
+                            单台服务器采购价 (Price_server)
                         </span>
                     </div>
-                    <input type="number" id="field-node-price-adv" class="flat-input" value="150" min="10" max="1000" oninput="changeParam('node-price', this.value)">
+                    <input type="number" id="field-node-price-adv" class="flat-input" value="140" min="10" max="1000" oninput="changeParam('node-price', this.value)">
                 </div>
 
-                <!-- Token 定价 -->
+                <!-- 运行模型选择 (同步) -->
+                <div class="input-group color-group-performance">
+                    <div class="label-row">
+                        <span class="label-text">
+                            <i data-lucide="cpu"></i>
+                            运行模型选择 (Model_Name)
+                        </span>
+                    </div>
+                    <div class="select-box">
+                        <select id="select-model-spec-adv" onchange="changeModelPreset(this.value)">
+                            <option value="flash" selected>DeepSeek-V4-Flash (官方定价)</option>
+                            <option value="pro">DeepSeek-V4-Pro (官方定价)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Token 销售价 (同步) -->
                 <div class="input-group color-group-business">
                     <div class="label-row">
                         <span class="label-text">
                             <i data-lucide="tag"></i>
-                            自建 Token 销售单价 (元/百万)
+                            对外销售定价 (P_sales)
                         </span>
-                        <span class="value-badge" id="badge-token-price-adv">12</span>
+                        <span class="value-badge" id="badge-token-price-adv">1.20</span>
                     </div>
                     <div class="slider-wrapper">
-                        <input type="range" id="slider-token-price-adv" min="1" max="50" step="0.5" value="12" oninput="changeParam('token-price', this.value)">
+                        <input type="range" id="slider-token-price-adv" min="0.1" max="5.0" step="0.05" value="1.2" oninput="changeParam('token-price', this.value)">
                     </div>
                     <div class="limits-row">
-                        <span>1 元/百万</span>
-                        <span>50 元/百万</span>
+                        <span id="label-sales-min-adv">0.1 元/M</span>
+                        <span id="label-sales-max-adv">5.0 元/M</span>
                     </div>
                 </div>
             `;
@@ -1316,30 +1600,53 @@
             trigger.classList.toggle('expanded');
         }
 
-        // 模型预设更改
-        function toggleModelSpecPreset(val) {
-            const customTpsWrap = document.getElementById('custom-tps-field-wrapper');
-            if (val === 'preset-70b') {
-                customTpsWrap.style.display = 'none';
-                changeParam('base-tps', 240);
-            } else if (val === 'preset-8b') {
-                customTpsWrap.style.display = 'none';
-                changeParam('base-tps', 960);
-            } else {
-                customTpsWrap.style.display = 'block';
-                const userTps = document.getElementById('field-base-tps').value;
-                changeParam('base-tps', userTps);
-            }
-        }
+        // 切换 DeepSeek 模型预设
+        function changeModelPreset(val) {
+            selectedModelId = val;
+            const config = deepseekOfficialPricing[val];
+            currentParams.modelName = config.name;
+            
+            // 联动更新吞吐量和官方混合均价
+            currentParams.tSpeed = config.defaultTps;
+            currentParams.tokenPrice = config.defaultSalesPrice;
 
-        // 改变选中的 API 竞品基准
-        function changeApiBenchmark(val) {
-            selectedApiId = val;
-            document.getElementById('badge-api-price').textContent = apiBenchmarks[val].text;
+            // 1. 同步下拉框
+            document.getElementById('select-model-spec').value = val;
+            const advSelect = document.getElementById('select-model-spec-adv');
+            if (advSelect) advSelect.value = val;
+
+            // 2. 更新定价静态显示文字
+            const pricingInfoEl = document.getElementById('model-pricing-static-info');
+            pricingInfoEl.innerHTML = `<span>输入: ${config.input.toFixed(3)} 元/M</span><span>输出: ${config.output.toFixed(3)} 元/M</span>`;
+
+            // 3. 更新销售定价滑块范围与默认值
+            const updateSliders = (suffix = '') => {
+                const slider = document.getElementById('slider-token-price' + suffix);
+                const badge = document.getElementById('badge-token-price' + suffix);
+                const minLabel = document.getElementById('label-sales-min' + suffix);
+                const maxLabel = document.getElementById('label-sales-max' + suffix);
+
+                if (slider) {
+                    slider.min = config.salesMin;
+                    slider.max = config.salesMax;
+                    slider.step = val === 'flash' ? 0.05 : 0.2;
+                    slider.value = config.defaultSalesPrice;
+                }
+                if (badge) badge.textContent = config.defaultSalesPrice.toFixed(2);
+                if (minLabel) minLabel.textContent = config.salesMin.toFixed(1) + ' 元/M';
+                if (maxLabel) maxLabel.textContent = config.salesMax.toFixed(1) + ' 元/M';
+            };
+            updateSliders('');
+            updateSliders('-adv');
+
+            // 4. 同步更新吞吐速率输入框 (如果高级面板处于渲染状态)
+            const tSpeedInput = document.getElementById('field-t-speed');
+            if (tSpeedInput) tSpeedInput.value = config.defaultTps;
+
             runFinancialCalculator();
         }
 
-        // 更新状态并刷新数据
+        // 更新参数
         function changeParam(key, val) {
             const floatVal = parseFloat(val);
             if (isNaN(floatVal)) return;
@@ -1348,30 +1655,35 @@
                 case 'server-count':
                     currentParams.serverCount = Math.round(floatVal);
                     document.getElementById('slider-server-count').value = currentParams.serverCount;
-                    document.getElementById('slider-server-count-adv').value = currentParams.serverCount;
+                    const advServer = document.getElementById('slider-server-count-adv');
+                    if (advServer) advServer.value = currentParams.serverCount;
                     document.getElementById('badge-server-count').textContent = currentParams.serverCount;
-                    document.getElementById('badge-server-count-adv').textContent = currentParams.serverCount;
+                    const advServerBadge = document.getElementById('badge-server-count-adv');
+                    if (advServerBadge) advServerBadge.textContent = currentParams.serverCount;
                     break;
                 case 'node-price':
                     currentParams.nodePrice = floatVal;
                     document.getElementById('field-node-price').value = floatVal;
-                    document.getElementById('field-node-price-adv').value = floatVal;
+                    const advNode = document.getElementById('field-node-price-adv');
+                    if (advNode) advNode.value = floatVal;
+                    break;
+                case 'network-price':
+                    currentParams.priceNetwork = floatVal;
+                    break;
+                case 'dep-years':
+                    currentParams.depYears = Math.round(floatVal);
+                    break;
+                case 'power-server':
+                    currentParams.powerServer = floatVal;
                     break;
                 case 'token-price':
                     currentParams.tokenPrice = floatVal;
                     document.getElementById('slider-token-price').value = floatVal;
-                    document.getElementById('slider-token-price-adv').value = floatVal;
-                    document.getElementById('badge-token-price').textContent = floatVal;
-                    document.getElementById('badge-token-price-adv').textContent = floatVal;
-                    break;
-                case 'dep-period':
-                    currentParams.depPeriod = Math.max(1, Math.round(floatVal));
-                    break;
-                case 'rack-limit':
-                    currentParams.rackLimit = Math.max(1, floatVal);
-                    break;
-                case 'rack-cost':
-                    currentParams.rackCost = floatVal;
+                    const advToken = document.getElementById('slider-token-price-adv');
+                    if (advToken) advToken.value = floatVal;
+                    document.getElementById('badge-token-price').textContent = floatVal.toFixed(2);
+                    const advTokenBadge = document.getElementById('badge-token-price-adv');
+                    if (advTokenBadge) advTokenBadge.textContent = floatVal.toFixed(2);
                     break;
                 case 'pue':
                     currentParams.pue = floatVal;
@@ -1380,16 +1692,21 @@
                 case 'elec-rate':
                     currentParams.elecRate = floatVal;
                     break;
-                case 'comm-loss':
-                    currentParams.commLoss = floatVal;
-                    document.getElementById('badge-comm-loss').textContent = floatVal.toFixed(1) + '%';
+                case 'rack-cost':
+                    currentParams.rackCost = floatVal;
                     break;
-                case 'base-tps':
-                    currentParams.baseTps = Math.round(floatVal);
-                    document.getElementById('field-base-tps').value = currentParams.baseTps;
+                case 'bandwidth':
+                    currentParams.bandwidth = floatVal;
                     break;
-                case 'context-length':
-                    currentParams.contextFactor = floatVal;
+                case 'ops-cost':
+                    currentParams.opsCost = floatVal;
+                    break;
+                case 't-speed':
+                    currentParams.tSpeed = floatVal;
+                    break;
+                case 'alpha-fail':
+                    currentParams.alphaFail = floatVal;
+                    document.getElementById('badge-alpha-fail').textContent = floatVal + '%';
                     break;
                 case 'utilization-rate':
                     currentParams.utilizationRate = Math.round(floatVal);
@@ -1404,117 +1721,126 @@
         // 重置配置
         function resetAllValues() {
             currentParams = { ...initParams };
-            selectedApiId = 'pro-official';
+            selectedModelId = 'flash';
             
-            document.getElementById('select-api-benchmark').value = selectedApiId;
-            document.getElementById('badge-api-price').textContent = apiBenchmarks[selectedApiId].text;
+            document.getElementById('select-model-spec').value = selectedModelId;
+            const pricingInfoEl = document.getElementById('model-pricing-static-info');
+            pricingInfoEl.innerHTML = `<span>输入: 0.218 元/M</span><span>输出: 0.435 元/M</span>`;
 
             document.getElementById('slider-server-count').value = currentParams.serverCount;
-            document.getElementById('slider-server-count-adv').value = currentParams.serverCount;
             document.getElementById('badge-server-count').textContent = currentParams.serverCount;
-            document.getElementById('badge-server-count-adv').textContent = currentParams.serverCount;
 
             document.getElementById('field-node-price').value = currentParams.nodePrice;
-            document.getElementById('field-node-price-adv').value = currentParams.nodePrice;
 
             document.getElementById('slider-token-price').value = currentParams.tokenPrice;
-            document.getElementById('slider-token-price-adv').value = currentParams.tokenPrice;
-            document.getElementById('badge-token-price').textContent = currentParams.tokenPrice;
-            document.getElementById('badge-token-price-adv').textContent = currentParams.tokenPrice;
+            document.getElementById('badge-token-price').textContent = currentParams.tokenPrice.toFixed(2);
 
-            document.getElementById('field-dep-period').value = currentParams.depPeriod;
-            document.getElementById('field-rack-limit').value = currentParams.rackLimit;
-            document.getElementById('field-rack-cost').value = currentParams.rackCost;
-
+            // 重置高级和专业参数
+            document.getElementById('field-network-price').value = currentParams.priceNetwork;
+            document.getElementById('select-dep-years').value = currentParams.depYears;
+            document.getElementById('field-power-server').value = currentParams.powerServer;
             document.getElementById('slider-pue').value = currentParams.pue;
             document.getElementById('badge-pue').textContent = currentParams.pue.toFixed(2);
-
             document.getElementById('field-elec-rate').value = currentParams.elecRate;
-            
-            document.getElementById('slider-comm-loss').value = currentParams.commLoss;
-            document.getElementById('badge-comm-loss').textContent = currentParams.commLoss.toFixed(1) + '%';
+            document.getElementById('field-rack-cost').value = currentParams.rackCost;
+            document.getElementById('field-bandwidth').value = currentParams.bandwidth;
+            document.getElementById('field-ops-cost').value = currentParams.opsCost;
+            document.getElementById('field-t-speed').value = currentParams.tSpeed;
+            document.getElementById('slider-alpha-fail').value = currentParams.alphaFail;
+            document.getElementById('badge-alpha-fail').textContent = currentParams.alphaFail + '%';
 
-            document.getElementById('select-model-spec-preset').value = 'preset-70b';
-            document.getElementById('custom-tps-field-wrapper').style.display = 'none';
-            document.getElementById('field-base-tps').value = currentParams.baseTps;
-
-            document.getElementById('select-context-factor').value = '0.85';
-            
             document.getElementById('slider-utilization').value = currentParams.utilizationRate;
             document.getElementById('badge-utilization').textContent = currentParams.utilizationRate + '%';
 
+            syncCoreInputs();
             runFinancialCalculator();
         }
 
-        // 计算核心
+        // 核心财务与数学逻辑精算
         function runFinancialCalculator() {
-            const nodeCount = currentParams.serverCount;
+            const N_server = currentParams.serverCount;
+            const Price_server = currentParams.nodePrice * 10000; // 万元转为元
+            const Price_network = currentParams.priceNetwork * 10000; // 万元转为元
+            const Years_depreciation = currentParams.depYears;
             
-            // 1. 物理吞吐性能
-            const commEfficiency = Math.pow(1 - (currentParams.commLoss / 100), nodeCount - 1);
-            const totalHours = 720;
-            const maxTokensMonth = (nodeCount * currentParams.baseTps * commEfficiency * currentParams.contextFactor * totalHours * 3600) / 1000000; // 百万 Token
+            const Power_server = currentParams.powerServer;
+            const PUE = currentParams.pue;
+            const Price_electricity = currentParams.elecRate;
+            const Price_cabinet = currentParams.rackCost;
+            const Bandwidth_monthly = currentParams.bandwidth;
+            const Ops_monthly = currentParams.opsCost;
             
-            // 2. 固定运营成本 (折旧、房租、固定运维)
-            const depCostMonth = (nodeCount * currentParams.nodePrice) / currentParams.depPeriod; // 万元
-            const opsCostMonth = depCostMonth * currentParams.opsOverheadRatio; // 万元
-            const rackCount = Math.ceil((nodeCount * currentParams.nodeMaxPower) / currentParams.rackLimit);
-            const rackRentMonth = (rackCount * currentParams.rackCost) / 10000; // 万元
-            
-            const fixedCostBase = depCostMonth + opsCostMonth + rackRentMonth;
+            const T_speed = currentParams.tSpeed;
+            const Alpha_fail = currentParams.alphaFail / 100;
+            const U_rate = currentParams.utilizationRate / 100;
+            const P_sales = currentParams.tokenPrice;
 
-            // 3. 动态功耗电费与分段利用率
-            const totalPowerMax = (nodeCount * currentParams.nodeMaxPower * currentParams.pue * totalHours * currentParams.elecRate) / 10000; // 万元
-            const idlePowerCost = totalPowerMax * currentParams.idlePowerRatio;
-            const variablePowerSlope = totalPowerMax * (1 - currentParams.idlePowerRatio);
+            const config = deepseekOfficialPricing[selectedModelId];
+            const P_official = config.blended;
 
-            const currentUDec = currentParams.utilizationRate / 100;
-            const currentPowerCost = idlePowerCost + (variablePowerSlope * currentUDec);
-            const currentTotalOpex = fixedCostBase + currentPowerCost;
+            // 1. 资产总值 (CapEx) 与年折旧 D_CapEx (元)
+            const CapEx = (Price_server * N_server) + Price_network;
+            const D_CapEx = CapEx / Years_depreciation;
 
-            // 4. 自建收入与利润
-            const actualThroughput = maxTokensMonth * currentUDec;
-            const actualRevenue = (actualThroughput * currentParams.tokenPrice) / 10000;
-            const netProfit = actualRevenue - currentTotalOpex;
+            // 2. 年运营成本 (OpEx_annual) (元)
+            const powerCostAnnual = Power_server * PUE * 24 * 365 * Price_electricity * N_server;
+            const cabinetCostAnnual = Price_cabinet * N_server * 12;
+            const bandwidthCostAnnual = Bandwidth_monthly * 12;
+            const opsCostAnnual = Ops_monthly * 12;
 
-            // 5. 求解平衡点 (U_be) & 最低平衡售价 (bePriceVal)
-            const maxRevenuePotential = (maxTokensMonth * currentParams.tokenPrice) / 10000;
-            const fixedCostTotal = fixedCostBase + idlePowerCost; // 固定成本 (含空闲电费)
-            const netDenominator = maxRevenuePotential - variablePowerSlope;
+            const OpEx_annual = powerCostAnnual + cabinetCostAnnual + bandwidthCostAnnual + opsCostAnnual;
 
+            // 3. 最大可用 Token 年产能 (M_annual) (百万 Tokens)
+            const M_annual = (T_speed * 86400 * 365 * (1 - Alpha_fail)) / 1000000;
+
+            // 4. 年总营业额 (R_gross) 与年净利润 (P_net) (元)
+            const R_gross = M_annual * U_rate * P_sales;
+            const P_net = R_gross - OpEx_annual - D_CapEx;
+
+            // 5. 纯现金流回本周期 (T_cash_back)
+            const netCashFlowAnnual = R_gross - OpEx_annual;
+            let T_cash_back = Infinity;
+            if (netCashFlowAnnual > 0) {
+                T_cash_back = CapEx / netCashFlowAnnual;
+            }
+
+            // 6. 盈亏平衡售价 (在当前 U_rate 下自建的成本单价) (元/百万 Tokens)
+            let bePriceVal = Infinity;
+            if (M_annual > 0 && U_rate > 0) {
+                bePriceVal = (OpEx_annual + D_CapEx) / (M_annual * U_rate);
+            }
+
+            // 7. 盈亏平衡利用率 (U_BEP)
             let beUDec = null;
-            let bePriceVal = null;
-
-            if (netDenominator > 0) {
-                beUDec = fixedCostTotal / netDenominator;
+            if (M_annual > 0 && P_sales > 0) {
+                beUDec = (OpEx_annual + D_CapEx) / (M_annual * P_sales);
             }
 
-            if (actualThroughput > 0) {
-                bePriceVal = (currentTotalOpex * 10000) / actualThroughput;
-            } else {
-                bePriceVal = Infinity;
-            }
-
-            // 6. 求解自建与购买 API 替代成本的临界交汇利用率 (U_roi)
-            // 公式: fixedCostTotal + variablePowerSlope * U = maxTokensMonth * U * APIBlendedPrice / 10000
-            const apiPrice = apiBenchmarks[selectedApiId].blended;
-            const maxApiCostPotential = (maxTokensMonth * apiPrice) / 10000; // 万元
-            const roiDenominator = maxApiCostPotential - variablePowerSlope;
-            
+            // 8. 获客优势拐点利用率 (U_ROI) —— 自建成本 = DeepSeek 官价时的利用率
             let roiUDec = null;
-            if (roiDenominator > 0) {
-                roiUDec = fixedCostTotal / roiDenominator;
+            if (M_annual > 0 && P_official > 0) {
+                roiUDec = (OpEx_annual + D_CapEx) / (M_annual * P_official);
             }
 
-            // 7. 更新 KPI Bento 数字
-            tickerInstances['total-cost'].update(currentTotalOpex);
-            
-            // 利润状态卡片微发光调色板
+            // 9. 更新 KPI 大数面板 (转换为“万元”单位)
+            tickerInstances['total-cost'].update(OpEx_annual / 12 / 10000); // 月运营费 (万元)
+            tickerInstances['net-profit'].update(P_net / 10000); // 年净利润 (万元/年)
+
+            // 回本周期显示
+            const cashbackEl = document.getElementById('val-cashback-period');
+            if (P_net <= 0) {
+                cashbackEl.innerHTML = `回本周期: <span style="color:#ef4444; font-weight:800;">无法回本 (净亏损)</span>`;
+            } else if (T_cash_back === Infinity || T_cash_back > 100) {
+                cashbackEl.innerHTML = `回本周期: <span style="color:#ef4444; font-weight:800;">无法回本 (运营费倒贴)</span>`;
+            } else {
+                cashbackEl.innerHTML = `回本周期: <span style="color:#059669; font-weight:800;">${T_cash_back.toFixed(1)} 年</span>`;
+            }
+
+            // 利润状态卡片调色
             const profitBento = document.getElementById('kpi-profit-bento');
             const profitArrow = document.getElementById('kpi-profit-arrow');
             const netProfitValueEl = document.getElementById('val-net-profit');
-            
-            if (netProfit >= 0) {
+            if (P_net >= 0) {
                 profitBento.style.borderTopColor = 'var(--secondary)';
                 profitArrow.setAttribute('data-lucide', 'trending-up');
                 profitArrow.style.color = 'var(--secondary)';
@@ -1526,8 +1852,6 @@
                 netProfitValueEl.style.color = '#ef4444';
             }
             lucide.createIcons();
-
-            tickerInstances['net-profit'].update(netProfit);
 
             if (bePriceVal === Infinity) {
                 tickerInstances['be-price'].update('N/A');
@@ -1543,32 +1867,34 @@
                 tickerInstances['be-utilization'].update('无法平衡');
             }
 
-            // 8. 判定 ROI 可行性红线状态并更新状态条 (ROI Safety Redline Banner)
+            // 10. 生死红线监控 Banner 状态决策
             const banner = document.getElementById('roi-redline-banner');
             const bannerIcon = document.getElementById('roi-banner-icon');
             const bannerText = document.getElementById('roi-banner-text');
 
-            const selectedApiName = apiBenchmarks[selectedApiId].name;
-            const selectedApiBlended = apiBenchmarks[selectedApiId].blended.toFixed(2);
-
-            if (bePriceVal > apiPrice) {
-                // 防线失守 (红色)
+            if (P_sales > P_official) {
+                // 销售定价高于官价
                 banner.className = 'roi-redline-banner warning';
                 bannerIcon.setAttribute('data-lucide', 'shield-alert');
-                bannerText.innerHTML = `⚠️ <b>算力防线失守！</b>自建盈亏平衡单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(2)} 元/百万</span>) <b>高于</b> 选定 API 价格 (<span class="roi-banner-badge" style="background:#B91C1C;">${selectedApiBlended} 元/百万</span>)。在此负载率下建议直接采购 <b>${selectedApiName}</b>，暂缓自建算力。`;
+                bannerText.innerHTML = `⚠️ <b>获客定价风险！</b>对外实际销售价 (<span style="text-decoration: underline;">${P_sales.toFixed(2)} 元/M</span>) <b>高于</b> DeepSeek 官方红线 (<span class="roi-banner-badge" style="background:#B91C1C;">${P_official.toFixed(2)} 元/M</span>)。算力零售获客困难，建议转为私有包机模式。`;
+            } else if (bePriceVal > P_official) {
+                // 自建成本单价高于官价 (防线失守)
+                banner.className = 'roi-redline-banner warning';
+                bannerIcon.setAttribute('data-lucide', 'shield-alert');
+                bannerText.innerHTML = `🚨 <b>算力防线失守！</b>当前算力利用率下自建保本单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(2)} 元/M</span>) <b>高于</b> DeepSeek 官方红线 (<span class="roi-banner-badge" style="background:#B91C1C;">${P_official.toFixed(2)} 元/M</span>)。在此负载率下自建不如买API划算！`;
             } else {
-                // 安全防御 (绿色)
+                // 防线安全 (绿色)
                 banner.className = 'roi-redline-banner success';
                 bannerIcon.setAttribute('data-lucide', 'shield-check');
-                bannerText.innerHTML = `✅ <b>算力防御成功！</b>自建盈亏平衡单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(2)} 元/百万</span>) <b>低于</b> 选定 API 价格 (<span class="roi-banner-badge" style="background:#047857;">${selectedApiBlended} 元/百万</span>)。当前规模自建具备突出的 ROI 财务优势，防线安全。`;
+                bannerText.innerHTML = `✅ <b>算力防御成功！</b>当前自建保本单价 (<span style="text-decoration: underline;">${bePriceVal.toFixed(2)} 元/M</span>) <b>低于</b> DeepSeek 官方红线 (<span class="roi-banner-badge" style="background:#047857;">${P_official.toFixed(2)} 元/M</span>)。自建方案具备可观的 ROI 获客优势。`;
             }
             lucide.createIcons();
 
-            // 9. 渲染 ECharts 曲线与物理脉冲拐点
-            drawAnalysisChart(fixedCostTotal, variablePowerSlope, maxRevenuePotential, maxApiCostPotential, beUDec, roiUDec);
+            // 11. 重新绘制 ECharts 单价对比曲线
+            drawPriceChart(OpEx_annual, D_CapEx, M_annual, P_sales, P_official, beUDec, roiUDec);
         }
 
-        // 初始化 ECharts (Flat 亮色系列)
+        // 初始化 ECharts (单价对比坐标轴)
         function initAnalysisChart() {
             const dom = document.getElementById('main-analysis-chart');
             analysisChart = echarts.init(dom, null, {
@@ -1592,10 +1918,11 @@
                     formatter: function (items) {
                         let text = `<div style="font-weight: 800; font-family: Outfit; margin-bottom: 8px; font-size:14px; color:#111827; border-bottom: 2px solid #E5E7EB; padding-bottom: 4px;">算力利用率: ${items[0].name}%</div>`;
                         items.forEach(el => {
-                            const num = parseFloat(el.value).toFixed(2);
+                            const val = parseFloat(el.value);
+                            const displayVal = (isNaN(val) || val === null) ? 'N/A' : val.toFixed(2) + ' 元/百万';
                             text += `<div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; font-family:Inter; margin-bottom: 4px;">
                                         <span style="color:#4B5563;">${el.seriesName}:</span>
-                                        <span style="font-weight:800; color:${el.color};">${num} 万元</span>
+                                        <span style="font-weight:800; color:${el.color};">${displayVal}</span>
                                     </div>`;
                         });
                         return text;
@@ -1634,7 +1961,7 @@
                 },
                 yAxis: {
                     type: 'value',
-                    name: '金额 (万元)',
+                    name: '单价 (元 / 百万 Tokens)',
                     nameTextStyle: {
                         color: '#4B5563',
                         fontSize: 11,
@@ -1663,35 +1990,35 @@
                 },
                 series: [
                     {
-                        name: '自建运营总成本',
+                        name: '自建盈亏平衡售价',
                         type: 'line',
                         smooth: true,
                         symbol: 'none',
                         lineStyle: {
-                            color: '#9CA3AF', // 灰色虚线成本
+                            color: '#9CA3AF', // 灰色虚线自建成本单价
                             width: 2.5,
                             type: 'dashed'
                         },
                         data: []
                     },
                     {
-                        name: '自建Token总收入',
+                        name: '自建对外销售定价',
                         type: 'line',
-                        smooth: true,
+                        smooth: false,
                         symbol: 'none',
                         lineStyle: {
-                            color: '#3B82F6', // 亮蓝自建收入实线
-                            width: 4
+                            color: '#3B82F6', // 蓝色实线对外售价
+                            width: 3.5
                         },
                         data: []
                     },
                     {
-                        name: 'API 采购替代成本',
+                        name: 'DeepSeek 官方定价红线',
                         type: 'line',
-                        smooth: true,
+                        smooth: false,
                         symbol: 'none',
                         lineStyle: {
-                            color: '#8B5CF6', // 采购 API 替代成本线 (高饱和度紫色)
+                            color: '#EF4444', // 红色加粗实线官价红线
                             width: 4
                         },
                         data: []
@@ -1704,33 +2031,47 @@
         }
 
         // 重新渲染 ECharts 数据点
-        function drawAnalysisChart(fixedC, varSlope, maxRev, maxApiCost, beUDec, roiUDec) {
+        function drawPriceChart(OpEx_annual, D_CapEx, M_annual, P_sales, P_official, beUDec, roiUDec) {
             if (!analysisChart) return;
 
-            const cData = [];
-            const rData = [];
-            const apiData = [];
+            const bePriceData = [];
+            const salesPriceData = [];
+            const officialPriceData = [];
+
+            // 动态控制 Y 轴最大值，防止低负载单价过高导致曲线无法阅读
+            const yMax = Math.max(P_official * 2.5, P_sales * 2.5);
 
             for (let i = 0; i <= 100; i++) {
-                const dec = i / 100;
-                cData.push(fixedC + (varSlope * dec));
-                rData.push(maxRev * dec);
-                apiData.push(maxApiCost * dec);
+                const U = i / 100;
+                
+                // 自建保本售价 (反比例变化)
+                if (i === 0) {
+                    bePriceData.push(null);
+                } else {
+                    const price = (OpEx_annual + D_CapEx) / (M_annual * U);
+                    bePriceData.push(price); // 大于yMax的会自动在图上截断，但不影响ECharts渲染和坐标转换
+                }
+
+                // 恒为对外销售定价的水平线
+                salesPriceData.push(P_sales);
+
+                // 恒为 DeepSeek 官方定价的水平线
+                officialPriceData.push(P_official);
             }
 
             let areas = [];
 
-            // 自建收支平衡拐点记录
+            // 定位收支平衡利用率
             if (beUDec !== null && beUDec >= 0 && beUDec <= 1) {
                 const bPercent = beUDec * 100;
-                const bValue = fixedC + (varSlope * beUDec);
-                lastCrossPointBe = { x: bPercent, y: bValue };
+                lastCrossPointBe = { x: bPercent, y: P_sales };
 
+                // 标记自建亏损与盈利区域
                 areas.push([
                     {
                         xAxis: 0,
                         itemStyle: {
-                            color: 'rgba(239, 68, 68, 0.03)' // 亏损区间 (淡粉红)
+                            color: 'rgba(239, 68, 68, 0.03)' // 亏损区间 (淡红)
                         }
                     },
                     {
@@ -1741,7 +2082,7 @@
                     {
                         xAxis: Math.min(100, bPercent),
                         itemStyle: {
-                            color: 'rgba(16, 185, 129, 0.03)' // 盈利区间 (淡绿)
+                            color: 'rgba(16, 185, 129, 0.03)' // 自身保本盈利区间 (淡绿)
                         }
                     },
                     {
@@ -1763,32 +2104,35 @@
                 ]);
             }
 
-            // 自建 vs API 临界拐点记录
+            // 定位获客优势 ROI 拐点利用率
             if (roiUDec !== null && roiUDec >= 0 && roiUDec <= 1) {
                 const rPercent = roiUDec * 100;
-                const rValue = fixedC + (varSlope * roiUDec);
-                lastCrossPointRoi = { x: rPercent, y: rValue };
+                lastCrossPointRoi = { x: rPercent, y: P_official };
             } else {
                 lastCrossPointRoi = null;
             }
 
+            // 将参数更新到 ECharts 实例上
             analysisChart.setOption({
+                yAxis: {
+                    max: yMax
+                },
                 series: [
                     {
-                        name: '自建运营总成本',
-                        data: cData,
+                        name: '自建盈亏平衡售价',
+                        data: bePriceData,
                         markArea: {
                             silent: true,
                             data: areas
                         }
                     },
                     {
-                        name: '自建Token总收入',
-                        data: rData
+                        name: '自建对外销售定价',
+                        data: salesPriceData
                     },
                     {
-                        name: 'API 采购替代成本',
-                        data: apiData
+                        name: 'DeepSeek 官方定价红线',
+                        data: officialPriceData
                     }
                 ]
             });
@@ -1797,7 +2141,7 @@
             setTimeout(relocatePulseDots, 50);
         }
 
-        // 重新计算转换物理像素点，安置盈亏平衡与防线拐点的脉冲灯
+        // 重新计算转换物理像素点，安置保本拐点与获客优势拐点脉冲
         function relocatePulseDots() {
             const glowDotBe = document.getElementById('chart-glow-pulse-be');
             const glowDotRoi = document.getElementById('chart-glow-pulse-roi');
@@ -1808,11 +2152,13 @@
                 return;
             }
 
-            // 1. 定位自建收支平衡脉冲
+            // 1. 定位自建保本交点 (Be)
             if (lastCrossPointBe) {
                 try {
                     const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPointBe.x, lastCrossPointBe.y]);
-                    if (xy && !isNaN(xy[0]) && !isNaN(xy[1])) {
+                    // 如果交点在当前 Y 轴 max 以上，则不显示它
+                    const yMax = analysisChart.getOption().yAxis[0].max;
+                    if (xy && !isNaN(xy[0]) && !isNaN(xy[1]) && lastCrossPointBe.y <= yMax) {
                         glowDotBe.style.left = xy[0] + 'px';
                         glowDotBe.style.top = xy[1] + 'px';
                         glowDotBe.style.display = 'block';
@@ -1826,11 +2172,12 @@
                 glowDotBe.style.display = 'none';
             }
 
-            // 2. 定位 API 划算临界脉冲
+            // 2. 定位 DeepSeek 获客临界交点 (Roi)
             if (lastCrossPointRoi) {
                 try {
                     const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPointRoi.x, lastCrossPointRoi.y]);
-                    if (xy && !isNaN(xy[0]) && !isNaN(xy[1])) {
+                    const yMax = analysisChart.getOption().yAxis[0].max;
+                    if (xy && !isNaN(xy[0]) && !isNaN(xy[1]) && lastCrossPointRoi.y <= yMax) {
                         glowDotRoi.style.left = xy[0] + 'px';
                         glowDotRoi.style.top = xy[1] + 'px';
                         glowDotRoi.style.display = 'block';
