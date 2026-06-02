@@ -656,8 +656,14 @@
         }
 
         .roi-redline-banner.warning {
+            background-color: #FFFBEB;
+            border-color: #F59E0B;
+            color: #92400E;
+        }
+
+        .roi-redline-banner.danger {
             background-color: #FEE2E2;
-            border-color: var(--danger);
+            border-color: #EF4444;
             color: #991B1B;
         }
 
@@ -1047,7 +1053,7 @@
     <header>
         <div class="header-title-wrapper">
             <div class="header-tag">产品与解决方案 / 智能计算PDT / AI开发部</div>
-            <h1>华鲲大模型算力集群盈亏平衡计算器 <span class="version-badge">v2.4.0</span></h1>
+            <h1>华鲲大模型算力集群盈亏平衡计算器 <span class="version-badge">v2.4.2</span></h1>
             <p class="subtitle">基于多维变动成本与大厂 API 价格获客防线的商业化精算决策大屏</p>
         </div>
         <div>
@@ -2852,13 +2858,63 @@
                 tickerInstances['be-utilization'].update('无法平衡');
             }
 
+            // ==================== 9.5 算力防御状态条 `#roi-redline-banner` 动态联动 ====================
+            const roiBanner = document.getElementById('roi-redline-banner');
+            const roiBannerText = document.getElementById('roi-banner-text');
+            const roiBannerIcon = document.getElementById('roi-banner-icon');
+
+            if (roiBanner && roiBannerText) {
+                // 清除已有的状态类
+                roiBanner.classList.remove('success', 'warning', 'danger');
+                
+                if (P_net >= 0) {
+                    // 安全状态 (Success)
+                    roiBanner.classList.add('success');
+                    if (roiBannerIcon) {
+                        roiBannerIcon.outerHTML = `<i data-lucide="shield-check" id="roi-banner-icon"></i>`;
+                    }
+                    const bePctStr = beUDec !== null && beUDec >= 0 && beUDec <= 1 ? (beUDec * 100).toFixed(1) + '%' : '无法保本';
+                    roiBannerText.innerHTML = `自建已突破盈亏平衡线（保本点负载率需求: <b style="font-size:14px; font-weight:800; text-decoration:underline;">${bePctStr}</b>），当前处于盈利防御区，年化净利润预计约 <b style="font-size:14px; font-weight:800; text-decoration:underline;">${(P_net / 10000).toFixed(2)} 万元</b>。`;
+                } else {
+                    // 亏损状态，判断是否有价格优势
+                    if (P_sales < P_official) {
+                        // 警示状态 (Warning)：自建价格便宜，但负载率不够导致亏损
+                        roiBanner.classList.add('warning');
+                        if (roiBannerIcon) {
+                            roiBannerIcon.outerHTML = `<i data-lucide="alert-triangle" id="roi-banner-icon"></i>`;
+                        }
+                        const priceSaving = ((P_official - P_sales) / P_official * 100).toFixed(1);
+                        const bePctStr = beUDec !== null && beUDec >= 0 && beUDec <= 1 ? (beUDec * 100).toFixed(1) + '%' : '无法保本';
+                        roiBannerText.innerHTML = `算力防御警报：当前自建折合销售均价较大厂官方 API 便宜 <b style="font-size:14px; font-weight:800;">${priceSaving}%</b>，具备获客优势；但因运行负载率不足（当前 ${(U_rate*100).toFixed(0)}% < 保本点 ${bePctStr}），仍处于年亏损 <b style="font-size:14px; font-weight:800;">${Math.abs(P_net / 10000).toFixed(2)} 万元</b> 状态。建议加速导入业务负载。`;
+                    } else {
+                        // 高危状态 (Danger)：自建价格贵，且亏损
+                        roiBanner.classList.add('danger');
+                        if (roiBannerIcon) {
+                            roiBannerIcon.outerHTML = `<i data-lucide="shield-alert" id="roi-banner-icon"></i>`;
+                        }
+                        const priceOverage = ((P_sales - P_official) / P_official * 100).toFixed(1);
+                        roiBannerText.innerHTML = `高危警告：当前自建折合销售价已高于大厂官方混合API价（溢出 <b style="font-size:14px; font-weight:800;">${priceOverage}%</b>），且算力集群年亏损 <b style="font-size:14px; font-weight:800;">${Math.abs(P_net / 10000).toFixed(2)} 万元</b>。算力方案已完全丧失商业可行性。`;
+                    }
+                }
+                lucide.createIcons();
+            }
+
             // ==================== 10. 装配 ECharts 绘图数据 ====================
             const bePriceData = [];
             const salesPriceData = [];
             const officialPriceData = [];
             
             // 为 Y 轴定调最大显示高度
-            let yMax = Math.max(P_sales, P_official) * 1.5;
+            const maxPrice = Math.max(P_sales, P_official);
+            let yMax = maxPrice * 1.5;
+
+            // 考虑在100%或50%利用率下的自建保本售价，融入绘图区以展示无法保本时的合理趋势，防止高估或低估
+            let bepAt100 = (elecIntercept + fixedOpExNoElec + D_CapEx + elecSlope) / M_annual;
+            let bepAt50 = (elecIntercept + fixedOpExNoElec + D_CapEx + elecSlope * 0.5) / (M_annual * 0.5);
+            if (isFinite(bepAt50) && bepAt50 > 0) {
+                // 如果保本点很高，我们将 yMax 适度扩大，以便在无法保本时也能完整看到保本虚线向下俯冲的走势
+                yMax = Math.max(yMax, Math.min(bepAt50, bepAt100 * 2.5)) * 1.25;
+            }
             if (yMax <= 0 || isNaN(yMax)) yMax = 5.0;
             currentYMax = yMax;
 
@@ -2868,15 +2924,12 @@
                 if (u === 0) {
                     beVal = null; // 零点不画
                 } else {
-                    const elecCostNet = powerCostRawWithUtil(u) * (1 - subsidyCarrierElecRatio);
-                    const netOpEx = elecCostNet + cabinetCostAnnual + bandwidthCostAnnualNet + opsCostAnnual - subsidyGovOpsVal;
-                    const denominatorBEP_u = M_annual * P_sales - elecSlope * u;
-                    // 在任意利用率 u 下的自建盈亏平衡售价 (即在该点实现盈亏平衡所需的售价)
-                    beVal = (elecIntercept + fixedOpExNoElec + D_CapEx) / (M_annual * u);
+                    // 精准计算在任意利用率 u 下的自建盈亏平衡售价 (包含随 u 变化的动态电费项)
+                    beVal = (elecIntercept + fixedOpExNoElec + D_CapEx + elecSlope * u) / (M_annual * u);
                 }
                 
-                // 剔除无效点，防溢出
-                if (beVal !== null && (beVal > yMax * 2 || beVal < 0 || isNaN(beVal))) {
+                // 剔除无效点，防溢出 (使用 yMax * 3 允许更大范围呈现)
+                if (beVal !== null && (beVal > yMax * 3 || beVal < 0 || isNaN(beVal))) {
                     bePriceData.push([i, null]);
                 } else {
                     bePriceData.push([i, beVal]);
@@ -2997,9 +3050,10 @@
                         let text = `<div style="font-family:var(--font-mono); font-size:11px; font-weight:700; border-bottom:1px solid #E5E7EB; padding-bottom:4px; margin-bottom:4px;">实际运行负载利用率: ${params[0].name}%</div>`;
                         params.forEach(el => {
                             let displayVal = '计算中...';
-                            if (typeof el.value === 'number') {
-                                displayVal = el.value.toFixed(2) + ' 元/M';
-                            } else if (el.value === null || el.value === undefined) {
+                            let val = Array.isArray(el.value) ? el.value[1] : el.value;
+                            if (typeof val === 'number') {
+                                displayVal = val.toFixed(3) + ' 元/M';
+                            } else if (val === null || val === undefined) {
                                 displayVal = '超出阈值';
                             }
                             text += `<div style="display:flex; justify-content:space-between; gap:16px; margin:2px 0; font-size:11px;">
