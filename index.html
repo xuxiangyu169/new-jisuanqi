@@ -713,7 +713,7 @@
         /* 公式网格：双列响应式排版 */
         .formula-list {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 16px;
         }
 
@@ -758,7 +758,7 @@
         /* 字典网格：4列响应式卡片排版 (完全解决左右挤压截断问题) */
         .dict-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 16px;
             width: 100%;
         }
@@ -820,22 +820,22 @@
         /* ==================== 响应式移动端自适应 ==================== */
         @media (max-width: 1200px) {
             .dict-grid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(3, minmax(0, 1fr));
             }
         }
 
         @media (max-width: 900px) {
             .formula-list {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
             }
             .dict-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
 
         @media (max-width: 1024px) {
             main {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
                 padding: 16px;
             }
             .col-span-2, .col-span-4, .col-span-6 {
@@ -853,7 +853,7 @@
                 gap: 10px;
             }
             .kpi-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
             .btn-reset {
                 width: 100%;
@@ -863,10 +863,10 @@
 
         @media (max-width: 600px) {
             .kpi-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
             }
             .dict-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
             }
             .formula-card {
                 padding: 20px;
@@ -1388,6 +1388,44 @@
     </footer>
 
     <script>
+        // 全局错误捕获并写入 DOM
+        window.onerror = function(message, source, lineno, colno, error) {
+            const div = document.createElement('div');
+            div.id = 'js-debug-error-banner';
+            div.style.position = 'fixed';
+            div.style.top = '0';
+            div.style.left = '0';
+            div.style.width = '100%';
+            div.style.background = '#ef4444';
+            div.style.color = '#ffffff';
+            div.style.padding = '15px';
+            div.style.zIndex = '999999';
+            div.style.fontFamily = 'monospace';
+            div.style.fontSize = '14px';
+            div.style.whiteSpace = 'pre-wrap';
+            div.style.borderBottom = '4px solid #7f1d1d';
+            div.innerHTML = '🚨 JS ERROR: ' + message + '\nat ' + source + ':' + lineno + ':' + colno + '\n' + (error ? error.stack : '');
+            document.body.appendChild(div);
+        };
+        window.addEventListener('unhandledrejection', function(event) {
+            const div = document.createElement('div');
+            div.id = 'js-debug-reject-banner';
+            div.style.position = 'fixed';
+            div.style.top = '100px';
+            div.style.left = '0';
+            div.style.width = '100%';
+            div.style.background = '#f59e0b';
+            div.style.color = '#ffffff';
+            div.style.padding = '15px';
+            div.style.zIndex = '999999';
+            div.style.fontFamily = 'monospace';
+            div.style.fontSize = '14px';
+            div.style.whiteSpace = 'pre-wrap';
+            div.style.borderBottom = '4px solid #78350f';
+            div.innerHTML = '🚨 UNHANDLED REJECTION: ' + event.reason;
+            document.body.appendChild(div);
+        });
+
         // 初始化图标
         lucide.createIcons();
 
@@ -2162,6 +2200,7 @@
                 series: [
                     {
                         name: '自建盈亏平衡售价',
+                        type: 'line',
                         data: bePriceData,
                         markArea: {
                             silent: true,
@@ -2170,10 +2209,12 @@
                     },
                     {
                         name: '自建对外销售定价',
+                        type: 'line',
                         data: salesPriceData
                     },
                     {
                         name: 'DeepSeek 官方定价红线',
+                        type: 'line',
                         data: officialPriceData
                     }
                 ]
@@ -2194,21 +2235,28 @@
                 return;
             }
 
+            // 安全检查：如果图表未开始排版或宽度/高度为0，则隐藏脉冲灯并返回，防止 convertToPixel 发生内部崩溃
+            if (analysisChart.getWidth() === 0 || analysisChart.getHeight() === 0) {
+                if (glowDotBe) glowDotBe.style.display = 'none';
+                if (glowDotRoi) glowDotRoi.style.display = 'none';
+                return;
+            }
+
             // 1. 定位自建保本交点 (Be)
             if (lastCrossPointBe) {
                 try {
                     const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPointBe.x, lastCrossPointBe.y]);
                     // 使用安全全局变量进行防护判断，防止报错
-                    if (xy && !isNaN(xy[0]) && !isNaN(xy[1]) && lastCrossPointBe.y <= currentYMax) {
+                    if (glowDotBe && xy && !isNaN(xy[0]) && !isNaN(xy[1]) && lastCrossPointBe.y <= currentYMax) {
                         glowDotBe.style.left = xy[0] + 'px';
                         glowDotBe.style.top = xy[1] + 'px';
                         glowDotBe.style.display = 'block';
-                    } else {
+                    } else if (glowDotBe) {
                         glowDotBe.style.display = 'none';
                     }
                 } catch (err) {
                     console.error("Positioning BE pulse dot error: ", err);
-                    glowDotBe.style.display = 'none';
+                    if (glowDotBe) glowDotBe.style.display = 'none';
                 }
             } else {
                 if (glowDotBe) glowDotBe.style.display = 'none';
@@ -2218,16 +2266,16 @@
             if (lastCrossPointRoi) {
                 try {
                     const xy = analysisChart.convertToPixel({ gridIndex: 0 }, [lastCrossPointRoi.x, lastCrossPointRoi.y]);
-                    if (xy && !isNaN(xy[0]) && !isNaN(xy[1]) && lastCrossPointRoi.y <= currentYMax) {
+                    if (glowDotRoi && xy && !isNaN(xy[0]) && !isNaN(xy[1]) && lastCrossPointRoi.y <= currentYMax) {
                         glowDotRoi.style.left = xy[0] + 'px';
                         glowDotRoi.style.top = xy[1] + 'px';
                         glowDotRoi.style.display = 'block';
-                    } else {
+                    } else if (glowDotRoi) {
                         glowDotRoi.style.display = 'none';
                     }
                 } catch (err) {
                     console.error("Positioning ROI pulse dot error: ", err);
-                    glowDotRoi.style.display = 'none';
+                    if (glowDotRoi) glowDotRoi.style.display = 'none';
                 }
             } else {
                 if (glowDotRoi) glowDotRoi.style.display = 'none';
