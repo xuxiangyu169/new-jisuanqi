@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>华鲲大模型算力集群盈亏平衡计算器 - Flat Poster Style</title>
-    <!-- 引入自定义 Favicon LOGO -->
-    <link rel="icon" href="https://cf-r2.testupup.cfd/%E7%8C%AB%E7%8C%AB%E5%A4%B4%E5%83%8F.jpg" type="image/jpeg">
+    <title>华鲲大模型算力集群盈亏平衡计算器 - v2.4.4</title>
     <!-- 引入 Outfit 现代展示字体与 Inter 常用字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- 引入 Favicon -->
+    <link rel="icon" href="https://cf-r2.testupup.cfd/%E7%8C%AB%E7%8C%AB%E5%A4%B4%E5%83%8F.jpg" type="image/jpeg">
     <!-- 引入 ECharts -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <!-- 引入 Lucide 图标 -->
@@ -564,10 +564,11 @@
             border: 2px solid var(--border-bold) !important;
             border-radius: 8px;
             margin-bottom: 16px;
-            padding: 12px 16px;
+            padding: 0;
             background: #FFFFFF;
             box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.04);
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            overflow: hidden;
         }
 
         .acc-panel:hover {
@@ -587,28 +588,29 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 14px;
+            padding: 14px 16px;
             cursor: pointer;
             color: var(--foreground-muted);
             font-size: 14px;
             font-weight: 700;
-            transition: all 0.2s ease;
-            border-radius: 6px;
-            margin: 4px 0;
-            background: rgba(248, 250, 252, 0.6);
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            background: transparent;
+            transition: background-color 0.15s ease, color 0.15s ease;
+            user-select: none;
         }
 
         .acc-trigger:hover {
+            background-color: #F8FAFC;
             color: var(--foreground);
-            background: rgba(241, 245, 249, 0.95);
-            border-color: rgba(203, 213, 225, 0.9);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .custom-legend-item:hover {
+            color: var(--primary) !important;
+            text-decoration-color: var(--primary) !important;
         }
 
         .acc-arrow {
             transition: transform 0.2s var(--easing-flat);
-            pointer-events: none;
+            pointer-events: none; /* 穿透点击，防止 svg 节点遮挡 trigger 点击 */
         }
 
         .acc-trigger.expanded .acc-arrow {
@@ -622,11 +624,13 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
+            padding: 0 16px;
         }
 
         .acc-trigger.expanded + .acc-body {
             max-height: 1200px;
-            padding-bottom: 12px;
+            padding-top: 4px;
+            padding-bottom: 16px;
         }
 
         .select-box {
@@ -1529,25 +1533,19 @@
                                 </div>
                                 
                                 <div id="mixed-config-container" style="display: none; flex-direction: column; gap: 12px; border-top: 1px dashed var(--border-default); padding-top: 8px;">
-                                    <!-- 混部状态摘要提示 -->
-                                    <div style="font-size: 11px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.15); border-radius: 6px; padding: 8px; color: var(--foreground); display: flex; flex-direction: column; gap: 4px;">
-                                        <div style="display: flex; justify-content: space-between; font-weight: 700;">
-                                            <span>集群物理总节点: <span id="mixed-total-nodes">0</span> 台</span>
-                                            <span style="color: var(--primary-dark);">已分配: <span id="mixed-allocated-nodes">0</span> 台</span>
-                                        </div>
-                                        <div style="font-size: 10px; color: var(--foreground-muted);">
-                                            主模型 A 自动分配剩余节点数。其它子模型台数之和不能超过物理总台数。
-                                        </div>
+                                    <!-- 主集群 A 汇总信息 -->
+                                    <div style="font-size: 11px; font-weight: 700; color: var(--primary-dark); padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                                        <span>🚀 主集群 A 部署 (自动分配剩余节点)：</span>
+                                        <span id="mixed-nodes-a-label" style="background: rgba(59, 130, 246, 0.1); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-weight: 800;">8 台</span>
                                     </div>
-
-                                    <!-- 子集群列表容器 -->
-                                    <div id="mixed-clusters-list" style="display: flex; flex-direction: column; gap: 12px;">
-                                        <!-- 动态生成子集群配置卡片 -->
-                                    </div>
-
-                                    <!-- 添加子集群按钮 -->
-                                    <button type="button" class="btn-primary" style="align-self: flex-start; padding: 6px 12px; font-size: 11px; display: flex; align-items: center; gap: 4px; border: none; border-radius: 4px; background: var(--primary); color: #fff; cursor: pointer; font-weight: 700; transition: background 0.15s ease;" onclick="addMixedCluster()">
-                                        <i data-lucide="plus" style="width: 12px; height: 12px; pointer-events: none;"></i> 添加混合子模型
+                                    
+                                    <!-- 动态子集群列表渲染容器 -->
+                                    <div id="mixed-clusters-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                                    
+                                    <!-- 添加集群按钮 -->
+                                    <button type="button" onclick="addMixedCluster()" style="background: rgba(168, 85, 247, 0.08); color: #8B5CF6; border: 1.5px dashed rgba(168, 85, 247, 0.4); padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%;">
+                                        <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i>
+                                        添加混合子集群
                                     </button>
                                 </div>
                             </div>
@@ -1663,15 +1661,12 @@
                             <div id="val-suggest-price-formula" style="font-size: 11.5px; color: #4B5563; margin: 6px 0 0 0; font-weight: 500; min-height: 26px;">
                                 <!-- 动态 LaTeX 公式区域 -->
                             </div>
-                            <div class="formula-explainer-legend" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 10.5px; color: var(--foreground-muted); border-top: 1px dashed rgba(168, 85, 247, 0.2); padding-top: 6px; align-items: center;">
-                                <span style="font-weight: 700; color: #8B5CF6;">公式参数释义 (悬停查看详情):</span>
-                                <span class="dict-term label-text" style="cursor: help; text-decoration: underline dashed #8B5CF6 1px; color: #8B5CF6; font-weight: 600;" data-term="C_dep">C_dep (年折旧)</span>
-                                <span style="color: #9CA3AF;">+</span>
-                                <span class="dict-term label-text" style="cursor: help; text-decoration: underline dashed #8B5CF6 1px; color: #8B5CF6; font-weight: 600;" data-term="O_ops">O_ops (年运营)</span>
-                                <span style="color: #9CA3AF;">/</span>
-                                <span class="dict-term label-text" style="cursor: help; text-decoration: underline dashed #8B5CF6 1px; color: #8B5CF6; font-weight: 600;" data-term="E_capacity">E_capacity (年产能)</span>
-                                <span style="color: #9CA3AF;">×</span>
-                                <span class="dict-term label-text" style="cursor: help; text-decoration: underline dashed #8B5CF6 1px; color: #8B5CF6; font-weight: 600;" data-term="U">U (利用率)</span>
+                            <div style="font-size: 10px; color: #64748b; margin-top: 6px; display: flex; gap: 12px; align-items: center; border-top: 1px dotted #e2e8f0; padding-top: 6px;">
+                                <span style="font-weight: 700; color: #475569;">公式参数释义 (悬停查看详情):</span>
+                                <span class="custom-legend-item" data-term="C_dep" style="cursor: help; text-decoration: underline dotted #94a3b8; transition: color 0.15s; font-weight: 700;">C_dep (年折旧)</span>
+                                <span class="custom-legend-item" data-term="O_ops" style="cursor: help; text-decoration: underline dotted #94a3b8; transition: color 0.15s; font-weight: 700;">O_ops (年运营)</span>
+                                <span class="custom-legend-item" data-term="E_capacity" style="cursor: help; text-decoration: underline dotted #94a3b8; transition: color 0.15s; font-weight: 700;">E_capacity (年产能)</span>
+                                <span class="custom-legend-item" data-term="U" style="cursor: help; text-decoration: underline dotted #94a3b8; transition: color 0.15s; font-weight: 700;">U (负载率)</span>
                             </div>
                         </div>
                     </div>
@@ -2095,22 +2090,15 @@
             lossPdScheduling: 10,   // PD 调度损失 (%)
 
             // 混合部署
-            mixedDeploymentEnabled: false
+            mixedDeploymentEnabled: false,
+            mixedNodeCountA: 4,
+            mixedModelIdB: 'qwen-3.7-max',
+            mixedTokenPriceInputB: 9.00,
+            mixedTokenPriceOutputB: 27.00,
+            mixedTokenPriceCacheB: 0.90,
+            mixedRatioInputB: 80,
+            mixedRatioCacheB: 30
         };
-
-        // 动态多模型混合部署子集群数组 (v2.4.4 重构)
-        let mixedClusters = [
-            {
-                id: 1,
-                modelId: 'qwen-3.7-max',
-                nodes: 4,
-                inputPrice: 9.00,
-                outputPrice: 27.00,
-                ratioInput: 80,
-                ratioCache: 30
-            }
-        ];
-        let nextClusterId = 2;
 
         // 大模型横向定价对比与自建基准 (升级至2026年最新四大前沿型号)
         const modelPresets = {
@@ -2422,15 +2410,23 @@
             const badgeLossPd = document.getElementById('badge-loss-pd-scheduling');
             if (badgeLossPd) badgeLossPd.textContent = currentParams.lossPdScheduling + '%';
 
-            // 6. 混合部署
+            // 6. 混合部署 (v2.4.4 重构)
             const chkMixed = document.getElementById('checkbox-mixed-deployment');
             if (chkMixed) chkMixed.checked = currentParams.mixedDeploymentEnabled;
 
             const mixedContainer = document.getElementById('mixed-config-container');
-            if (mixedContainer) mixedContainer.style.display = currentParams.mixedDeploymentEnabled ? 'flex' : 'none';
-
-            if (currentParams.mixedDeploymentEnabled) {
-                renderMixedClustersUI();
+            if (mixedContainer) {
+                if (currentParams.mixedDeploymentEnabled) {
+                    mixedContainer.style.display = 'flex';
+                    // 动态更新渲染列表 UI (初次启用或同步时)
+                    // 为避免打字输入时覆盖，我们可以先判断子节点是否为空
+                    const listContainer = document.getElementById('mixed-clusters-list');
+                    if (listContainer && listContainer.children.length === 0) {
+                        renderMixedClustersUI();
+                    }
+                } else {
+                    mixedContainer.style.display = 'none';
+                }
             }
 
             // 全局共享负载
@@ -2474,181 +2470,15 @@
             }
         }
 
-        // 动态渲染子集群配置面板与事件管理
-        function renderMixedClustersUI() {
-            const container = document.getElementById('mixed-clusters-list');
-            if (!container) return;
-
-            const N_server = currentParams.serverCount;
-            let allocatedNodes = 0;
-            mixedClusters.forEach(c => allocatedNodes += c.nodes);
-            
-            const N_A = Math.max(0, N_server - allocatedNodes);
-
-            const totalNodesEl = document.getElementById('mixed-total-nodes');
-            if (totalNodesEl) totalNodesEl.textContent = N_server;
-            const allocatedNodesEl = document.getElementById('mixed-allocated-nodes');
-            if (allocatedNodesEl) allocatedNodesEl.textContent = allocatedNodes;
-
-            let html = '';
-
-            // 1. 渲染主集群 A (只读)
-            const mainModelName = currentParams.modelName || 'DeepSeek-R1级';
-            html += `
-                <div class="mixed-cluster-card" style="border: 1px solid rgba(168, 85, 247, 0.2); background: rgba(168, 85, 247, 0.02); border-radius: 6px; padding: 10px; position: relative;">
-                    <div style="font-size: 11px; font-weight: 700; color: var(--primary-dark); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
-                        <span style="display: flex; align-items: center; gap: 4px;">🚀 主集群 A (当前模型) : <span style="background: rgba(168, 85, 247, 0.1); padding: 1px 4px; border-radius: 3px; font-weight:700;">${mainModelName}</span></span>
-                        <span style="font-weight: 700; color: var(--primary-dark); font-size: 12px;">${N_A} 台</span>
-                    </div>
-                    <div style="font-size: 10px; color: var(--foreground-muted); border-top: 1px dashed rgba(168, 85, 247, 0.1); padding-top: 4px;">
-                        主集群参数由左侧配置区 (4.营收定价/5.性能) 决定，自动分摊剩余服务器节点。
-                    </div>
-                </div>
-            `;
-
-            // 2. 渲染其它子集群
-            mixedClusters.forEach((cluster, idx) => {
-                let otherAllocated = 0;
-                mixedClusters.forEach(c => {
-                    if (c.id !== cluster.id) otherAllocated += c.nodes;
-                });
-                const maxNodesForThis = Math.max(0, N_server - otherAllocated);
-
-                let presetOptionsHtml = '';
-                for (const pid in modelPresets) {
-                    const preset = modelPresets[pid];
-                    const selectedAttr = (pid === cluster.modelId) ? 'selected' : '';
-                    presetOptionsHtml += `<option value="${pid}" ${selectedAttr}>${preset.name}</option>`;
-                }
-
-                html += `
-                    <div class="mixed-cluster-card" style="border: 1.5px solid rgba(59, 130, 246, 0.2); background: rgba(255, 255, 255, 0.6); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: all 0.2s ease;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 11px; font-weight: 700; color: var(--secondary-dark); display: flex; align-items: center; gap: 4px;">
-                                🤖 子集群 ${idx + 2} (${modelPresets[cluster.modelId]?.name || '自定义模型'})
-                            </span>
-                            <button type="button" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 2px;" onclick="removeMixedCluster(${cluster.id})">
-                                <i data-lucide="trash-2" style="width: 12px; height: 12px; pointer-events: none;"></i> 删除
-                            </button>
-                        </div>
-
-                        <!-- 预设选择 -->
-                        <div style="display: flex; flex-direction: column; gap: 2px;">
-                            <span class="label-text" style="font-size: 10px;">子模型预设</span>
-                            <div class="select-box">
-                                <select style="font-size: 11.5px; padding: 4px 8px; width: 100%; border: 1px solid var(--border-default); border-radius: 4px;" onchange="updateMixedCluster(${cluster.id}, 'modelId', this.value)">
-                                    ${presetOptionsHtml}
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- 节点数分配 -->
-                        <div style="display: flex; flex-direction: column; gap: 2px;">
-                            <div class="label-row" style="display: flex; justify-content: space-between; font-size: 10.5px;">
-                                <span class="label-text" style="font-size: 10px;">分配节点数 (N_${idx + 2})</span>
-                                <span class="value-badge" style="background-color: var(--secondary); font-size: 10px; color: #fff; padding: 1px 4px; border-radius: 3px;">${cluster.nodes} 台</span>
-                            </div>
-                            <div class="slider-wrapper" style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
-                                <button type="button" class="btn-step" style="padding: 2px 6px; font-size: 10px; border: 1px solid var(--border-default); border-radius: 3px; background:#fff; cursor:pointer;" onclick="adjustMixedClusterNodes(${cluster.id}, -1)">-</button>
-                                <input type="range" min="0" max="${maxNodesForThis}" step="1" value="${cluster.nodes}" oninput="updateMixedCluster(${cluster.id}, 'nodes', parseInt(this.value))" style="flex: 1; height: 5px; cursor: pointer;">
-                                <button type="button" class="btn-step" style="padding: 2px 6px; font-size: 10px; border: 1px solid var(--border-default); border-radius: 3px; background:#fff; cursor:pointer;" onclick="adjustMixedClusterNodes(${cluster.id}, 1)">+</button>
-                            </div>
-                        </div>
-
-                        <!-- 售价与占比 -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 2px;">
-                            <div>
-                                <span class="label-text" style="font-size: 9.5px; color: var(--foreground-muted);">输入售价 (元/M)</span>
-                                <input type="number" class="flat-input" style="padding: 4px 6px; font-size: 11px; margin-top: 1px; border: 1px solid var(--border-default); border-radius:4px; width:100%;" value="${cluster.inputPrice}" step="0.1" oninput="updateMixedCluster(${cluster.id}, 'inputPrice', parseFloat(this.value) || 0)">
-                            </div>
-                            <div>
-                                <span class="label-text" style="font-size: 9.5px; color: var(--foreground-muted);">输出售价 (元/M)</span>
-                                <input type="number" class="flat-input" style="padding: 4px 6px; font-size: 11px; margin-top: 1px; border: 1px solid var(--border-default); border-radius:4px; width:100%;" value="${cluster.outputPrice}" step="0.1" oninput="updateMixedCluster(${cluster.id}, 'outputPrice', parseFloat(this.value) || 0)">
-                            </div>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                            <div>
-                                <span class="label-text" style="font-size: 9.5px; color: var(--foreground-muted);">缓存命中率 (%)</span>
-                                <input type="number" class="flat-input" style="padding: 4px 6px; font-size: 11px; margin-top: 1px; border: 1px solid var(--border-default); border-radius:4px; width:100%;" value="${cluster.ratioCache}" step="5" oninput="updateMixedCluster(${cluster.id}, 'ratioCache', parseFloat(this.value) || 0)">
-                            </div>
-                            <div>
-                                <span class="label-text" style="font-size: 9.5px; color: var(--foreground-muted);">输入占比 (%)</span>
-                                <input type="number" class="flat-input" style="padding: 4px 6px; font-size: 11px; margin-top: 1px; border: 1px solid var(--border-default); border-radius:4px; width:100%;" value="${cluster.ratioInput}" step="5" oninput="updateMixedCluster(${cluster.id}, 'ratioInput', parseFloat(this.value) || 0)">
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-            lucide.createIcons();
-        }
-
-        function addMixedCluster() {
-            let allocatedNodes = 0;
-            mixedClusters.forEach(c => allocatedNodes += c.nodes);
-            const remainingNodes = Math.max(0, currentParams.serverCount - allocatedNodes);
-            const defaultNodes = remainingNodes > 0 ? 1 : 0;
-
-            const defaultModelPreset = 'qwen-3.7-max';
-            const preset = modelPresets[defaultModelPreset];
-
-            mixedClusters.push({
-                id: nextClusterId++,
-                modelId: defaultModelPreset,
-                nodes: defaultNodes,
-                inputPrice: preset.defaultSalesPriceInput,
-                outputPrice: preset.defaultSalesPriceOutput,
-                ratioInput: 80,
-                ratioCache: 30
-            });
-
-            renderMixedClustersUI();
-            runFinancialCalculator();
-        }
-
-        function removeMixedCluster(id) {
-            mixedClusters = mixedClusters.filter(c => c.id !== id);
-            renderMixedClustersUI();
-            runFinancialCalculator();
-        }
-
-        function updateMixedCluster(id, field, val) {
-            const cluster = mixedClusters.find(c => c.id === id);
-            if (!cluster) return;
-
-            if (field === 'modelId') {
-                cluster.modelId = val;
-                const preset = modelPresets[val];
-                if (preset) {
-                    cluster.inputPrice = preset.defaultSalesPriceInput;
-                    cluster.outputPrice = preset.defaultSalesPriceOutput;
-                }
-            } else {
-                cluster[field] = val;
+        function adjustMixedNodesA(delta) {
+            const slider = document.getElementById('slider-mixed-nodes-a');
+            if (slider) {
+                let val = parseInt(slider.value) + delta;
+                const maxVal = currentParams.serverCount - 1;
+                val = Math.min(Math.max(val, 1), maxVal);
+                slider.value = val;
+                changeParam('mixed-nodes-a', val);
             }
-
-            if (field === 'nodes') {
-                let otherAllocated = 0;
-                mixedClusters.forEach(c => {
-                    if (c.id !== id) otherAllocated += c.nodes;
-                });
-                const maxNodesForThis = Math.max(0, currentParams.serverCount - otherAllocated);
-                if (cluster.nodes > maxNodesForThis) {
-                    cluster.nodes = maxNodesForThis;
-                }
-                if (cluster.nodes < 0) cluster.nodes = 0;
-            }
-
-            renderMixedClustersUI();
-            runFinancialCalculator();
-        }
-
-        function adjustMixedClusterNodes(id, delta) {
-            const cluster = mixedClusters.find(c => c.id === id);
-            if (!cluster) return;
-            updateMixedCluster(id, 'nodes', cluster.nodes + delta);
         }
 
         // 手风琴面板收放
@@ -2779,6 +2609,9 @@
                 // 混合部署
                 case 'mixed-deployment':
                     currentParams.mixedDeploymentEnabled = val; // Boolean
+                    if (val) {
+                        renderMixedClustersUI();
+                    }
                     break;
 
                 case 'utilization-rate':
@@ -2790,11 +2623,217 @@
             runFinancialCalculator();
         }
 
+        // 动态子集群状态变量 (v2.4.4 新增)
+        let mixedClusters = [
+            {
+                id: 'cluster-1',
+                modelId: 'qwen-3.7-max',
+                nodes: 4,
+                inputPrice: 9.00,
+                outputPrice: 27.00,
+                cachePrice: 0.90,
+                ratioInput: 80,
+                ratioCache: 30
+            }
+        ];
+
+        // 渲染混合部署 UI 列表 (v2.4.4)
+        function renderMixedClustersUI() {
+            const listContainer = document.getElementById('mixed-clusters-list');
+            if (!listContainer) return;
+
+            if (mixedClusters.length === 0) {
+                listContainer.innerHTML = `<div style="font-size: 11px; color: var(--foreground-muted); text-align: center; padding: 12px; border: 1.5px dashed var(--border-default); border-radius: 6px;">暂无混合子集群，请点击下方按钮添加</div>`;
+                return;
+            }
+
+            const N_server = currentParams.serverCount;
+            let totalOthers = 0;
+            mixedClusters.forEach(c => totalOthers += c.nodes);
+
+            let html = '';
+            mixedClusters.forEach((c, index) => {
+                let selectOptions = '';
+                for (const key in modelPresets) {
+                    const preset = modelPresets[key];
+                    const selected = c.modelId === key ? 'selected' : '';
+                    selectOptions += `<option value="${key}" ${selected}>${preset.name}</option>`;
+                }
+
+                // 步进器增加按钮的禁用态：如果 N_A <= 1 (totalOthers >= N_server - 1)，则无法再增加
+                const plusDisabled = totalOthers >= N_server - 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : '';
+
+                html += `
+                    <div class="mixed-cluster-card" style="background: rgba(168, 85, 247, 0.02); border: 1.5px solid rgba(168, 85, 247, 0.15); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700; color: var(--secondary-dark);">
+                            <span>🤖 混合子集群 #${index + 1} (${modelPresets[c.modelId]?.name || '未定义'})</span>
+                            <button type="button" onclick="removeMixedCluster('${c.id}')" style="background: transparent; color: #EF4444; border: none; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 2px;">
+                                <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i> 删除
+                            </button>
+                        </div>
+                        
+                        <!-- 模型预设 -->
+                        <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                            <div class="label-row"><span class="label-text" style="font-size: 11px;">部署模型预设选择</span></div>
+                            <div class="select-box">
+                                <select onchange="updateMixedCluster('${c.id}', 'modelId', this.value, true)" style="padding: 6px; font-size: 11.5px;">
+                                    ${selectOptions}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- 节点数分配步进器 -->
+                        <div class="input-group color-group-business" style="background: transparent; border: none; padding: 0;">
+                            <div class="label-row" style="margin-bottom: 4px;">
+                                <span class="label-text" style="font-size: 11px;">分配节点数 (N_${index + 1})</span>
+                                <span class="value-badge" style="background: var(--secondary-dark); font-family: var(--font-mono); font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; color: #fff;">${c.nodes} 台</span>
+                            </div>
+                            <div class="slider-wrapper" style="display: flex; align-items: center; gap: 8px;">
+                                <button type="button" class="btn-step" onclick="adjustMixedClusterNodes('${c.id}', -1)" style="padding: 2px 8px; font-size: 12px;">-</button>
+                                <div style="flex: 1; text-align: center; font-size: 11.5px; font-weight: 700; color: var(--foreground-muted);">
+                                    已分配物理节点: ${c.nodes} 台
+                                </div>
+                                <button type="button" class="btn-step" onclick="adjustMixedClusterNodes('${c.id}', 1)" ${plusDisabled} style="padding: 2px 8px; font-size: 12px;">+</button>
+                            </div>
+                        </div>
+
+                        <!-- 售价配置 (输入, 输出) -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <div>
+                                <span class="label-text" style="font-size: 10px; color:#475569;">自建输入售价 (元/M)</span>
+                                <input type="number" class="flat-input" style="padding: 5px; font-size: 11px; margin-top: 2px;" value="${c.inputPrice}" step="0.1" oninput="updateMixedCluster('${c.id}', 'inputPrice', this.value, false)">
+                            </div>
+                            <div>
+                                <span class="label-text" style="font-size: 10px; color:#475569;">自建输出售价 (元/M)</span>
+                                <input type="number" class="flat-input" style="padding: 5px; font-size: 11px; margin-top: 2px;" value="${c.outputPrice}" step="0.1" oninput="updateMixedCluster('${c.id}', 'outputPrice', this.value, false)">
+                            </div>
+                        </div>
+
+                        <!-- 缓存命中与输入占比 -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <div>
+                                <span class="label-text" style="font-size: 10px; color:#475569;">缓存命中率 (%)</span>
+                                <input type="number" class="flat-input" style="padding: 5px; font-size: 11px; margin-top: 2px;" value="${c.ratioCache}" step="5" oninput="updateMixedCluster('${c.id}', 'ratioCache', this.value, false)">
+                            </div>
+                            <div>
+                                <span class="label-text" style="font-size: 10px; color:#475569;">输入Token占比 (%)</span>
+                                <input type="number" class="flat-input" style="padding: 5px; font-size: 11px; margin-top: 2px;" value="${c.ratioInput}" step="5" oninput="updateMixedCluster('${c.id}', 'ratioInput', this.value, false)">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listContainer.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // 添加子集群 (v2.4.4)
+        function addMixedCluster() {
+            const N_server = currentParams.serverCount;
+            let totalOthers = 0;
+            mixedClusters.forEach(c => totalOthers += c.nodes);
+
+            if (totalOthers >= N_server - 1) {
+                alert(`物理节点已分配殆尽。请先调小其它混合集群的节点数，保留主选模型 A 至少 1 台节点。`);
+                return;
+            }
+
+            const newId = 'cluster-' + Date.now();
+            mixedClusters.push({
+                id: newId,
+                modelId: 'qwen-3.7-max',
+                nodes: 1,
+                inputPrice: 9.00,
+                outputPrice: 27.00,
+                cachePrice: 0.90,
+                ratioInput: 80,
+                ratioCache: 30
+            });
+
+            renderMixedClustersUI();
+            runFinancialCalculator();
+        }
+
+        // 删除子集群 (v2.4.4)
+        function removeMixedCluster(id) {
+            mixedClusters = mixedClusters.filter(c => c.id !== id);
+            renderMixedClustersUI();
+            runFinancialCalculator();
+        }
+
+        // 调整子集群节点分配数 (v2.4.4)
+        function adjustMixedClusterNodes(id, delta) {
+            const N_server = currentParams.serverCount;
+            let currentCluster = mixedClusters.find(c => c.id === id);
+            if (!currentCluster) return;
+
+            let totalOthersExceptCurrent = 0;
+            mixedClusters.forEach(c => {
+                if (c.id !== id) totalOthersExceptCurrent += c.nodes;
+            });
+
+            const maxVal = Math.max(1, N_server - totalOthersExceptCurrent - 1);
+            let newVal = currentCluster.nodes + delta;
+            if (newVal < 1) newVal = 1;
+            if (newVal > maxVal) newVal = maxVal;
+
+            currentCluster.nodes = newVal;
+            renderMixedClustersUI();
+            runFinancialCalculator();
+        }
+
+        // 更新子集群字段 (v2.4.4)
+        function updateMixedCluster(id, field, value, shouldReRenderUI = true) {
+            let currentCluster = mixedClusters.find(c => c.id === id);
+            if (!currentCluster) return;
+
+            const floatVal = parseFloat(value);
+            if (field === 'modelId') {
+                currentCluster.modelId = value;
+                const config = modelPresets[value];
+                if (config) {
+                    currentCluster.inputPrice = config.defaultSalesPriceInput;
+                    currentCluster.outputPrice = config.defaultSalesPriceOutput;
+                    currentCluster.cachePrice = config.defaultSalesPriceCache;
+                }
+            } else if (field === 'inputPrice') {
+                currentCluster.inputPrice = isNaN(floatVal) ? 0 : floatVal;
+            } else if (field === 'outputPrice') {
+                currentCluster.outputPrice = isNaN(floatVal) ? 0 : floatVal;
+            } else if (field === 'cachePrice') {
+                currentCluster.cachePrice = isNaN(floatVal) ? 0 : floatVal;
+            } else if (field === 'ratioCache') {
+                currentCluster.ratioCache = isNaN(floatVal) ? 0 : Math.round(floatVal);
+            } else if (field === 'ratioInput') {
+                currentCluster.ratioInput = isNaN(floatVal) ? 0 : Math.round(floatVal);
+            }
+
+            if (shouldReRenderUI) {
+                renderMixedClustersUI();
+            }
+            runFinancialCalculator();
+        }
+
         // 重置配置
         function resetAllValues() {
             currentParams = { ...initParams };
-            // 调用 changeModelPreset 即可自动重置文字、部署建议并刷新计算
+            mixedClusters = [
+                {
+                    id: 'cluster-1',
+                    modelId: 'qwen-3.7-max',
+                    nodes: 4,
+                    inputPrice: 9.00,
+                    outputPrice: 27.00,
+                    cachePrice: 0.90,
+                    ratioInput: 80,
+                    ratioCache: 30
+                }
+            ];
             changeModelPreset('deepseek-r1');
+            if (currentParams.mixedDeploymentEnabled) {
+                renderMixedClustersUI();
+            }
         }
 
         // 财务核心精算大引擎
@@ -2813,8 +2852,39 @@
             const CapEx_net = CapEx * (1 - subsidyGovHardwareRatio);
             const D_CapEx = CapEx_net / Years_depreciation;
 
-            // ==================== 2. 集群混合配置分配 (A与其它子集群) ====================
+            // ==================== 2. 多集群混合配置分配 (v2.4.4 重构) ====================
+            let N_A = N_server;
             const modelConfigA = modelPresets[selectedModelId];
+
+            if (currentParams.mixedDeploymentEnabled) {
+                // 校验并调整 mixedClusters 节点，确保 N_A 至少为 1 (若 N_server 很小，则动态裁剪)
+                let totalOthers = 0;
+                mixedClusters.forEach(c => {
+                    totalOthers += c.nodes;
+                });
+                const maxOthers = N_server - 1; // 保证 A 至少 1 台
+                if (totalOthers > maxOthers) {
+                    let allocated = 0;
+                    mixedClusters.forEach(c => {
+                        if (allocated + c.nodes > maxOthers) {
+                            c.nodes = Math.max(0, maxOthers - allocated);
+                        }
+                        allocated += c.nodes;
+                    });
+                    // 我们可以在此处同步更新一次 UI（但因为此裁剪较少发生，主要在 N_server 改变时触发）
+                    setTimeout(renderMixedClustersUI, 10);
+                }
+                
+                totalOthers = 0;
+                mixedClusters.forEach(c => totalOthers += c.nodes);
+                N_A = N_server - totalOthers;
+            }
+
+            // 更新主集群 A 在输入面板上的 Label 显示
+            const mixedNodesALabel = document.getElementById('mixed-nodes-a-label');
+            if (mixedNodesALabel) {
+                mixedNodesALabel.textContent = `${N_A} 台`;
+            }
 
             // 节点电费静态与变动计算公共系数
             const Power_server = currentParams.powerServer;
@@ -2847,28 +2917,6 @@
             // 扣除补贴与折扣后的年运营成本 OpEx
             const OpEx_annual = powerCostAnnualSubsidized + cabinetCostAnnual + bandwidthCostAnnualNet + opsCostAnnual - subsidyGovOpsVal;
 
-            // 计算已分配的混合子集群台数并保护物理总台数防溢出
-            let allocatedNodes = 0;
-            if (currentParams.mixedDeploymentEnabled) {
-                mixedClusters.forEach(c => allocatedNodes += c.nodes);
-                if (allocatedNodes > N_server) {
-                    for (let i = mixedClusters.length - 1; i >= 0; i--) {
-                        if (allocatedNodes <= N_server) break;
-                        const diff = allocatedNodes - N_server;
-                        if (mixedClusters[i].nodes >= diff) {
-                            mixedClusters[i].nodes -= diff;
-                            allocatedNodes -= diff;
-                        } else {
-                            allocatedNodes -= mixedClusters[i].nodes;
-                            mixedClusters[i].nodes = 0;
-                        }
-                    }
-                    setTimeout(renderMixedClustersUI, 0);
-                }
-            }
-
-            const N_A = currentParams.mixedDeploymentEnabled ? Math.max(0, N_server - allocatedNodes) : N_server;
-
             // ==================== 3. 模型 A (DeepSeek-R1级) 产能与售价 ====================
             const T_prefill_A = currentParams.nodeTpsPrefill;
             const T_decoding_A = currentParams.nodeTpsDecoding;
@@ -2897,75 +2945,60 @@
 
             const M_annual_A = (T_speed_A * 86400 * 365 * (1 - Alpha_fail) * N_A) / 1000000;
 
-            // ==================== 4. 其它混合子集群 产能与售价计算 (v2.4.4 重构) ====================
+            // ==================== 4. 其它混合子模型集群计算 (v2.4.4 重构) ====================
             let totalMAnnualOthers = 0;
-            let totalWeightedSalesPriceOthers = 0;
-            let totalWeightedOfficialPriceOthers = 0;
-            let mixedInfoString = '';
+            let weightedSalesPriceOthersSum = 0;
+            let weightedOfficialPriceOthersSum = 0;
 
             if (currentParams.mixedDeploymentEnabled) {
-                mixedClusters.forEach((cluster, idx) => {
-                    const N_i = cluster.nodes;
-                    if (N_i > 0) {
-                        const preset = modelPresets[cluster.modelId];
-                        if (preset) {
-                            // 起步台数校验 minNodes (根据部署说明推导或默认为1)
-                            let minNodes = 1;
-                            if (cluster.modelId === 'deepseek-r1') minNodes = 2;
-                            else if (cluster.modelId === 'deepseek-v4-pro') minNodes = 4;
-                            else if (cluster.modelId === 'glm-5.1' || cluster.modelId === 'kimi-k2.6') minNodes = 4;
-                            else if (cluster.modelId === 'deepseek-v4-flash') minNodes = 1;
+                mixedClusters.forEach(c => {
+                    if (c.nodes > 0) {
+                        const modelConfigSub = modelPresets[c.modelId];
+                        if (!modelConfigSub) return;
 
-                            let T_speed_i = 0;
-                            let M_annual_i = 0;
+                        const T_prefill_sub = modelConfigSub.defaultPrefill;
+                        const T_decoding_sub = modelConfigSub.defaultDecoding;
+                        const R_input_sub = c.ratioInput / 100;
+                        const R_output_sub = 1 - R_input_sub;
+                        const R_cache_sub = c.ratioCache / 100;
 
-                            if (N_i >= minNodes) {
-                                const T_prefill_i = preset.defaultPrefill;
-                                const T_decoding_i = preset.defaultDecoding;
-                                const R_input_i = cluster.ratioInput / 100;
-                                const R_output_i = 1 - R_input_i;
-
-                                if (currentParams.pdSeparationEnabled) {
-                                    const rPrefill = currentParams.ratioPrefillNodes / 100;
-                                    const rDecoding = 1 - rPrefill;
-                                    const lossPd = currentParams.lossPdScheduling / 100;
-                                    T_speed_i = Math.min((rPrefill * T_prefill_i) / R_input_i, (rDecoding * T_decoding_i) / R_output_i) * (1 - lossPd);
-                                } else {
-                                    T_speed_i = 1 / ((R_input_i / T_prefill_i) + (R_output_i / T_decoding_i));
-                                }
-                                M_annual_i = (T_speed_i * 86400 * 365 * (1 - Alpha_fail) * N_i) / 1000000;
-                            }
-
-                            const R_input_i = cluster.ratioInput / 100;
-                            const R_cache_i = cluster.ratioCache / 100;
-
-                            // 缓存命中价：取输入售价的10%
-                            const P_cache_i = cluster.inputPrice * 0.1;
-                            const P_sales_i = (P_cache_i * R_input_i * R_cache_i) +
-                                              (cluster.inputPrice * R_input_i * (1 - R_cache_i)) +
-                                              (cluster.outputPrice * (1 - R_input_i));
-
-                            const P_official_i = (preset.cache * R_input_i * R_cache_i) +
-                                                  (preset.input * R_input_i * (1 - R_cache_i)) +
-                                                  (preset.output * (1 - R_input_i));
-
-                            totalMAnnualOthers += M_annual_i;
-                            totalWeightedSalesPriceOthers += P_sales_i * M_annual_i;
-                            totalWeightedOfficialPriceOthers += P_official_i * M_annual_i;
+                        let T_speed_sub = 0;
+                        if (currentParams.pdSeparationEnabled) {
+                            const rPrefill = currentParams.ratioPrefillNodes / 100;
+                            const rDecoding = 1 - rPrefill;
+                            const lossPd = currentParams.lossPdScheduling / 100;
+                            T_speed_sub = Math.min((rPrefill * T_prefill_sub) / R_input_sub, (rDecoding * T_decoding_sub) / R_output_sub) * (1 - lossPd);
+                        } else {
+                            T_speed_sub = 1 / ((R_input_sub / T_prefill_sub) + (R_output_sub / T_decoding_sub));
                         }
+
+                        // 该子集群的自建售价与官方参考价
+                        const P_sales_sub = (c.cachePrice * R_input_sub * R_cache_sub) +
+                                            (c.inputPrice * R_input_sub * (1 - R_cache_sub)) +
+                                            (c.outputPrice * R_output_sub);
+
+                        const P_official_sub = (modelConfigSub.cache * R_input_sub * R_cache_sub) +
+                                                (modelConfigSub.input * R_input_sub * (1 - R_cache_sub)) +
+                                                (modelConfigSub.output * R_output_sub);
+
+                        const M_annual_sub = (T_speed_sub * 86400 * 365 * (1 - Alpha_fail) * c.nodes) / 1000000;
+
+                        totalMAnnualOthers += M_annual_sub;
+                        weightedSalesPriceOthersSum += P_sales_sub * M_annual_sub;
+                        weightedOfficialPriceOthersSum += P_official_sub * M_annual_sub;
                     }
-                    mixedInfoString += ` | ${modelPresets[cluster.modelId]?.name || '子集群'}:${N_i}台`;
                 });
             }
 
             // ==================== 5. 整体混合产能、售价与财务指标 ====================
             const M_annual = M_annual_A + totalMAnnualOthers;
-
+            
+            // 按最大年产能进行加权折算售价与官方参考红线
             let P_sales = P_sales_A;
             let P_official = P_official_A;
             if (M_annual > 0) {
-                P_sales = (P_sales_A * M_annual_A + totalWeightedSalesPriceOthers) / M_annual;
-                P_official = (P_official_A * M_annual_A + totalWeightedOfficialPriceOthers) / M_annual;
+                P_sales = (P_sales_A * M_annual_A + weightedSalesPriceOthersSum) / M_annual;
+                P_official = (P_official_A * M_annual_A + weightedOfficialPriceOthersSum) / M_annual;
             }
 
             // 年总营业额与利润
@@ -3064,7 +3097,7 @@
             const mixedSubEl = document.getElementById('subtotal-mixed');
             if (mixedSubEl) {
                 if (currentParams.mixedDeploymentEnabled) {
-                    mixedSubEl.textContent = `混合部署: 启用 | A:${N_A}台${mixedInfoString}`;
+                    mixedSubEl.textContent = `混合部署: 启用 | A:${N_A}台 | B:${N_B}台(${modelConfigB.name})`;
                 } else {
                     mixedSubEl.textContent = `混合部署: 未启用`;
                 }
@@ -3120,6 +3153,8 @@
             } else {
                 setHtml('calc-detail-t-cashback', 
                     `📌 <b>数据推导</b>：纯现金流回收期 = 净投资 ${(CapEx_net/10000).toFixed(2)}万元 / [ 营收减运营现金净流入 <b>${(netCashFlowAnnual/10000).toFixed(2)}万元</b> ] = <b class="result-val">无法回本 (经营现金流净亏损)</b>`);
+            }
+
             // ==================== 8.5 更新已选参数可视化配置汇总看板 (v2.4.4 重构) ====================
             const setVal = (id, val) => {
                 const el = document.getElementById(id);
@@ -3127,7 +3162,7 @@
             };
 
             setVal('summary-server-count', `${N_server} 台`);
-            setVal('summary-node-price', `${(Price_server / 10000).toFixed(0)} 万元`);
+            setVal('summary-node-price', `${(currentParams.nodePrice).toFixed(0)} 万元`);
             setVal('summary-net-storage', `${(currentParams.priceNetwork).toFixed(1)}/${(currentParams.priceStorage).toFixed(1)} 万元`);
             setVal('summary-capex-net', `${(CapEx_net / 10000).toFixed(2)} 万元`);
 
@@ -3145,7 +3180,7 @@
             
             const modelDeployEl = document.getElementById('summary-model-deploy');
             if (modelDeployEl) {
-                const mainModelName = currentParams.modelName || 'DeepSeek-R1级';
+                const mainModelName = modelPresets[selectedModelId]?.name || 'DeepSeek-R1';
                 if (currentParams.mixedDeploymentEnabled) {
                     let text = `模型: ${mainModelName} (${N_A}台)`;
                     mixedClusters.forEach((c, idx) => {
@@ -3716,6 +3751,7 @@
             // 模糊匹配函数
             function findGlossaryKey(target) {
                 if (!target) return null;
+                // 优先使用自定义数据属性进行精准匹配，避免 KaTeX 字符打散
                 const term = target.getAttribute('data-term');
                 if (term && glossary[term]) return term;
 
