@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>华鲲大模型算力集群盈亏平衡计算器 - v2.4.4</title>
+    <title>华鲲大模型算力集群盈亏平衡计算器 - v2.4.5</title>
     <!-- 引入 Outfit 现代展示字体与 Inter 常用字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <!-- 引入 Favicon -->
-    <link rel="icon" href="https://cf-r2.testupup.cfd/%E7%8C%AB%E7%8C%AB%E5%A4%B4%E5%83%8F.jpg" type="image/jpeg">
+    <link rel="icon" href="https://cf-r2.testupup.cfd/%E6%A0%87%E5%87%86%E7%8C%AB%E7%8C%AB%E5%A4%B4%E5%83%8Ficon.png" type="image/png">
     <!-- 引入 ECharts -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <!-- 引入 Lucide 图标 -->
@@ -1125,7 +1125,7 @@
     <header>
         <div class="header-title-wrapper">
             <div class="header-tag">产品与解决方案 / 智能计算PDT / AI开发部</div>
-            <h1>华鲲大模型算力集群盈亏平衡计算器 <span class="version-badge">v2.4.4</span></h1>
+            <h1>华鲲大模型算力集群盈亏平衡计算器 <span class="version-badge">v2.4.5</span></h1>
             <p class="subtitle">基于多维变动成本与大厂 API 价格获客防线的商业化精算决策大屏</p>
         </div>
         <div>
@@ -1983,7 +1983,7 @@
 
     <!-- 页脚 Footer -->
     <footer>
-        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • 商业精算沙盘 v2.4.4</div>
+        <div>华鲲大模型算力集群 ROI 辅助决策沙盘 • 商业精算沙盘 v2.4.5</div>
         <div class="footer-desc-group">
             <span>硬件折旧按双倍余额/平均分摊计算</span>
             <span>|</span>
@@ -2410,7 +2410,7 @@
             const badgeLossPd = document.getElementById('badge-loss-pd-scheduling');
             if (badgeLossPd) badgeLossPd.textContent = currentParams.lossPdScheduling + '%';
 
-            // 6. 混合部署 (v2.4.4 重构)
+            // 6. 混合部署 (v2.4.5 重构)
             const chkMixed = document.getElementById('checkbox-mixed-deployment');
             if (chkMixed) chkMixed.checked = currentParams.mixedDeploymentEnabled;
 
@@ -3097,7 +3097,11 @@
             const mixedSubEl = document.getElementById('subtotal-mixed');
             if (mixedSubEl) {
                 if (currentParams.mixedDeploymentEnabled) {
-                    mixedSubEl.textContent = `混合部署: 启用 | A:${N_A}台 | B:${N_B}台(${modelConfigB.name})`;
+                    let detailText = `混合部署: 启用 | 主A:${N_A}台`;
+                    mixedClusters.forEach((c, idx) => {
+                        detailText += ` | 子${idx+1}:${c.nodes}台`;
+                    });
+                    mixedSubEl.textContent = detailText;
                 } else {
                     mixedSubEl.textContent = `混合部署: 未启用`;
                 }
